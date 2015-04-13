@@ -7,11 +7,11 @@ Each submission has a record in DB that tracks the status/result of the submissi
 ## Judging Status
 Judging status is given by *state* and *code*.
 
-| State     | Code      | Range             |
-|:---------:|:---------:|:-----------------:|
-| Pending   | NA        |  NA               |
-| Judging   | test #    |  1..n             |
-| Complete  | verdict   | see verdict table |
+| State     | Code   | Range             |
+|:---------:|:------:|:-----------------:|
+| Pending   | 0      |  NA               |
+| Judging   | 1      |  1 .. test #      |
+| Complete  | 2      | see verdict table |
 
 
 
