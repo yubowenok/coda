@@ -9,5 +9,6 @@ Then execute the *init.sql* script. This shall generates a few dummy tables so a
 ```
 
 Note that you need to create the folder structure at /data/coda and put some submission files there, 
-according to the test setup (e.g. *a.cpp* under /data/coda/src submitted to problem #1) 
+according to the test setup (e.g. *ac.cpp* under /data/coda/src submitted to problem #1) 
 
+Test cases have to be prepared under /data/coda/inout.
