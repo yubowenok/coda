@@ -20,6 +20,7 @@ The verdict of a submission is given by the *verdict code* listed in the verdict
 
 | Verdict               | Code  |
 |:---------------------:|:-----:|
+| Not Judged            | -1    |
 | Accepted              | 0     |
 | Wrong Answer          | 1     |
 | Runtime Error         | 2     |
@@ -29,6 +30,6 @@ The verdict of a submission is given by the *verdict code* listed in the verdict
 | Compilation Error     | 6     |
 | System Error          | 10    |
 
-For each test case, a thumbnail for the submission's output is generated.
-The thumbnails are then combined into an output result file to be written to FS.
-For compilation error, the thumbnail contains the compilation error messages.
+For each test case, a snapshot for the submission's output is generated.
+The snapshots are then combined into an output result file to be written to FS.
+For compilation error, the snapshot contains the compilation error messages.
