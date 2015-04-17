@@ -5,13 +5,14 @@ The judge keeps processing the submissions until the judging queue becomes empty
 Each submission has a record in DB that tracks the status/result of the submission.
 
 ## Judging Status
-Judging status is given by *state* and *code*.
+Judging status is given by *status* and *verdict*.
 
-| State     | Code   | Range             |
+| Status    | Code   | Verdict           |
 |:---------:|:------:|:-----------------:|
-| Pending   | 0      |  NA               |
-| Judging   | 1      |  1 .. test #      |
-| Complete  | 2      | see verdict table |
+| Pending   | 0      | NA                |
+| Compiling | 1      | NA                |
+| Running   | 2      | 1 .. test #       |
+| Complete  | 3      | see verdict table |
 
 
 
@@ -20,7 +21,7 @@ The verdict of a submission is given by the *verdict code* listed in the verdict
 
 | Verdict               | Code  |
 |:---------------------:|:-----:|
-| Not Judged            | -1    |
+| NA                    | -1    |
 | Accepted              | 0     |
 | Wrong Answer          | 1     |
 | Runtime Error         | 2     |

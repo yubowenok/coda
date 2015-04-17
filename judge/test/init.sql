@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS `codadb`.`problems` (
   `name` VARCHAR(100),
   `inout_path` VARCHAR(100) NOT NULL,
   `test_num` INT UNSIGNED NOT NULL,
+  `time_limit` INT UNSIGNED NOT NULL,
+  `memory_limit` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`));
   
 CREATE TABLE IF NOT EXISTS `codadb`.`submissions` (
@@ -33,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `codadb`.`judge_queue` (
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-CREATE TABLE IF NOT EXISTS `codadb`.`test_results` (
+CREATE TABLE IF NOT EXISTS `codadb`.`judge_results` (
   `id` INT UNSIGNED NOT NULL,
   `test_num` INT UNSIGNED NOT NULL,
   `time` INT UNSIGNED,
@@ -51,9 +53,9 @@ CREATE TABLE IF NOT EXISTS `codadb`.`test_results` (
 DELETE FROM `problems`;
 DELETE FROM `submissions`;
 DELETE FROM `judge_queue`;
-INSERT INTO `problems` (name, inout_path, test_num)
+INSERT INTO `problems` (name, inout_path, test_num, time_limit, memory_limit)
   VALUES
-    ('A Test Problem', '/data/coda/inout/1/', 3);
+    ('A Test Problem', '/data/coda/inout/1/', 3, 1000, 65536);
 INSERT INTO `submissions` (user_id, problem_id, src_path)
   VALUES
     ('yubowenok', 1, '/data/coda/src/ac.cpp'),
