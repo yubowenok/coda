@@ -1,4 +1,7 @@
-import sys, time, os, subprocess, threading
+import sys, time, os, subprocess
+
+sys.path.append("..") # to import daemon from parent directory
+
 import daemon
 import MySQLdb.cursors
 
