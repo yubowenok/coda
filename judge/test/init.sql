@@ -1,3 +1,7 @@
+
+# ATTENTION: drops all other tables!!
+DROP DATABASE codadb;
+
 CREATE SCHEMA IF NOT EXISTS `codadb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
 USE `codadb`;
 
@@ -18,7 +22,6 @@ CREATE TABLE IF NOT EXISTS `codadb`.`submissions` (
   `user_id` INT UNSIGNED,
   `problem_id` INT UNSIGNED NOT NULL,
   `language` INT UNSIGNED NOT NULL DEFAULT 0,
-  `src_path` VARCHAR(100) NOT NULL,
   `status` INT NOT NULL DEFAULT 0,
   `last_test_num` INT UNSIGNED NOT NULL DEFAULT 0,
   `verdict` INT NULL DEFAULT -1,
@@ -33,8 +36,7 @@ CREATE TABLE IF NOT EXISTS `codadb`.`judge_queue` (
   CONSTRAINT
     FOREIGN KEY (`id`)
     REFERENCES `codadb`.`submissions` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE);
+    ON DELETE CASCADE);
 
 CREATE TABLE IF NOT EXISTS `codadb`.`judge_results` (
   `sub_id` INT UNSIGNED NOT NULL,
@@ -65,7 +67,7 @@ INSERT INTO `submissions` (user_id, problem_id)
     ('yubowenok', 1),  # tle
     ('yubowenok', 1),  # re
     ('yubowenok', 1);  # ce
-  
+
+
 INSERT INTO `judge_queue` (id)
-  VALUES
-    (1), (2), (3), (4), (5);
+SELECT id FROM submissions

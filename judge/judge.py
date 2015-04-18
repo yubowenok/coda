@@ -48,6 +48,8 @@ class DB:
     self.cur.close()
     self.db.close()
     self.isConnected = False
+  def commit(self):
+    self.db.commit()
   def execute(self, query):
     self.cur.execute(query)
     return self.cur.fetchall()
@@ -82,12 +84,15 @@ def judge(db, sub, prob):
     values = [str(sub_id), str(test_num), 
       str(VERDICT_CODES[verdict]), str(time), str(memory), sub_output, checker_output]
     db.execute("INSERT INTO judge_results (sub_id, test_num, verdict, time, memory, sub_output, checker_output) "
-     + "VALUES (" + ','.join(values) + ")")
+      "VALUES (" + ','.join(values) + ")")
       
-  def complete(verdict, last_test_num=0, time=0, memory=0):
+  def complete(verdict, last_test_num=0, time=0, time_total=0, memory=0):
     print >> sys.stdout, "sub result: %s" % verdict
-    db.execute("UPDATE submissions SET status=%d, verdict=%d, last_test_num=%d WHERE id=%d"
-      % (STATUS_CODES['complete'], VERDICT_CODES[verdict], last_test_num, sub_id) )
+    db.execute("UPDATE submissions SET status=%d, verdict=%d, last_test_num=%d, "
+     "time=%d, time_total=%d, memory=%d WHERE id=%d"
+      % (STATUS_CODES['complete'], VERDICT_CODES[verdict], last_test_num, 
+      time, time_total, memory, sub_id) )
+    # remove sub from judge queue
     db.execute("DELETE FROM judge_queue WHERE id=%d" % sub_id)
   
   
@@ -125,14 +130,16 @@ def judge(db, sub, prob):
     complete('SE')
     return
   
-  db.execute("DELETE FROM judge_results WHERE sub_id=%d" % sub_id)
-  
   # run user program
   set_status('running')
   inout_path, test_num = prob['inout_path'], prob['test_num']
   test_prefix = inout_path + str(prob['id']) + "_"
+  time_total, time_max, memory_max = 0, 0, 0
   
   for test_id in range(1, test_num+1):
+    # remove previous results (possible rejudge)
+    db.execute("DELETE FROM judge_results WHERE sub_id=%d AND test_num=%d" % (sub_id, test_id))
+    
     sandbox_prefix = "/sandbox/%d_%d" % (sub_id, test_id)
     
     # problem inout files
@@ -182,29 +189,27 @@ def judge(db, sub, prob):
     signaled = int(result['SIGNALED']);
     exceed = result['EXCEED'];
     
-    failed = False
+    time_max = max(time_max, time)
+    memory_max = max(memory_max, memory)
+    time_total += time
     
     if exceed == 'CPU_TIME':
       set_case(test_num=test_id, verdict='TLE', time=time, memory=memory) 
-      complete('TLE', test_id)
+      complete('TLE', last_test_num=test_id, time=time_max, memory=memory_max)
     elif exceed == 'MEMORY':
       set_case(test_num=test_id, verdict='MLE', time=time, memory=memory) 
-      complete('MLE', test_id)
+      complete('MLE', last_test_num=test_id, time=time_max, memory=memory_max)
     elif exceed == 'OUTPUT':
       set_case(test_num=test_id, verdict='OLE', time=time, memory=memory) 
-      complete('OLE', test_id)
+      complete('OLE', last_test_num=test_id, time=time_max, memory=memory_max)
     
-    failed |= exceed != 'none'
-    if failed:
+    if exceed != 'none':
       return # pass RE check
     
     if signaled == 1:
       set_case(test_num=test_id, verdict='RE', time=time, memory=memory)
-      complete('RE', test_id)
-      
-    failed |= signaled
-    if failed:
-      return  # pass checker run
+      complete('RE', last_test_num=test_id, time=time_max, memory=memory_max)
+      return # pass checker run
       
     # run checker
     args = ["lrun"]
@@ -228,17 +233,18 @@ def judge(db, sub, prob):
     if verdict != 'AC':
       set_case(test_num=test_id, verdict='WA', time=time, memory=memory, 
         sub_output=sub_output, checker_output=checker_output)
-      complete('WA', test_id)
+      complete('WA', last_test_num=test_id, time=time_max, memory=memory_max)
       return
     
     set_case(test_num=test_id, verdict='AC', time=time, memory=memory, 
         sub_output=sub_output, checker_output=checker_output)
       
-  complete('AC', test_num)
+  complete('AC', last_test_num=test_id, time=time_max, time_total=time_total, memory=memory_max)
   
 def main():
   db = DB()
   db.connect()
+  
   subs = db.execute("SELECT * FROM judge_queue")
   for row_queue in subs:
     # get submission
@@ -254,6 +260,9 @@ def main():
       print >> sys.stderr, "cannot find judge queue prob #%d from problems" % prob_id
       continue
     judge(db, sub, prob)
+    db.commit()
+  
+  db.disconnect()
 
 if __name__ == "__main__":
   main()
