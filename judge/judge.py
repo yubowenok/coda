@@ -5,6 +5,8 @@ import MySQLdb.cursors
 OUTPUT_LIMIT = 51200*1024
 STACK_SIZE = 8192*1024
 SRC_PATH = "/data/coda/src/"
+CHECKER_TIME = 30.0
+SNAPSHOT_SIZE = 500
 LANG_SUFFIX = {
   0: ".cpp"
 }
@@ -49,13 +51,14 @@ class DB:
   def execute(self, query):
     self.cur.execute(query)
     return self.cur.fetchall()
-  def executeOne(self, query):
+  def execute_one(self, query):
     self.cur.execute(query)
     return self.cur.fetchone()
+  def escape_string(self, s):
+    return self.db.escape_string(s)
 
 
 def judge(db, sub, prob):
-  sub_id = str(sub['id'])
   
   def compile(lang, src):
     if lang == 0:
@@ -69,85 +72,169 @@ def judge(db, sub, prob):
     return -1
   
   def set_status(status):
-    db.execute("UPDATE submissions SET status=" + str(STATUS_CODES[status]) + " WHERE id=" + sub_id)
+    db.execute("UPDATE submissions SET status=%d WHERE id=%d" 
+      % (STATUS_CODES[status], sub_id))
   
-  def complete(verdict):
-    db.execute("UPDATE submissions SET status=" + str(STATUS_CODES['complete'])
-      + ", " + "verdict=" + str(VERDICT_CODES[verdict]) + " WHERE id=" + sub_id)
-    db.execute("DELETE FROM judge_queue WHERE id=" + sub_id)
+  def set_case(test_num, verdict, time=0, memory=0, sub_output="", checker_output=""):
+    print >> sys.stdout, "case #%d: %s" % (test_num, verdict)
+    sub_output = "'" + db.escape_string(sub_output) + "'"
+    checker_output = "'" + db.escape_string(checker_output) + "'"
+    values = [str(sub_id), str(test_num), 
+      str(VERDICT_CODES[verdict]), str(time), str(memory), sub_output, checker_output]
+    db.execute("INSERT INTO judge_results (sub_id, test_num, verdict, time, memory, sub_output, checker_output) "
+     + "VALUES (" + ','.join(values) + ")")
+      
+  def complete(verdict, last_test_num=0, time=0, memory=0):
+    print >> sys.stdout, "sub result: %s" % verdict
+    db.execute("UPDATE submissions SET status=%d, verdict=%d, last_test_num=%d WHERE id=%d"
+      % (STATUS_CODES['complete'], VERDICT_CODES[verdict], last_test_num, sub_id) )
+    db.execute("DELETE FROM judge_queue WHERE id=%d" % sub_id)
   
   
-  # judging starts here
-  sys.stdout.write("Judging <" + prob['name'] + "> for sub #" + sub_id + "...\n")
+  sub_id = sub['id']
   
+  # avoid fd 3 interrupting with db (hacky...)
+  db.disconnect()
+  fd3 = os.open("/sandbox/fd3", os.O_RDWR | os.O_CREAT)
+  os.dup2(fd3, 3)
+  db.connect()
+  
+  # judging starts here .................
+  print >> sys.stdout, "Judging <%s> for sub #%d ..." % (prob['name'], sub_id)
   
   # compile the src, status <- compling
   set_status('compiling')
-  src_path = SRC_PATH + sub_id + LANG_SUFFIX[sub['language']]
+  src_path = SRC_PATH + str(sub_id) + LANG_SUFFIX[sub['language']]
   cret = compile(sub['language'], src_path)
   # compilation error, move compiler msg to /coda/ce
   if cret != 0:
     if cret == -1:
-      sys.stderr.write("unrecognized sub compiler" + sub['language'])
+      print >> sys.stderr, "unrecognized sub compiler %d" % sub['language']
     else: 
-      subprocess.Popen(["mv", "/sandbox/compiler_out", "/data/coda/ce/" + sub_id + ".ce"])
+      subprocess.Popen(["mv", "/sandbox/compiler_out", "/data/coda/ce/%d.ce" % sub_id])
       # status <- complete
       complete('CE')
     return 
+  
+  # copy checker to sandbox
+  checker_path = prob['checker_path']
+  try:
+    subprocess.check_output(["cp", checker_path, "/sandbox"])
+  except subprocess.CalledProcessError:
+    print >> sys.stderr, "cannot cp checker %s" % checker_path
+    complete('SE')
+    return
+  
+  db.execute("DELETE FROM judge_results WHERE sub_id=%d" % sub_id)
   
   # run user program
   set_status('running')
   inout_path, test_num = prob['inout_path'], prob['test_num']
   test_prefix = inout_path + str(prob['id']) + "_"
+  
   for test_id in range(1, test_num+1):
+    sandbox_prefix = "/sandbox/%d_%d" % (sub_id, test_id)
+    
+    # problem inout files
     infile_path = test_prefix + str(test_id) + ".in"
-    outfile_path = "/sandbox/" + sub_id + "_" + str(test_id) + ".out"
-    lrunfile_path = "/sandbox/" + sub_id + "_" + str(test_id) + ".lrun"
-    with open(infile_path, 'r') as infile:
-      sys.stdout.write("Running test " + infile_path + "...\n")
-      
-      # TODO: lrun drops mysql connection
-      args = ["lrun"]
-      args += ["--max-cpu-time", str(prob['time_limit'] / 1000.0)]
-      args += ["--max-memory", str(prob['memory_limit'] * 1024)]
-      args += ["--max-output", str(OUTPUT_LIMIT)]
-      args += ["--max-stack", str(STACK_SIZE)]
-      args += ["--status"]
-      
-      args += ["/sandbox/program"]
-      
-      infile = open(infile_path, 'r')
-      outfile = open(outfile_path, 'w')
-      subprocess.call(["rm", lrunfile_path])
-      
-      # avoid fd 3 interrupting with db (hacky...)
-      db.disconnect()
-      
-      # open a new fd for lrun, and dup it to fd 3 to capture lrun message
-      fdlrun = os.open(lrunfile_path, os.O_RDWR | os.O_CREAT)
-      os.dup2(fdlrun, 3)
+    ansfile_path = test_prefix + str(test_id) + ".out"
+    
+    # files written in the sandbox path
+    outfile_path = sandbox_prefix + ".out"
+    lrunfile_path = sandbox_prefix + ".lrun"
+    checkerfile_path = sandbox_prefix + ".checker"
+    
+    # begin case judge ...
+    print >> sys.stdout, "Running test %s..." % infile_path
+    
+    args = ["lrun"]
+    args += ["--max-cpu-time", str(prob['time_limit'] / 1000.0)]
+    args += ["--max-memory", str(prob['memory_limit'] * 1024)]
+    args += ["--max-output", str(OUTPUT_LIMIT)]
+    args += ["--max-stack", str(STACK_SIZE)]
+    args += ["/sandbox/program"]
+    
+    infile = open(infile_path, 'r')
+    outfile = open(outfile_path, 'w')
+    
+    # open a new fd for lrun, and dup 3 to it to capture lrun message
+    fdlrun = os.open(lrunfile_path, os.O_RDWR | os.O_CREAT)
+    os.dup2(3, fdlrun)
 
-      proc = subprocess.Popen(args,
-        stdin=infile,
-        stdout=outfile,
-        stderr=subprocess.PIPE #sys.stderr
-      )
-      proc.communicate()
+    proc = subprocess.Popen(args,
+      stdin=infile,
+      stdout=outfile
+    )
+    proc.communicate()
+    infile.close()
+    outfile.close()
+    
+    # we now have lrun result in lrunfile
+    lrunfile = open(lrunfile_path, 'r')
+    result_tokens = lrunfile.read().split()
+    lrunfile.close()
+    result = {}
+    for i in range(0,len(result_tokens),2):
+      result[result_tokens[i]] = result_tokens[i + 1]
+    # parse lrun result
+    memory = int(result['MEMORY']) / 1024;
+    time = int(float(result['CPUTIME']) * 1000);
+    signaled = int(result['SIGNALED']);
+    exceed = result['EXCEED'];
+    
+    failed = False
+    
+    if exceed == 'CPU_TIME':
+      set_case(test_num=test_id, verdict='TLE', time=time, memory=memory) 
+      complete('TLE', test_id)
+    elif exceed == 'MEMORY':
+      set_case(test_num=test_id, verdict='MLE', time=time, memory=memory) 
+      complete('MLE', test_id)
+    elif exceed == 'OUTPUT':
+      set_case(test_num=test_id, verdict='OLE', time=time, memory=memory) 
+      complete('OLE', test_id)
+    
+    failed |= exceed != 'none'
+    if failed:
+      return # pass RE check
+    
+    if signaled == 1:
+      set_case(test_num=test_id, verdict='RE', time=time, memory=memory)
+      complete('RE', test_id)
       
-      # we now have lrun result in lrunfile
-      lrunfile = open(lrunfile_path, 'r')
-      result = lrunfile.read()
-      # TODO: parse lrun result
-      # TODO: run checker
+    failed |= signaled
+    if failed:
+      return  # pass checker run
       
+    # run checker
+    args = ["lrun"]
+    args += ["--max-cpu-time", str(CHECKER_TIME)]
+    args += [checker_path, ansfile_path, outfile_path, checkerfile_path]
+    proc = subprocess.Popen(args)
+    
+    # get checker result
+    checkerfile = open(checkerfile_path, 'r')
+    verdict = checkerfile.readline().rstrip()
+    checker_output = checkerfile.read()
+    checkerfile.close()
+    
+    # get user output
+    outfile = open(outfile_path, 'r')
+    sub_output = outfile.read()
+    outfile.close()
+    if len(sub_output) > SNAPSHOT_SIZE:
+      sub_output = sub_output[:SNAPSHOT_SIZE] + " (...)"
+    
+    if verdict != 'AC':
+      set_case(test_num=test_id, verdict='WA', time=time, memory=memory, 
+        sub_output=sub_output, checker_output=checker_output)
+      complete('WA', test_id)
+      return
+    
+    set_case(test_num=test_id, verdict='AC', time=time, memory=memory, 
+        sub_output=sub_output, checker_output=checker_output)
       
-      # reconnect db (hacky...)
-      db.connect()
-      
-      # DEBUG: verify db is still okay
-      db.execute("SELECT * from judge_queue")
-      
-  complete('AC')
+  complete('AC', test_num)
   
 def main():
   db = DB()
@@ -155,18 +242,19 @@ def main():
   subs = db.execute("SELECT * FROM judge_queue")
   for row_queue in subs:
     # get submission
-    sub_id = str(row_queue['id'])
-    sub = db.executeOne("SELECT * FROM submissions WHERE id=" + sub_id)
+    sub_id = row_queue['id']
+    sub = db.execute_one("SELECT * FROM submissions WHERE id=%d" % sub_id)
     if len(sub) == 0:
-      sys.stderr.write("cannot find judge queue sub #" + sub_id + " from submissions\n")
+      print >> sys.stderr, "cannot find judge queue sub #%d from submissions" % sub_id
       continue
     # get problem
-    prob_id = str(sub['problem_id'])
-    prob = db.executeOne("SELECT * FROM problems WHERE id=" + prob_id)
+    prob_id = sub['problem_id']
+    prob = db.execute_one("SELECT * FROM problems WHERE id=%d" % prob_id)
     if len(prob) == 0:
-      sys.stderr.write("cannot find judge queue prob #" + prob_id + " from problems\n")
+      print >> sys.stderr, "cannot find judge queue prob #%d from problems" % prob_id
+      continue
     judge(db, sub, prob)
-    break
 
 if __name__ == "__main__":
   main()
+  
