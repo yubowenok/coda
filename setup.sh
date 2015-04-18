@@ -3,10 +3,11 @@
 #  Folder structure of coda
 #  /data
 #    /coda
-#      /inout     ... problem inout files
-#      /src       ... user src code
-#      /ce        ... compilation error messages
-#  /sandbox       ... compile and run user program
+#      /inout         ... problem inout files
+#      /src           ... user src code
+#      /ce            ... compilation error messages
+#      /checker       ... checker src and executable
+#  /sandbox           ... compile and run user program
 #  
 #-----------------------------------------------------      
 
@@ -41,5 +42,8 @@ if [[ ! -d "src" ]]; then
 fi
 if [[ ! -d "ce" ]]; then
 	sudo mkdir ce
+fi
+if [[ ! -d "checker" ]]; then
+	sudo mkdir checker
 fi
 

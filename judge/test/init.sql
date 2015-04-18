@@ -56,13 +56,13 @@ DELETE FROM `judge_queue`;
 INSERT INTO `problems` (name, inout_path, test_num, time_limit, memory_limit)
   VALUES
     ('A Test Problem', '/data/coda/inout/1/', 3, 1000, 65536);
-INSERT INTO `submissions` (user_id, problem_id, src_path)
+INSERT INTO `submissions` (user_id, problem_id)
   VALUES
-    ('yubowenok', 1, '/data/coda/src/ac.cpp'),
-    ('yubowenok', 1, '/data/coda/src/wa.cpp'),
-    ('yubowenok', 1, '/data/coda/src/tle.cpp'),
-    ('yubowenok', 1, '/data/coda/src/re.cpp'),
-    ('yubowenok', 1, '/data/coda/src/ce.cpp');
+    ('yubowenok', 1),  # ac
+    ('yubowenok', 1),  # wa
+    ('yubowenok', 1),  # tle
+    ('yubowenok', 1),  # re
+    ('yubowenok', 1);  # ce
   
 INSERT INTO `judge_queue` (id)
   VALUES
