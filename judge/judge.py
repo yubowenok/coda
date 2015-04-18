@@ -27,11 +27,6 @@ VERDICT_CODES = {
   'SE': 10
 }
 
-# run judge as daemon
-#with daemon.DaemonContext(stderr=sys.stderr):
-#  while True:
-#    time.sleep(1)
-
 class DB:
   def __init__ (self):
     self.isConnected = False
@@ -240,7 +235,8 @@ def judge(db, sub, prob):
         sub_output=sub_output, checker_output=checker_output)
       
   complete('AC', last_test_num=test_id, time=time_max, time_total=time_total, memory=memory_max)
-  
+
+
 def main():
   db = DB()
   db.connect()
@@ -263,7 +259,17 @@ def main():
     db.commit()
   
   db.disconnect()
+  
 
 if __name__ == "__main__":
-  main()
+  if len(sys.argv) == 2 and sys.argv[1] == 'daemon':
+    # run judge as daemon, judge every 5 seconds
+    with daemon.DaemonContext(): 
+      # may direct stdout/stderr=sys.stdout/sys.stderr
+      while True:
+        main()
+        time.sleep(5)
+  else:
+    # run judge once
+    main()
   
