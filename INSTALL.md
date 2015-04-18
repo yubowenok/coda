@@ -30,4 +30,9 @@ sudo make install
 sudo usermod -a -G lrun {username}
 ```
 
+## Install MySQLdb
+```bash
+sudo apt-get install python-mysqldb
+```
+
 lrun requires the current user to be in the lrun group to run.

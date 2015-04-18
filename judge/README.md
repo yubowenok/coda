@@ -5,13 +5,14 @@ The judge keeps processing the submissions until the judging queue becomes empty
 Each submission has a record in DB that tracks the status/result of the submission.
 
 ## Judging Status
-Judging status is given by *state* and *code*.
+Judging status is given by *status* and *verdict*.
 
-| State     | Code   | Range             |
+| Status    | Code   | Verdict           |
 |:---------:|:------:|:-----------------:|
-| Pending   | 0      |  NA               |
-| Judging   | 1      |  1 .. test #      |
-| Complete  | 2      | see verdict table |
+| Pending   | 0      | NA                |
+| Compiling | 1      | NA                |
+| Running   | 2      | 1 .. test #       |
+| Complete  | 3      | see verdict table |
 
 
 
@@ -20,6 +21,7 @@ The verdict of a submission is given by the *verdict code* listed in the verdict
 
 | Verdict               | Code  |
 |:---------------------:|:-----:|
+| NA                    | -1    |
 | Accepted              | 0     |
 | Wrong Answer          | 1     |
 | Runtime Error         | 2     |
@@ -29,6 +31,6 @@ The verdict of a submission is given by the *verdict code* listed in the verdict
 | Compilation Error     | 6     |
 | System Error          | 10    |
 
-For each test case, a thumbnail for the submission's output is generated.
-The thumbnails are then combined into an output result file to be written to FS.
-For compilation error, the thumbnail contains the compilation error messages.
+For each test case, the judge returns its time and memory consumption, 
+along with the an output snapshot and a checker message.
+For compilation error, the snapshot contains a path to a file storing the compilation error message.
