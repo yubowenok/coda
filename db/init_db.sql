@@ -23,7 +23,7 @@ USE `codadb` ;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `codadb`.`languages` (
   `id` INT UNSIGNED NOT NULL,
-  `language` VARCHAR(45) NULL,
+  `name` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -60,10 +60,10 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `codadb`.`checkers` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `code` CHAR(16) NULL,
-  `language` INT NULL,
+  `language_id` INT UNSIGNED NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `checkersFK0`
-    FOREIGN KEY (`id`)
+    FOREIGN KEY (`language_id`)
     REFERENCES `codadb`.`languages` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `codadb`.`problems` (
   `name` VARCHAR(100) NOT NULL,
   `code` CHAR(16) NOT NULL,
   `time_limit` INT UNSIGNED NOT NULL DEFAULT 1000,
-  `memory_limit` INT UNSIGNED NOT NULL,
+  `memory_limit` INT UNSIGNED NOT NULL DEFAULT 65536,
   `description` VARCHAR(256) NOT NULL,
   `input_description` VARCHAR(256) NOT NULL,
   `output_description` VARCHAR(256) NOT NULL,
@@ -132,18 +132,18 @@ CREATE TABLE IF NOT EXISTS `codadb`.`submissions` (
   `problem_version` INT UNSIGNED NOT NULL,
   `session_id` INT UNSIGNED NOT NULL,
   `submission_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `language` INT UNSIGNED NOT NULL,
+  `language_id` INT UNSIGNED NOT NULL,
   `status` INT NOT NULL,
-  `time_max` INT UNSIGNED NULL,
+  `time` INT UNSIGNED NULL,
   `time_total` INT UNSIGNED NULL,
   `memory` INT UNSIGNED NULL,
-  `last_test_num` INT UNSIGNED NULL,
+  `last_test_id` INT UNSIGNED NULL,
   `verdict` INT UNSIGNED NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC),
-  INDEX `submissionsFK0_idx` (`language` ASC),
+  INDEX `submissionsFK0_idx` (`language_id` ASC),
   CONSTRAINT `submissionsFK0`
-    FOREIGN KEY (`language`)
+    FOREIGN KEY (`language_id`)
     REFERENCES `codadb`.`languages` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -248,7 +248,8 @@ CREATE TABLE IF NOT EXISTS `codadb`.`judge_results` (
   `test_id` INT UNSIGNED NOT NULL,
   `time` INT NOT NULL,
   `memory` INT NOT NULL,
-  `output_snapshot` VARCHAR(512) NULL,
+  `verdict` INT NOT NULL,
+  `submission_output` VARCHAR(512) NULL,
   `checker_output` VARCHAR(512) NULL,
   PRIMARY KEY (`submission_id`, `test_id`),
   CONSTRAINT `judge_resultsFK0`
@@ -300,6 +301,11 @@ CREATE TABLE IF NOT EXISTS `codadb`.`quality_test_purchased` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+
+ALTER TABLE `languages` AUTO_INCREMENT = 1;
+ALTER TABLE `submissions` AUTO_INCREMENT = 1000000;
+ALTER TABLE `problems` AUTO_INCREMENT = 1000;
+ALTER TABLE `checkers` AUTO_INCREMENT = 1000;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
