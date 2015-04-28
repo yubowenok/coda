@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin: List of Problems</title>
+    <link rel="stylesheet" href="./style.css"/>
+    
+    <!-- insert the script to reference jQuery here -->
+    <script type="text/javascript" src="./jquery-1.11.1.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?
+		config=TeX-AMS-MML_HTMLorMML"></script>
+
+</head>
+
+
+<body>
+<!-- main content -->
+	<h1 id=title">List of Problems:</h1>
+	</br>
+	<div ng-app="problem_list" ng-controller="problem_list_ctrl">
+		<table>
+		  <tr ng-repeat="prob in problems">
+			<td>{{ prob.title }}</td>
+			<td><button ng-click="edit(prob)">Edit</button></td>
+		  </tr>
+		</table>
+		<br><br>
+
+		<hr>
+
+		<form novalidate>
+			Title<br>
+			<input type="text" ng-model="p.title"><br><br>
+			Description<br>
+			<textarea ng-model="p.description" cols="60" rows="12"></textarea><br><br>
+			Sample Input<br>
+			<textarea ng-model="p.sampleInput" cols="60" rows="6"></textarea><br><br>
+			Sample Output<br>
+			<textarea ng-model="p.sampleOutput" cols="60" rows="6"></textarea><br><br>
+			Hint<br>
+			<textarea ng-model="p.hint" cols="60" rows="3"></textarea><br><br>
+
+			<button ng-click="submit()">SAVE</button>
+		
+		</form>
+	</div>
+	<br>
+	<p><a href="admin_index.html">Back to Home</a></p>
+
+
+	<script type="text/javascript" src="./scripts/problem_list.js"></script>
+</body>
+</html>

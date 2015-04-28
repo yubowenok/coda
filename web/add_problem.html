@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin: Add Problem</title>
+    <link rel="stylesheet" href="./style.css"/>
+    
+    <!-- insert the script to reference jQuery here -->
+    <script type="text/javascript" src="./jquery-1.11.1.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?
+		config=TeX-AMS-MML_HTMLorMML"></script>
+
+</head>
+
+
+<body>
+<!-- main content -->
+	<h1>Add a new Problem below:</h1>
+	</br>
+	<div ng-app="add_problem" ng-controller="add_problem_ctrl">
+		<form novalidate>
+			Title<br>
+			<input type="text" ng-model="title"><br><br>
+			Description<br>
+			<textarea ng-model="descrip" cols="60" rows="12"></textarea><br><br>
+			Sample Input<br>
+			<textarea ng-model="samplein" cols="60" rows="6"></textarea><br><br>
+			Sample Output<br>
+			<textarea ng-model="sampleout" cols="60" rows="6"></textarea><br><br>
+			Hint<br>
+			<textarea ng-model="hint" cols="60" rows="3"></textarea><br><br>
+
+			<button ng-click="submit()">SUBMIT</button>
+			<button ng-click="reset()">RESET</button>
+		
+		
+		</form>
+	</div>
+	<br>
+	<p><a href="admin_index.html">Back to Home</a></p>
+
+
+	<script type="text/javascript" src="./scripts/add_problem.js"></script>
+</body>
+</html>
