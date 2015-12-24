@@ -1,0 +1,32 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.list-group-item > .glyphicon {
+  margin-right: 1em;
+}
+
+.box {
+  padding: 12px 20px;
+  margin: 20px 0;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  &.note {
+    border-left-width: 5px;
+  }
+}
+
+.featured {
+  .box {
+    height: 240px;
+  }
+  button {
+    position: absolute;
+    bottom: 40px;
+  }
+}

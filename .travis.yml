@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+  - "4.1"
+
+sudo: required
+dist: trusty
+
+before_script:
+  - npm install -g gulp
+  - bower install
+
+script:
+  - gulp

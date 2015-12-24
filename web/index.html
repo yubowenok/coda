@@ -1,16 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="coda">
 <head>
   <meta charset="utf-8">
-  <title>Coda</title>
+  <title>coda</title>
+  <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
 
-  <script type="text/javascript" src="bower_components/underscore/underscore-min.js"></script>
-  <script type="text/javascript" src="bower_components/d3/d3.min.js"></script>
-  <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="bower_components/underscore/underscore-min.js"></script>
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="bower_components/angular/angular.js"></script>
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css">
 
+  <script src="dist/coda.js"></script>
+  <link rel="stylesheet" href="dist/coda.css">
 </head>
 <body>
+<div class="container">
+  <!-- navbar -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">
+          <img src="./imgs/logo.png">
+          <span>coda</span>
+        </a>
+      </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a>Sessions</a></li>
+          <li><a>Problems</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a>Register</a></li>
+          <li><a>Login</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-
+  <div class="page-header">
+    <h3>Active Sessions</h3>
+    <div class="list-group" ng-controller="ActiveSessionCtrl">
+      <a class="list-group-item" ng-repeat="session in sessions">
+        <i class="glyphicon glyphicon-chevron-right"></i>{{session.text}}}
+      </a>
+    </div>
+  </div>
+  <div class="box note">
+    <h3>Announcements</h3>
+    <ul>
+      <li><a href="#">Homework 12/23/2015</a> has been assigned.</li>
+      <li>Coda is a light-weight contest & practice platform for Coding Of Data structure and Algorithm.</li>
+    </ul>
+  </div>
+  <div class="row featured">
+    <div class="col-lg-4">
+      <div class="box">
+        <h4>Daily Challenge</h4>
+        <p>Large Multiple (<a href="#">LGMUL</a>) - Compute the multiple of two given large integers.
+        The integers may contain up to 50,000 digits.</p>
+        <button class="btn btn-primary">Try It! &raquo;</button>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="box">
+        <h4>Sign Up for the Programming Team</h4>
+        <p>The mission of NYU Programming Team is to enjoy programming by solving algorithm problems.
+          We anually send teams to the ICPC competitions and hold weekly practices both onsite and online...</p>
+        <button class="btn btn-primary">Learn More &raquo;</button>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="box">
+        <h4>Latest News</h4>
+        <ul>
+          <li><a href="#">boris</a> submitted a solution to <a href="#">LGMUL</a> but unfortunately it was too slow.</li>
+          <li><a href="#">boris</a> submitted a solution to <a href="#">LGMUL</a> but unfortunately it was incorrect.</li>
+          <li><a href="#">bz123</a> has solved <a href="#">MUL</a> on the 1st attempt!</li>
+        </ul>
+        <button class="btn btn-default">Judge Status &raquo;</button>
+      </div>
+    </div>
+  </div>
+</div> <!-- /container -->
 </body>
 </html>

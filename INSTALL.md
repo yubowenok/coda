@@ -35,4 +35,9 @@ sudo usermod -a -G lrun {username}
 sudo apt-get install python-mysqldb
 ```
 
+## Build the front-end
+```bash
+gulp
+```
+
 lrun requires the current user to be in the lrun group to run.
