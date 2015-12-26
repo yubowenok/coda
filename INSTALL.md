@@ -30,14 +30,18 @@ sudo make install
 sudo usermod -a -G lrun {username}
 ```
 
+lrun requires the current user to be in the lrun group to run.
+
 ## Install MySQLdb
 ```bash
 sudo apt-get install python-mysqldb
 ```
 
-## Build the front-end
+## Build the Front-end
 ```bash
+npm install
 gulp
 ```
+The front-end uses angular route with HTML5. To support direct URL access of sub-routes, the server needs to be configured to
+redirect request to index.html. For details see the angular route [FAQ](https://github.com/angular-ui/ui-router/wiki/Frequently-Asked-Questions#how-to-configure-your-server-to-work-with-html5mode).
 
-lrun requires the current user to be in the lrun group to run.

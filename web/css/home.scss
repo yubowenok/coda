@@ -7,8 +7,11 @@ body {
   margin-bottom: 60px;
 }
 
-.list-group-item > .glyphicon {
-  margin-right: 1em;
+.list-group-item {
+  cursor: pointer;
+  > .glyphicon {
+    margin-right: 1em;
+  }
 }
 
 .box {

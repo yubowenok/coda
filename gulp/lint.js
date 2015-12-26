@@ -14,7 +14,7 @@ gulp.task('lint-gulp', function(cb) {
 });
 
 gulp.task('lint-web', function(cb) {
-  return gulp.src(paths.webJS)
+  return gulp.src(paths.webJs)
     .pipe(gjslint())
     .pipe(gjslint.reporter('console'))
     .pipe(gjslint.reporter('fail'))

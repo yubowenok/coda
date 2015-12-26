@@ -4,6 +4,9 @@
   "description": "coding of data structure and algorithm",
   "main": "index.html",
   "scripts": {
+    "prestart": "npm install",
+    "postinstall": "bower install",
+    "pretest": "npm install",
     "test": "gulp test"
   },
   "repository": {

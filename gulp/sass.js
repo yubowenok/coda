@@ -6,9 +6,8 @@ var concat = require('gulp-concat');
 var paths = require('./paths.js');
 
 var runSass = function(cb, compressed) {
-  return gulp.src(paths.webCSS)
+  return gulp.src(paths.webCss)
     .pipe(concat('coda.scss'))
-    .pipe(flatten())
     .pipe(sass({
       outputStyle: compressed ? 'compressed' : ''
     }).on('error', sass.logError))

@@ -5,7 +5,7 @@ var concat = require('gulp-concat');
 var paths = require('./paths.js');
 
 gulp.task('compile', function(cb) {
-  return gulp.src(paths.webJS)
+  return gulp.src(paths.webJs)
     .pipe(closureCompiler({
       compilerPath: 'node_modules/google-closure-compiler/compiler.jar',
       fileName: 'coda.js'
@@ -16,7 +16,7 @@ gulp.task('compile', function(cb) {
 });
 
 gulp.task('compile-dev', function(cb) {
-  return gulp.src(paths.webJS)
+  return gulp.src(paths.webJs)
     .pipe(concat('coda.js'))
     .pipe(gulp.dest(paths.dist))
     .on('error', function(err) {

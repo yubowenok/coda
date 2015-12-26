@@ -6,10 +6,10 @@ module.exports = {
   web: [
     'web/**/*'
   ],
-  webJS: [
+  webJs: [
     'web/**/*.js'
   ],
-  webCSS: [
+  webCss: [
     'web/**/*.css',
     'web/**/*.scss'
   ],
@@ -18,6 +18,10 @@ module.exports = {
   ],
   index: [
     'web/index.html'
+  ],
+  html: [
+    'web/**/*.html',
+    '!web/index.html'
   ],
   gulp: [
     'gulp/**/*.js'

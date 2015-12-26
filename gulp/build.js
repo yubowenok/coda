@@ -5,20 +5,20 @@ var runSequence = require('run-sequence');
 gulp.task('build', function(cb) {
   runSequence(
     'dist',
-    ['index', 'sass', 'compile'],
+    ['html', 'index', 'sass', 'compile'],
     cb);
 });
 
 gulp.task('build-dev', function(cb) {
   runSequence(
     'dist',
-    ['index-dev', 'sass-dev', 'compile-dev'],
+    ['html', 'index-dev', 'sass-dev', 'compile-dev'],
     cb);
 });
 
 gulp.task('build-test', function(cb) {
   runSequence(
     'dist',
-    ['index-test', 'sass-dev'],
+    ['html', 'index-test', 'sass-dev'],
     cb);
 });
