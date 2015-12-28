@@ -1,0 +1,29 @@
+<h3>{{ (isAddProblem ? 'Add' : 'Edit') + ' Problem' }}</h3>
+<hr>
+  <form class="set-problem">
+    <table>
+        <col width="20%">
+        <col width="80%">
+      </colgroup>
+      <thead></thead>
+      <tbody>
+        <tr>
+          <td><h4>Problem ID</h4></td>
+          <td><input id="id" class="form-control" value="APLUSB" ng-disabled="!isAddProblem"></td>
+        </tr>
+      </tbody>
+      <tbody ng-hide="isAddProblem">
+        <tr>
+          <td><h4>Title</h4></td>
+          <td><input id="title" class="form-control"></td>
+        </tr>
+        <tr>
+          <td><h4>Description</h4></td>
+          <td><textarea id="description" class="form-control"/></td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>
+<hr>
+<button class="btn btn-primary" ng-click="submit()">Submit</button>

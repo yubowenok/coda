@@ -12,13 +12,17 @@
   <script src="bower_components/angular-route/angular-route.js"></script>
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css">
+  <script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+  <script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+  <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css"/>
+  <script src="bower_components/datatables.net-select/js/dataTables.select.min.js"></script>
+  <link rel="stylesheet" href="bower_components/datatables.net-select-bs/css/select.bootstrap.min.css"/>
 
   <script src="dist/coda.js"></script>
   <link rel="stylesheet" href="dist/coda.css">
 </head>
 <body>
 <div class="container">
-  <!-- navbar -->
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
@@ -31,7 +35,9 @@
         <ul id="nav-pages" class="nav navbar-nav">
           <li id="home" class="active"><a href=".">Home</a></li>
           <li id="sessions"><a href="sessions">Sessions</a></li>
-          <li id="problems"><a href="problems">Problems</a></li>
+          <li id="archive"><a href="archive">Archive</a></li>
+          <li id="moderator"><a href="moderator">Moderator</a></li>
+          <li id="admin"><a href="admin">Admin</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li><a>Register</a></li>
@@ -40,8 +46,9 @@
       </div>
     </div>
   </nav>
-
-  <div ng-view></div>
-</div> <!-- /container -->
+  <div class="col-xs-12">
+    <div ng-view></div>
+  </div>
+</div>
 </body>
 </html>

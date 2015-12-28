@@ -1,24 +1,32 @@
+$light-gray: #eee;
+
 html {
-  position: relative;
   min-height: 100%;
+  position: relative;
 }
 
 body {
   margin-bottom: 60px;
+
+  svg {
+    border-width: 2px;
+  }
 }
 
 .list-group-item {
   cursor: pointer;
+
   > .glyphicon {
     margin-right: 1em;
   }
 }
 
 .box {
-  padding: 12px 20px;
-  margin: 20px 0;
-  border: 1px solid #eee;
+  border: 1px solid $light-gray;
   border-radius: 4px;
+  margin: 20px 0;
+  padding: 12px 20px;
+
   &.note {
     border-left-width: 5px;
   }
@@ -28,8 +36,9 @@ body {
   .box {
     height: 240px;
   }
+
   button {
-    position: absolute;
     bottom: 40px;
+    position: absolute;
   }
 }

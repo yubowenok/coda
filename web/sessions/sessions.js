@@ -3,7 +3,7 @@ coda.controller('SessionsCtrl', ['$scope', 'page', function($scope, page) {
   $scope.activeSessions = [
     {text: 'Homework 12/23/2015'},
     {text: 'ACM-ICPC Asia-Amritapuri Onsite Mirror Contest 2015'},
-    {text: 'Petrozavodsk Winter Training Camp'}
+    {text: 'Daily Challenge 12/23/2015'}
   ];
   $scope.scheduledSessions = [
     {text: 'Friday Night 12/25/2015'}

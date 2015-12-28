@@ -1,0 +1,10 @@
+<h3>Problem Archive</h3>
+<div class="list-group archive">
+  <a class="list-group-item" ng-repeat="problem in problems">
+    <span class="id label label-primary">{{problem.id}}</span>
+    {{problem.title}}
+    <span class="success-rate">
+      {{problem.successRate >= 0 ? problem.successRate + '%' : 'N/A'}}
+    </span>
+  </a>
+</div>

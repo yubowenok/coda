@@ -9,7 +9,7 @@ module.exports = {
   webJs: [
     'web/**/*.js'
   ],
-  webCss: [
+  webScss: [
     'web/**/*.css',
     'web/**/*.scss'
   ],

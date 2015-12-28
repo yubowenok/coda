@@ -1,0 +1,17 @@
+.archive {
+  span {
+    &.id {
+      display: inline-block;
+      margin-right: 2em;
+      width: 8em;
+    }
+
+    &.success-rate {
+      display: inline-block;
+      float: right;
+      font-size: 12px;
+      height: 18px;
+      line-height: 18px;
+    }
+  }
+}
