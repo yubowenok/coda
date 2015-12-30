@@ -1,5 +1,3 @@
-$light-gray: #eee;
-
 html {
   min-height: 100%;
   position: relative;
@@ -21,20 +19,9 @@ body {
   }
 }
 
-.box {
-  border: 1px solid $light-gray;
-  border-radius: 4px;
-  margin: 20px 0;
-  padding: 12px 20px;
-
-  &.note {
-    border-left-width: 5px;
-  }
-}
-
 .featured {
   .box {
-    height: 240px;
+    height: 200px;
   }
 
   button {

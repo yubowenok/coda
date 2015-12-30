@@ -12,8 +12,7 @@ var dirs = [
 
 gulp.task('clean', function() {
   return del([
-    paths.dist + '*.css',
-    paths.dist + '*.js'
+    paths.dist + '**/*'
   ]);
 });
 

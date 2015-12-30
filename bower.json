@@ -19,6 +19,7 @@
     "underscore": "~1.8.3",
     "bootstrap": "~3.3.6",
     "angular": "~1.4.8",
+    "angular-route": "~1.4.8",
     "datatables.net": "~1.10.10",
     "datatables.net-select": "~1.1.0",
     "datatables.net-bs": "~1.10.10",

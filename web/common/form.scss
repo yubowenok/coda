@@ -1,6 +1,7 @@
-.set-problem {
-  padding-left: 20px;
-  padding-right: 20px;
+@import 'common/util';
+
+form {
+  @include padding-lr(20px);
 
   tr {
     td:first-child {
@@ -13,6 +14,6 @@
   }
 
   textarea {
-    width: 100%;
+    resize: vertical;
   }
 }

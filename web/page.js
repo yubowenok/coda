@@ -4,8 +4,8 @@ coda.factory('page', function() {
     setNav: function(newPage) {
       curPage = newPage;
       var navPages = $('#nav-pages');
-      navPages.children().removeClass('active');
-      navPages.children('#' + curPage).addClass('active');
+      navPages.find('li').removeClass('active');
+      navPages.find('#' + curPage).addClass('active');
     }
   };
 });
