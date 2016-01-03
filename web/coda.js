@@ -35,6 +35,7 @@ coda.config(['$routeProvider', '$locationProvider',
         templateUrl: 'dist/html/archive/archive.html',
         controller: 'ArchiveCtrl'
       })
+
       // Moderator pages
       .when('/moderator', {
         templateUrl: 'dist/html/moderator/moderator.html',
@@ -42,32 +43,32 @@ coda.config(['$routeProvider', '$locationProvider',
       })
       // Moderator - problem
       .when('/moderator/problem', {
-        templateUrl: 'dist/html/moderator/problem.html',
+        templateUrl: 'dist/html/moderator/problem/problem.html',
         controller: 'AddProblemCtrl'
       })
       .when('/moderator/problem/:problemId', {
-        templateUrl: 'dist/html/moderator/problem.html',
+        templateUrl: 'dist/html/moderator/problem/problem.html',
         controller: 'EditProblemCtrl'
       })
       .when('/moderator/problem/:problemId/submissions', {
-        templateUrl: 'dist/html/moderator/problem-submissions.html',
+        templateUrl: 'dist/html/moderator/problem/problem-submissions.html',
         controller: 'ProblemSubmissionsCtrl'
       })
       .when('/moderator/problem/:problemId/tests', {
-        templateUrl: 'dist/html/moderator/tests.html',
+        templateUrl: 'dist/html/moderator/tests/tests.html',
         controller: 'TestsCtrl'
       })
       // Moderator - session
       .when('/moderator/session', {
-        templateUrl: 'dist/html/moderator/session.html',
+        templateUrl: 'dist/html/moderator/session/session.html',
         controller: 'AddSessionCtrl'
       })
       .when('/moderator/session/:sessionId', {
-        templateUrl: 'dist/html/moderator/session.html',
+        templateUrl: 'dist/html/moderator/session/session.html',
         controller: 'EditSessionCtrl'
       })
       .when('/moderator/session/:sessionId/submissions', {
-        templateUrl: 'dist/html/moderator/session-submissions.html',
+        templateUrl: 'dist/html/moderator/session/session-submissions.html',
         controller: 'SessionSubmissionsCtrl'
       })
 

@@ -3,6 +3,8 @@ coda.controller('ArchiveProblemCtrl', [
   function($scope, $location, $routeParams, page) {
     page.setNav('archive');
 
+    coda.problemInfo($scope);
+
     $scope.problemId = $routeParams.problemId;
   }
 ]);

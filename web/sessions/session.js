@@ -3,15 +3,10 @@ coda.controller('SessionCtrl', [
   function($scope, $location, $routeParams, page) {
     page.setNav('sessions');
 
-    $scope.sessionId = $routeParams.sessionId;
+    coda.sessionInfo($scope);
 
-    $scope.problems = [
-      {id: 'APLUSB', title: 'A + B', successRate: 91.62},
-      {id: 'MUL', title: 'Integer Multiplication', successRate: 75.26},
-      {id: 'MAXSUM', title: 'Maximum Sum', successRate: 41.62},
-      {id: 'MAXSUM2', title: 'Maximum Sum II', successRate: 27.10},
-      {id: 'GRAPHCUT', title: 'Graph Cutting', successRate: -1}
-    ];
+    $scope.sessionId = $routeParams.sessionId;
+    $scope.sessionTitle = 'Session Title';
 
     /**
      * Gets an uppercase character by letter index.

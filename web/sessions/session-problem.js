@@ -3,6 +3,10 @@ coda.controller('SessionProblemCtrl', [
   function($scope, $location, $routeParams, page) {
     page.setNav('sessions');
 
+    coda.problemInfo($scope);
+
     $scope.problemIndex = $routeParams.problemIndex;
   }
 ]);
+
+
