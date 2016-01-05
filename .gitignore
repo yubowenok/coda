@@ -1,4 +1,4 @@
-*.pyc
+**/*.pyc
 node_modules*
 bower_components*
 dist*
