@@ -19,14 +19,18 @@ class CodaUserSerializer(serializers.ModelSerializer) :
 
     def save(self):
         vdata = self.validated_data
-        user = User(
-            email=vdata['email'],
-            username=vdata['username']
-        )
-        user.set_password(vdata['password'])
+        aff = vdata.pop('affiliation','')
+        pword = vdata.pop('password')
+        user = User.objects.create(**vdata)
+        user.set_password(pword)
         user.save()
         cuser = CodaUser(
             user=user, 
-            affiliation = vdata['affiliation']
+            affiliation = aff
         )
         cuser.save()
+
+class CodaLoginSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = User
+        fields = ('username','password')

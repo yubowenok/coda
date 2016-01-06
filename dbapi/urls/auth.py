@@ -4,6 +4,7 @@ from dbapi import views
 
 urlpatterns = [
     url(r'^registerUser/$', views.auth.RegisterUser.as_view()),
+    url(r'^login/$', views.auth.Login.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
