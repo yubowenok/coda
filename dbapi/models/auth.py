@@ -11,7 +11,10 @@ class CodaUser(models.Model) :
         on_delete = models.CASCADE,
         primary_key = True
     )
-    affiliation = models.CharField(max_length=DEFAULT_MAX_LENGTH)
+    affiliation = models.CharField(
+        max_length=DEFAULT_MAX_LENGTH,
+        blank = True
+    )
 
 class CodaGroup(models.Model) :
     group = models.OneToOneField(
