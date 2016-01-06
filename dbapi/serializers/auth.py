@@ -30,7 +30,6 @@ class CodaUserSerializer(serializers.ModelSerializer) :
         )
         cuser.save()
 
-class CodaLoginSerializer(serializers.ModelSerializer) :
-    class Meta:
-        model = User
-        fields = ('username','password')
+class CodaLoginSerializer(serializers.Serializer) :
+    username = serializers.CharField(max_length=30)
+    password = serializers.CharField()

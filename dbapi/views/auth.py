@@ -1,20 +1,17 @@
 from __future__ import unicode_literals
-import sys
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from django.contrib.auth import login, logout
+
 from dbapi.models.auth import CodaUser, CodaGroup
 from dbapi.serializers.auth import CodaUserSerializer, CodaLoginSerializer
 from dbapi.views.error import ErrorResponse
 
-from rest_framework.authentication import *
 
-def login(ser, request) :
-    vdata = ser.validated_data
-    username = ser['username']
-    password = ser['password']
+def login(username, password, request) :
     user = authenticate(username=username, password=password)
     if user is not None :
         if user.is_active :
@@ -31,13 +28,22 @@ class RegisterUser(APIView) :
         ser = CodaUserSerializer(data = request.data)
         if ser.is_valid() :
             ser.save()
-            return login(ser,request)
+            username = ser.validated_data['username']
+            password = ser.validated_data['password']
+            return login(username,password,request)
         return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class Login(APIView) :
     def post(self, request, format=None) :
         ser = CodaLoginSerializer(data = request.data)
         if ser.is_valid() :
-            return login(ser,request)
+            username = ser.validated_data['username']
+            password = ser.validated_data['password']
+            return login(username,password,request)
         else :
             return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class Logout(APIView) :
+    def post(self, request, format=None) :
+        logout(request)
+        return Response("Logout successful", status=status.HTTP_202_ACCEPTED)
