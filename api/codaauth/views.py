@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import generics
 
 import django.contrib.auth as auth
 
@@ -23,7 +24,8 @@ def login(username, password, request) :
         return ErrorResponse("Bad Credentials", status=status.HTTP_403_FORBIDDEN)
     
 
-class RegisterUser(APIView) :
+class RegisterUser(generics.GenericAPIView) :
+    serializer_class = CodaUserSerializer
     def post(self, request, format=None) :
         ser = CodaUserSerializer(data = request.data)
         if ser.is_valid() :
@@ -33,7 +35,8 @@ class RegisterUser(APIView) :
             return login(username,password,request)
         return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class Login(APIView) :
+class Login(generics.GenericAPIView) :
+    serializer_class = CodaLoginSerializer
     def post(self, request, format=None) :
         ser = CodaLoginSerializer(data = request.data)
         if ser.is_valid() :
@@ -48,7 +51,8 @@ class Logout(APIView) :
         auth.logout(request)
         return Response("Logout successful", status=status.HTTP_202_ACCEPTED)
 
-class ChangePassword(APIView) :
+class ChangePassword(generics.GenericAPIView) :
+    serializer_class = CodaChangePasswordSerializer
     def post(self, request, format=None) :
         if request.user.is_authenticated() :
             user = request.user

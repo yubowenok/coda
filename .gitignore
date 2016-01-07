@@ -1,5 +1,6 @@
 **/*.pyc
 static/
+datafiles/
 node_modules*
 bower_components*
 dist*

@@ -7,9 +7,12 @@ from codaauth.models import CodaUser
 class CheckerType(models.Model) :
     checkerID = models.CharField(
         max_length=DEFAULT_MAX_LENGTH, 
-        unique = True
+        primary_key = True
     )
     onlyExecChecker = models.BooleanField()
+
+def getProblemPath(instance, filename) :
+    return 'problems/%s/%s' % (instance.problemID,filename)
 
 class Problem(models.Model) :
     problemID = models.CharField(
@@ -18,16 +21,27 @@ class Problem(models.Model) :
     )
     checkerType = models.ForeignKey(
         CheckerType,
-        on_delete = models.CASCADE
+        on_delete = models.CASCADE,
+        default = "diff"
     )
-    checker = models.FileField(blank=True)
-    owner = CodaUser()
-    title = models.TextField()
-    statement = models.TextField()
-    pdfStatement = models.FileField(blank=True)
-    usePDF = models.BooleanField()
-    input = models.TextField()
-    output = models.TextField()
+    checker = models.FileField(
+        upload_to = getProblemPath,
+        null=True
+    )
+    owner = models.ForeignKey(
+        CodaUser,
+        null = True,
+        on_delete = models.SET_NULL
+    )
+    title = models.TextField(blank=True)
+    statement = models.TextField(blank=True)
+    pdfStatement = models.FileField(
+        upload_to = getProblemPath,
+        null=True
+    )
+    usePDF = models.BooleanField(default=False)
+    input = models.TextField(blank=True)
+    output = models.TextField(blank=True)
 
     
 class Sample(models.Model) :
@@ -48,7 +62,7 @@ class Batch(models.Model) :
     )
     problem = models.ForeignKey(
         Problem, 
-       on_delete = models.CASCADE
+        on_delete = models.CASCADE
     )
     memoryLimitBytes = models.BigIntegerField()
     timeLimitMS = models.IntegerField()

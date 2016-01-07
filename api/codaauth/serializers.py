@@ -32,7 +32,7 @@ class CodaUserSerializer(serializers.ModelSerializer) :
 
 class CodaLoginSerializer(serializers.Serializer) :
     username = serializers.CharField(max_length=30)
-    password = serializers.CharField()
+    password = serializers.CharField(style={'input_type': 'password'})
 
 class CodaChangePasswordSerializer(serializers.Serializer) :
-    password = serializers.CharField()
+    password = serializers.CharField(style={'input_type': 'password'})
