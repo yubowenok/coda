@@ -28,6 +28,6 @@ mysqlcmd = 'mysql -u%s -p%s %s' %(user,password,db)
 
 subprocess.call(listdropscmd+' | grep -e "^DROP \| FOREIGN_KEY_CHECKS" | '+mysqlcmd,shell = True)
 
-print "Clearing ../filedata"
-subprocess.call('rm -rf ../filedata', shell=True)
-subprocess.call('mkdir ../filedata', shell=True)
+print "Clearing ../datafiles"
+subprocess.call('rm -rf ../datafiles', shell=True)
+subprocess.call('mkdir ../datafiles', shell=True)
