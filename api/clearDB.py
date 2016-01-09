@@ -3,6 +3,7 @@ import subprocess
 import os
 import sys
 import os.path
+import ConfigParser
 
 print "Deleting migrations"
 for root, dirs, files in os.walk('.') :
@@ -13,8 +14,20 @@ for root, dirs, files in os.walk('.') :
                 print "Deleting %s"%(path)
                 os.remove(path)
 
+print "Reading Database Config from api/mysql.cfg"
+config = ConfigParser.RawConfigParser()
+config.read('api/mysql.cfg')
+db = config.get('client','database')
+user = config.get('client','user')
+password = config.get('client','password')
+
 print "Dropping Tables"
-subprocess.call('mysqldump -ucoda -pcoda --add-drop-table --no-data Coda | grep -e "^DROP \| FOREIGN_KEY_CHECKS" | mysql -ucoda -pcoda Coda',shell = True)
+
+listdropscmd  = 'mysqldump -u%s -p%s --add-drop-table --no-data %s' % (user,password, db)
+mysqlcmd = 'mysql -u%s -p%s %s' %(user,password,db)
+
+subprocess.call(listdropscmd+' | grep -e "^DROP \| FOREIGN_KEY_CHECKS" | '+mysqlcmd,shell = True)
+
 print "Clearing ../filedata"
 subprocess.call('rm -rf ../filedata', shell=True)
 subprocess.call('mkdir ../filedata', shell=True)

@@ -21,5 +21,5 @@ Also make sure your python is 32-bit to match Apache
 Download source (don't use macports) for mod_wsgi, and ./configure using paths to the correct versions of python and apache
 
 ##DB Setup
-Assumes there is a mysql database running on localhost with user/pword coda/coda, and a database named coda where the user coda has permissions
-Run python reset.py in the api folder it will setup the database tables, and populate with some initial test data
+Assumes there is a mysql database running on localhost with user/pword coda/coda, and a database named coda where the user coda has permissions.  This can be configured in the api/api/mysql.cfg file.
+Run python reset.py in the api folder to setup the database tables, and populate with some initial test data.  reset will also copy necessary files into coda/static and coda/filedata.  This process is destructive and will drop all tables and delete/overwrite files.
