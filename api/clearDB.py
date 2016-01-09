@@ -15,4 +15,6 @@ for root, dirs, files in os.walk('.') :
 
 print "Dropping Tables"
 subprocess.call('mysqldump -ucoda -pcoda --add-drop-table --no-data Coda | grep -e "^DROP \| FOREIGN_KEY_CHECKS" | mysql -ucoda -pcoda Coda',shell = True)
-
+print "Clearing ../filedata"
+subprocess.call('rm -rf ../filedata', shell=True)
+subprocess.call('mkdir ../filedata', shell=True)
