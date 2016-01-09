@@ -32,7 +32,7 @@ class ProblemSerializer(serializers.ModelSerializer) :
         model = Problem
         fields = ('problemID','checkerType','checker','owner','title','statement','pdfStatement',
         'usePDF', 'input', 'output', 'timeLimit', 'memoryLimit', 'samples')
-        read_only_fields = ('problemID')
+        read_only_fields = ('problemID',)
 
 class SampleSerializer(serializers.ModelSerializer) :
     def create(self, validated_data) :
