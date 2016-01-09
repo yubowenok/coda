@@ -33,6 +33,7 @@ class ProblemSerializer(serializers.ModelSerializer) :
         fields = ('problemID','checkerType','checker','owner','title','statement','pdfStatement',
         'usePDF', 'input', 'output', 'timeLimit', 'memoryLimit', 'samples')
         read_only_fields = ('problemID',)
+        extra_kwargs = {'pdfStatement': {'write_only': True}}
 
 class SampleSerializer(serializers.ModelSerializer) :
     def create(self, validated_data) :
