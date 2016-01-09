@@ -1,0 +1,4 @@
+@mixin padding-lr($val) {
+  padding-left: $val;
+  padding-right: $val;
+}

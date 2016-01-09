@@ -1,6 +1,10 @@
 <h3>{{ (isAddProblem ? 'Add' : 'Edit') + ' Problem' }}</h3>
+<div ng-hide="isAddProblem">
+  <a class="btn btn-default" href="moderator/problem/{{problemId}}/tests">Test Cases</a>
+  <a class="btn btn-default" href="moderator/problem/{{problemId}}/submissions">Submissions</a>
+</div>
 <hr>
-  <form class="set-problem">
+  <form class="moderator-form">
     <table>
         <col width="20%">
         <col width="80%">
@@ -9,7 +13,7 @@
       <tbody>
         <tr>
           <td><h4>Problem ID</h4></td>
-          <td><input id="id" class="form-control" value="APLUSB" ng-disabled="!isAddProblem"></td>
+          <td><input id="id" class="form-control" value="{{problemId}}" ng-disabled="!isAddProblem"></td>
         </tr>
       </tbody>
       <tbody ng-hide="isAddProblem">
@@ -26,4 +30,4 @@
   </form>
 </div>
 <hr>
-<button class="btn btn-primary" ng-click="submit()">Submit</button>
+<a class="btn btn-primary" ng-click="submit()">Submit</a>

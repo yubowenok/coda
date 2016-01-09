@@ -51,3 +51,28 @@ gulp
 The front-end uses angular route with HTML5. To support direct URL access of sub-routes, the server needs to be configured to
 redirect request to index.html. For details see the angular route [FAQ](https://github.com/angular-ui/ui-router/wiki/Frequently-Asked-Questions#how-to-configure-your-server-to-work-with-html5mode).
 
+A sample configuration is show below.
+```
+<VirtualHost *:443>
+  <Directory C:/xampp/htdocs/coda>
+      RewriteEngine on
+
+      # Don't rewrite files or directories
+      RewriteCond %{REQUEST_FILENAME} -f [OR]
+      RewriteCond %{REQUEST_FILENAME} -d
+      RewriteRule ^ - [L]
+
+      # Rewrite everything else to index.html to allow html5 state links
+      RewriteRule ^ index.html [L]
+  </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+  <Directory C:/xampp/htdocs/coda>
+      # Redirect all http requests to https
+      RewriteEngine on
+      RewriteCond %{HTTPS} off
+      RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI}
+  </Directory>
+</VirtualHost>
+```

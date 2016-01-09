@@ -5,6 +5,5 @@ var paths = require('./paths.js');
 
 gulp.task('html', function() {
   return gulp.src(paths.html)
-    .pipe(flatten())
     .pipe(gulp.dest(paths.dist + 'html'));
 });

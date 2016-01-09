@@ -1,2 +1,19 @@
+<h3>Problems Created</h3>
+<div class="list-group">
+  <a class="problem list-group-item" ng-repeat="problem in problems" ng-click="editProblem(problem.id)">
+    <span class="id label label-primary">{{problem.id}}</span>
+    {{problem.title}}
+    <span class="success-rate">
+      {{problem.successRate >= 0 ? problem.successRate + '%' : 'N/A'}}
+    </span>
+  </a>
+</div>
 <a class="btn btn-default" href="moderator/problem">Add Problem</a>
+<hr>
+<h3>Sessions Created</h3>
+<div class="list-group">
+  <a class="list-group-item" ng-repeat="session in sessions" ng-click="editSession(session.id)">
+    <i class="glyphicon glyphicon-chevron-right"></i>{{session.text}}
+  </a>
+</div>
 <a class="btn btn-default" href="moderator/session">Add Session</a>

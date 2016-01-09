@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css"/>
   <script src="bower_components/datatables.net-select/js/dataTables.select.min.js"></script>
   <link rel="stylesheet" href="bower_components/datatables.net-select-bs/css/select.bootstrap.min.css"/>
+  <script src="bower_components/showdown/dist/showdown.min.js"></script>
+  <script src="bower_components/MathJax/MathJax.js?config=TeX-AMS_CHTML"></script>
 
   <script src="dist/coda.js"></script>
   <link rel="stylesheet" href="dist/coda.css">
@@ -26,13 +28,13 @@
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand">
+        <a class="navbar-brand" href=".">
           <img src="./imgs/logo.png">
           <span>coda</span>
         </a>
       </div>
-      <div class="navbar-collapse collapse">
-        <ul id="nav-pages" class="nav navbar-nav">
+      <div id="nav-pages" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
           <li id="home" class="active"><a href=".">Home</a></li>
           <li id="sessions"><a href="sessions">Sessions</a></li>
           <li id="archive"><a href="archive">Archive</a></li>
@@ -40,8 +42,8 @@
           <li id="admin"><a href="admin">Admin</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li><a>Register</a></li>
-          <li><a>Login</a></li>
+          <li id="register"><a href="register">Register</a></li>
+          <li id="login"><a href="login">Login</a></li>
         </ul>
       </div>
     </div>
