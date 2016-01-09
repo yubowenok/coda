@@ -4,7 +4,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User, Group
 
 from codaauth.models import CodaUser, CodaGroup
-from codaauth.models import DEFAULT_MAX_LENGTH
+from api.constants import DEFAULT_MAX_LENGTH
 
 class CodaUserSerializer(serializers.ModelSerializer) :
     affiliation = serializers.CharField(
@@ -15,7 +15,7 @@ class CodaUserSerializer(serializers.ModelSerializer) :
     class Meta:
         model = User
         fields = ('username','email','password','affiliation')
-        extra_kwargs = {'password': {'write_only': True}}
+        extra_kwargs = {'password': {'write_only': True, 'style' : {'input_type': 'password'}}}
 
     def save(self):
         vdata = self.validated_data

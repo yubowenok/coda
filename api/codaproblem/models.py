@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from codaauth.models import DEFAULT_MAX_LENGTH
+from api.constants import DEFAULT_MAX_LENGTH
 from codaauth.models import CodaUser
 
 class CheckerType(models.Model) :
@@ -10,6 +10,9 @@ class CheckerType(models.Model) :
         primary_key = True
     )
     onlyExecChecker = models.BooleanField()
+    
+    def __str__(self) :
+        return str(self.checkerID)
 
 def getProblemPath(instance, filename) :
     return 'problems/%s/%s' % (instance.problemID,filename)
@@ -42,18 +45,20 @@ class Problem(models.Model) :
     usePDF = models.BooleanField(default=False)
     input = models.TextField(blank=True)
     output = models.TextField(blank=True)
-
+    timeLimit = models.BigIntegerField(default=0)  #in milliseconds
+    memoryLimit = models.BigIntegerField(default=100000000) #in bytes
     
 class Sample(models.Model) :
-    input = models.TextField()
-    output = models.TextField()
+    input = models.TextField(blank=True)
+    output = models.TextField(blank=True)
     sampleID = models.IntegerField()
     problem = models.ForeignKey(
         Problem,
+        related_name='samples',
         on_delete = models.CASCADE
     )
     class Meta:
-        unique_together = ('id', 'problem')
+        ordering = ('sampleID',)
 
 class Batch(models.Model) : 
     batchID = models.IntegerField()
@@ -67,7 +72,8 @@ class Batch(models.Model) :
     memoryLimitBytes = models.BigIntegerField()
     timeLimitMS = models.IntegerField()
     class Meta:
-        unique_together = ('id', 'problem')
+        ordering = ('batchID',)
+        unique_together = ('batchID','problem')
     
 class TestFile(models.Model) :
     testFileID = models.IntegerField()
@@ -79,7 +85,7 @@ class TestFile(models.Model) :
     input = models.FileField(blank=True)
     output = models.FileField(blank=True)
     resources = models.FileField(blank=True)
-
     class Meta:
-        unique_together = ('id', 'batch')
+        ordering = ('testFileID',)
+        unique_together = ('testFileID','batch')
 

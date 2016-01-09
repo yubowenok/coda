@@ -5,5 +5,6 @@ from rest_framework import status
 
 class ErrorResponse(Response) :
     def __init__(self, error, *args, **kw) :
-        newerror = {'error' : {'message' : error}}
+        newerror = {'detail' : error}
         Response.__init__(self,newerror,*args,**kw)
+

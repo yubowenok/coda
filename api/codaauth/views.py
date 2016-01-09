@@ -26,6 +26,7 @@ def login(username, password, request) :
 
 class RegisterUser(generics.GenericAPIView) :
     serializer_class = CodaUserSerializer
+    queryset = {}
     def post(self, request, format=None) :
         ser = CodaUserSerializer(data = request.data)
         if ser.is_valid() :
@@ -37,6 +38,7 @@ class RegisterUser(generics.GenericAPIView) :
 
 class Login(generics.GenericAPIView) :
     serializer_class = CodaLoginSerializer
+    queryset = {}
     def post(self, request, format=None) :
         ser = CodaLoginSerializer(data = request.data)
         if ser.is_valid() :
@@ -53,6 +55,7 @@ class Logout(APIView) :
 
 class ChangePassword(generics.GenericAPIView) :
     serializer_class = CodaChangePasswordSerializer
+    queryset = {}
     def post(self, request, format=None) :
         if request.user.is_authenticated() :
             user = request.user
