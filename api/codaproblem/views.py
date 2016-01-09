@@ -95,6 +95,8 @@ class ReorderSamples(generics.GenericAPIView) :
                 samples = Sample.objects.filter(problem = problem)
                 if len(samples) != len(newIDs) :
                     return ErrorResponse({'newSampleIDs':'Incorrect number of IDs'}, status=status.HTTP_403_FORBIDDEN)
+                if set(newIDs) != set(range(1,len(newIDs)+1)) :
+                    return ErrorResponse({'newSampleIDs':'Not sequentially numbered'}, status=status.HTTP_403_FORBIDDEN)
                 for i in xrange(len(samples)) :
                     samples[i].sampleID = newIDs[i]
                     samples[i].save()
