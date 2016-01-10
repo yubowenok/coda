@@ -122,3 +122,56 @@ class DeleteSample(APIView) :
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
+class AddBatch(generics.GenericAPIView) :
+    serializer_class = BatchSerializer
+    queryset = {}
+    def post(self, request, problemID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            ser = BatchSerializer(data = request.data)
+            if ser.is_valid() :
+                sam = ser.save(problem = problem)                
+                return Response("Added Batch "+str(sam.sampleID), status=status.HTTP_202_ACCEPTED)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+            
+class ReorderSamples(generics.GenericAPIView) :
+    serializer_class = BatchReorderSerializer
+    queryset = {}
+    def post(self, request, problemID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            ser = BatchReorderSerializer(data = request.data)
+            if ser.is_valid() :
+                newIDs = ser.validated_data['newBatchIDs']
+                batches = Batch.objects.filter(problem = problem)
+                if len(batches) != len(newIDs) :
+                    return ErrorResponse({'newBatchIDs':'Incorrect number of IDs'}, status=status.HTTP_403_FORBIDDEN)
+                if set(newIDs) != set(range(1,len(newIDs)+1)) :
+                    return ErrorResponse({'newBatchIDs':'Not sequentially numbered'}, status=status.HTTP_403_FORBIDDEN)
+                for i in xrange(len(samples)) :
+                    batches[i].batchID = newIDs[i]
+                    batches[i].save()
+                return Response("Batches Reordered Successfully", status=status.HTTP_202_ACCEPTED)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class DeleteBatch(APIView) :
+    def post(self, request, problemID, batchID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            batch = get_object_or_404(Batch,problem=problem,batchID = batchID)
+            batch.delete()
+            gtBatches = Batch.objects.filter(problem=problem,batchID__gt = batchID)
+            num = 0
+            for s in gtBatches :
+                s.batchID = s.batchID - 1
+                s.save()
+                num += 1
+            return Response("Deleted batch %s and renumbered %d batchs"%(batchID,num), status=status.HTTP_202_ACCEPTED)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)

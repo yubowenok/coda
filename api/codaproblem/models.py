@@ -45,8 +45,8 @@ class Problem(models.Model) :
     usePDF = models.BooleanField(default=False)
     input = models.TextField(blank=True)
     output = models.TextField(blank=True)
-    timeLimit = models.BigIntegerField(default=0)  #in milliseconds
-    memoryLimit = models.BigIntegerField(default=100000000) #in bytes
+    timeLimitMS = models.BigIntegerField(default=0)  #in milliseconds
+    memoryLimitBytes = models.BigIntegerField(default=100000000) #in bytes
     
 class Sample(models.Model) :
     input = models.TextField(blank=True)
@@ -67,10 +67,12 @@ class Batch(models.Model) :
     )
     problem = models.ForeignKey(
         Problem, 
+        related_name='batches',
         on_delete = models.CASCADE
     )
-    memoryLimitBytes = models.BigIntegerField()
-    timeLimitMS = models.IntegerField()
+    constraints = models.TextField(blank=True)
+    timeLimitMS = models.IntegerField(default=0)
+    memoryLimitBytes = models.BigIntegerField(default=100000000)
     class Meta:
         ordering = ('batchID',)
         unique_together = ('batchID','problem')
