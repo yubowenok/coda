@@ -14,34 +14,6 @@ class CheckerTypeSerializer(serializers.ModelSerializer) :
         model = CheckerType
         fields = ('checkerID','onlyExecChecker')    
 
-class CreateProblemSerializer(serializers.ModelSerializer) :
-    class Meta:
-        model = Problem
-        fields = ('problemID',)
-
-class SampleListSerializer(serializers.ModelSerializer) :
-    class Meta:
-        model = Sample
-        fields = ('input','output','sampleID')
-        read_only_fields = ('sampleID',)
-
-class BatchListSerializer(serializers.ModelSerializer) :
-    class Meta:
-        model = Batch
-        fields = ('name','constraints','timeLimitMS','memoryLimitBytes','batchID')
-        read_only_fields = ('batchID',)
-
-class ProblemSerializer(serializers.ModelSerializer) :
-    owner = serializers.CharField(source = 'owner.user.username', read_only=True)
-    samples = SampleListSerializer(many = True, read_only = True)
-    batches = BatchListSerializer(many = True, read_only = True)
-    class Meta:
-        model = Problem
-        fields = ('problemID','checkerType','checker','owner','title','statement','pdfStatement',
-                  'usePDF', 'input', 'output', 'timeLimitMS', 'memoryLimitBytes', 'samples', 'batches')
-        read_only_fields = ('problemID',)
-        extra_kwargs = {'pdfStatement': {'write_only': True}}
-
 class SampleSerializer(serializers.ModelSerializer) :
     def create(self, validated_data) :
         problem = validated_data['problem']
@@ -53,10 +25,15 @@ class SampleSerializer(serializers.ModelSerializer) :
 
     class Meta:
         model = Sample
-        fields = ('sampleID', 'input','output')
+        exclude = ('problem',)
 
 class SampleReorderSerializer(serializers.Serializer) :
     newSampleIDs = serializers.ListField(child = serializers.IntegerField())
+
+class SetSampleSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = Sample
+        exclude = ('sampleID', 'problem')    
 
 class BatchSerializer(serializers.ModelSerializer) :
     def create(self, validated_data) :
@@ -69,7 +46,29 @@ class BatchSerializer(serializers.ModelSerializer) :
 
     class Meta:
         model = Batch
-        fields = ('batchID', 'name', 'constraints','timeLimitMS','memoryLimitBytes')
+        exclude = ('problem',)
     
 class BatchReorderSerializer(serializers.Serializer) :
     newBatchIDs = serializers.ListField(child = serializers.IntegerField())
+
+class SetBatchSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = Batch
+        exclude = ('batchID', 'problem')    
+
+class CreateProblemSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = Problem
+        fields = ('problemID',)
+
+class ProblemSerializer(serializers.ModelSerializer) :
+    owner = serializers.CharField(source = 'owner.user.username', read_only=True)
+    samples = SampleSerializer(many = True, read_only = True)
+    batches = BatchSerializer(many = True, read_only = True)
+    class Meta:
+        model = Problem
+        fields = ('problemID','checkerType','checker','owner','title','statement','pdfStatement',
+                  'usePDF', 'input', 'output', 'timeLimitMS', 'memoryLimitBytes', 'samples', 'batches')
+        read_only_fields = ('problemID',)
+        extra_kwargs = {'pdfStatement': {'write_only': True}}
+

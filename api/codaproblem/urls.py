@@ -9,9 +9,11 @@ urlpatterns = [
     url(r'^getProblemInfo/(?P<problemID>.+)$', views.GetProblem.as_view()),
     url(r'^setProblemInfo/(?P<problemID>.+)$', views.SetProblem.as_view()),
     url(r'^addSample/(?P<problemID>.+)$', views.AddSample.as_view()),
+    url(r'^setSample/(?P<problemID>.+)/(?P<sampleID>.+)$', views.SetSample.as_view()),
     url(r'^reorderSamples/(?P<problemID>.+)$', views.ReorderSamples.as_view()),
     url(r'^deleteSample/(?P<problemID>.+)/(?P<sampleID>.+)$', views.DeleteSample.as_view()),
     url(r'^addBatch/(?P<problemID>.+)$', views.AddBatch.as_view()),
+    url(r'^setBatch/(?P<problemID>.+)/(?P<batchID>.+)$', views.SetBatch.as_view()),
     url(r'^reorderBatches/(?P<problemID>.+)$', views.ReorderBatches.as_view()),
     url(r'^deleteBatch/(?P<problemID>.+)/(?P<batchID>.+)$', views.DeleteBatch.as_view()),
 ]

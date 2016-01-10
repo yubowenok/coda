@@ -82,6 +82,22 @@ class AddSample(generics.GenericAPIView) :
                 return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class SetSample(generics.GenericAPIView) :
+    serializer_class = SetSampleSerializer
+    queryset = {}
+    def post(self, request, problemID, sampleID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            sample = get_object_or_404(Sample,problem = problem,sampleID = sampleID)
+            ser = SetSampleSerializer(sample, data = request.data, partial = True)
+            if ser.is_valid() :
+                ser.save()                
+                return Response("Updated Sample "+str(sample.sampleID), status=status.HTTP_202_ACCEPTED)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
             
 class ReorderSamples(generics.GenericAPIView) :
     serializer_class = SampleReorderSerializer
@@ -132,6 +148,22 @@ class AddBatch(generics.GenericAPIView) :
             if ser.is_valid() :
                 bat = ser.save(problem = problem)                
                 return Response("Added Batch "+str(bat.batchID), status=status.HTTP_202_ACCEPTED)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+            
+class SetBatch(generics.GenericAPIView) :
+    serializer_class = SetBatchSerializer
+    queryset = {}
+    def post(self, request, problemID, batchID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            batch = get_object_or_404(Batch,problem = problem,batchID = batchID)
+            ser = SetBatchSerializer(batch, data = request.data, partial = True)
+            if ser.is_valid() :
+                ser.save()                
+                return Response("Updated Batch "+str(batch.batchID), status=status.HTTP_202_ACCEPTED)
             else :
                 return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)
         else :
