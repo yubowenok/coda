@@ -80,6 +80,7 @@ class TestFile(models.Model) :
     testFileID = models.IntegerField()
     batch = models.ForeignKey(
         Batch,
+        related_name='testfiles',
         on_delete = models.CASCADE
     )
     #think about upload path of files

@@ -138,6 +138,18 @@ class DeleteSample(APIView) :
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
+class GetBatch(APIView) :
+    def get(self, request, problemID, batchID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            batch = get_object_or_404(Batch,batchID = batchID, problem = problem)
+            ser = BatchSerializer(obj)
+            num = len(TestFiles.objects.filter(batch=batch))
+            ser.data['numTestFiles'] = num
+            return Response(ser.data, status=status.HTTP_202_ACCEPTED)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
 class AddBatch(generics.GenericAPIView) :
     serializer_class = BatchSerializer
     queryset = {}
@@ -205,5 +217,79 @@ class DeleteBatch(APIView) :
                 s.save()
                 num += 1
             return Response("Deleted batch %s and renumbered %d batchs"%(batchID,num), status=status.HTTP_202_ACCEPTED)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class AddTestFile(generics.GenericAPIView) :
+    serializer_class = TestFileSerializer
+    queryset = {}
+    def post(self, request, problemID, batchID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            batch = get_object_or_404(Batch,batchID = batchID, problem = problem)
+            ser = TestFileSerializer(data = request.data)
+            if ser.is_valid() :
+                tf = ser.save(batch = batch)                
+                return Response("Added TestFile "+str(tf.testFileID), status=status.HTTP_202_ACCEPTED)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+            
+class SetTestFile(generics.GenericAPIView) :
+    serializer_class = SetTestFileSerializer
+    queryset = {}
+    def post(self, request, problemID, batchID, testFileID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            batch = get_object_or_404(Batch,problem = problem,batchID = batchID)
+            tf = get_object_or_404(TestFile,batch = batch, testFileID = testFileID)
+            ser = SetTestFileSerializer(tf, data = request.data, partial = True)
+            if ser.is_valid() :
+                ser.save()                
+                return Response("Updated TestFile "+str(tf.testFileID), status=status.HTTP_202_ACCEPTED)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+            
+class ReorderTestFiles(generics.GenericAPIView) :
+    serializer_class = TsetFileReorderSerializer
+    queryset = {}
+    def post(self, request, problemID, batchID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            batch = get_object_or_404(Batch,problem = problem,batchID = batchID)
+            ser = TestFileReorderSerializer(data = request.data)
+            if ser.is_valid() :
+                newIDs = ser.validated_data['newTestFileIDs']
+                tfs = TestFile.objects.filter(batch=batch)
+                if len(tfs) != len(newIDs) :
+                    return ErrorResponse({'newTestFileIDs':'Incorrect number of IDs'}, status=status.HTTP_403_FORBIDDEN)
+                if set(newIDs) != set(range(1,len(newIDs)+1)) :
+                    return ErrorResponse({'newTestFileIDs':'Not sequentially numbered'}, status=status.HTTP_403_FORBIDDEN)
+                for i in xrange(len(batches)) :
+                    tfs[i].testFileID = newIDs[i]
+                    tfs[i].save()
+                return Response("Test Files Reordered Successfully", status=status.HTTP_202_ACCEPTED)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class DeleteTestFile(APIView) :
+    def post(self, request, problemID, batchID, testFileID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            batch = get_object_or_404(Batch,problem = problem,batchID = batchID)
+            tf = get_object_or_404(TestFile,batch = batch, testFileID = testFileID)
+            tf.delete()
+            gtTestFiles = TestFile.objects.filter(batch=batch,TestFileID__gt = testFileID)
+            num = 0
+            for s in gtTestFiles :
+                s.testFileID = s.testFileID - 1
+                s.save()
+                num += 1
+            return Response("Deleted TestFile %s and renumbered %d testfiles"%(testFileID,num), status=status.HTTP_202_ACCEPTED)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
