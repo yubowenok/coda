@@ -37,7 +37,21 @@ samples = [
         "output" : "Output 3"
     },
 ]
-
+batches = [
+    {
+        "batchID" : 1,
+        "name" : "Batch 1",
+    },
+    {
+        "batchID" : 2,
+        "name" : "Batch 2",
+    },
+    {
+        "batchID" : 3,
+        "name" : "Batch 3",
+    },
+    
+]
 for c in checkerTypes :
     ser = CheckerTypeSerializer(data = c)
     if ser.is_valid() :
@@ -52,6 +66,12 @@ for p in problems :
         prob = ser.save(owner = codauser)
         for sa in samples :
             ser2 = SampleSerializer(data = sa)
+            if ser2.is_valid() :
+                ser2.save(problem = prob)
+            else :
+                print >> sys.stderr, ser2.errors                
+        for ba in batches :
+            ser2 = BatchSerializer(data = ba)
             if ser2.is_valid() :
                 ser2.save(problem = prob)
             else :

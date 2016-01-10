@@ -130,14 +130,14 @@ class AddBatch(generics.GenericAPIView) :
             problem = get_object_or_404(Problem,problemID = problemID)
             ser = BatchSerializer(data = request.data)
             if ser.is_valid() :
-                sam = ser.save(problem = problem)                
-                return Response("Added Batch "+str(sam.sampleID), status=status.HTTP_202_ACCEPTED)
+                bat = ser.save(problem = problem)                
+                return Response("Added Batch "+str(bat.batchID), status=status.HTTP_202_ACCEPTED)
             else :
                 return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
             
-class ReorderSamples(generics.GenericAPIView) :
+class ReorderBatches(generics.GenericAPIView) :
     serializer_class = BatchReorderSerializer
     queryset = {}
     def post(self, request, problemID, format = None) :
@@ -151,7 +151,7 @@ class ReorderSamples(generics.GenericAPIView) :
                     return ErrorResponse({'newBatchIDs':'Incorrect number of IDs'}, status=status.HTTP_403_FORBIDDEN)
                 if set(newIDs) != set(range(1,len(newIDs)+1)) :
                     return ErrorResponse({'newBatchIDs':'Not sequentially numbered'}, status=status.HTTP_403_FORBIDDEN)
-                for i in xrange(len(samples)) :
+                for i in xrange(len(batches)) :
                     batches[i].batchID = newIDs[i]
                     batches[i].save()
                 return Response("Batches Reordered Successfully", status=status.HTTP_202_ACCEPTED)

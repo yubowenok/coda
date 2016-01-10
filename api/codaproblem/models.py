@@ -75,7 +75,6 @@ class Batch(models.Model) :
     memoryLimitBytes = models.BigIntegerField(default=100000000)
     class Meta:
         ordering = ('batchID',)
-        unique_together = ('batchID','problem')
     
 class TestFile(models.Model) :
     testFileID = models.IntegerField()
@@ -89,5 +88,4 @@ class TestFile(models.Model) :
     resources = models.FileField(blank=True)
     class Meta:
         ordering = ('testFileID',)
-        unique_together = ('testFileID','batch')
 

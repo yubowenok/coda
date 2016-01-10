@@ -4,6 +4,7 @@ import os
 import sys
 import os.path
 import ConfigParser
+import shutil
 
 print "Deleting migrations"
 for root, dirs, files in os.walk('.') :
@@ -29,5 +30,9 @@ mysqlcmd = 'mysql -u%s -p%s %s' %(user,password,db)
 subprocess.call(listdropscmd+' | grep -e "^DROP \| FOREIGN_KEY_CHECKS" | '+mysqlcmd,shell = True)
 
 print "Clearing ../datafiles"
-subprocess.call('rm -rf ../datafiles', shell=True)
-subprocess.call('mkdir ../datafiles', shell=True)
+if os.path.exists('../datafiles') :
+    shutil.rmtree('../datafiles')
+else :
+    print "... but it didn't exist"
+print "Remaking ../datafiles"
+os.mkdir('../datafiles')
