@@ -75,5 +75,8 @@ class ProblemSerializer(serializers.ModelSerializer) :
         fields = ('problemID','checkerType','checker','owner','title','statement','pdfStatement',
                   'usePDF', 'input', 'output', 'timeLimitMS', 'memoryLimitBytes', 'samples', 'batches')
         read_only_fields = ('problemID',)
-        extra_kwargs = {'pdfStatement': {'write_only': True}}
+        extra_kwargs = {
+            'pdfStatement': {'write_only': True},
+            'checker' : {'write_only': True},
+        }
 

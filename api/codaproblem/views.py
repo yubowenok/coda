@@ -67,13 +67,26 @@ class GetPDFStatement(APIView) :
                 return ErrorResponse("File Not Found", status=status.HTTP_404_NOT_FOUND)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
-    
+
+class GetChecker(APIView) :
+    def get(self, request, problemID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            checker = problem.checker
+            if checker :
+                return sendfile(request, checker.path, attachment = True)
+            else :
+                return ErrorResponse("File Not Found", status=status.HTTP_404_NOT_FOUND)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)    
+
     
 class SetProblem(generics.GenericAPIView) :
     serializer_class = ProblemSerializer
     queryset = {}
     def post(self, request, problemID, format = None) :
         if request.user.is_authenticated() :
+            print >> sys.stderr, "SETTING "+str(request.data)
             obj = get_object_or_404(Problem,problemID = problemID)
             ser = ProblemSerializer(obj, data = request.data, partial = True)
             if ser.is_valid() :
