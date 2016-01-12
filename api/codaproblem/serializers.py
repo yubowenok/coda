@@ -19,63 +19,44 @@ class SampleSerializer(serializers.ModelSerializer) :
         problem = validated_data['problem']
         samples = problem.samples.all()
         sampleID = len(samples)+1
-        if sampleID != validated_data['sampleID'] :
-            raise ValidationError('Invalid sampleID')
-        return Sample.objects.create(**validated_data)
+        return Sample.objects.create(sampleID = sampleID,**validated_data)
 
     class Meta:
         model = Sample
-        exclude = ('problem',)
+        exclude = ('id','problem','sampleID')
 
 class SampleReorderSerializer(serializers.Serializer) :
     newSampleIDs = serializers.ListField(child = serializers.IntegerField())
 
-class SetSampleSerializer(serializers.ModelSerializer) :
-    class Meta:
-        model = Sample
-        exclude = ('sampleID', 'problem')    
-
 class BatchSerializer(serializers.ModelSerializer) :
+    numTestFiles = serializers.CharField(source='getNumTestFiles',read_only=True)
+
     def create(self, validated_data) :
         problem = validated_data['problem']
         batches = problem.batches.all()
         batchID = len(batches)+1
-        if batchID != validated_data['batchID'] :
-            raise ValidationError('Invalid batchID')
-        return Batch.objects.create(**validated_data)
+        return Batch.objects.create(batchID = batchID,**validated_data)
 
     class Meta:
         model = Batch
-        exclude = ('problem',)
+        exclude = ('id','problem','batchID')
     
 class BatchReorderSerializer(serializers.Serializer) :
     newBatchIDs = serializers.ListField(child = serializers.IntegerField())
 
-class SetBatchSerializer(serializers.ModelSerializer) :
-    class Meta:
-        model = Batch
-        exclude = ('batchID', 'problem')    
-
 class TestFileSerializer(serializers.ModelSerializer) :
     def create(self, validated_data) :
         batch = validated_data['batch']
-        testfiles = batch.testfiles.all()
-        testfileID = len(testfiles)+1
-        if testfileID != validated_data['testfileID'] :
-            raise ValidationError('Invalid testfileID')
-        return TestFile.objects.create(**validated_data)
+        testFiles = batch.testFiles.all()
+        testFileID = len(testFiles)+1
+        return TestFile.objects.create(testFileID = testFileID, **validated_data)
 
     class Meta:
         model = TestFile
-        exclude = ('batch',)
+        exclude = ('id','batch',)
     
 class TestFileReorderSerializer(serializers.Serializer) :
     newTestFileIDs = serializers.ListField(child = serializers.IntegerField())
-
-class SetTestFileSerializer(serializers.ModelSerializer) :
-    class Meta:
-        model = Test
-        exclude = ('testFileID', 'batch')    
 
 class CreateProblemSerializer(serializers.ModelSerializer) :
     class Meta:

@@ -84,13 +84,13 @@ class AddSample(generics.GenericAPIView) :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
 class SetSample(generics.GenericAPIView) :
-    serializer_class = SetSampleSerializer
+    serializer_class = SampleSerializer
     queryset = {}
     def post(self, request, problemID, sampleID, format = None) :
         if request.user.is_authenticated() :
             problem = get_object_or_404(Problem,problemID = problemID)
             sample = get_object_or_404(Sample,problem = problem,sampleID = sampleID)
-            ser = SetSampleSerializer(sample, data = request.data, partial = True)
+            ser = SampleSerializer(sample, data = request.data, partial = True)
             if ser.is_valid() :
                 ser.save()                
                 return Response("Updated Sample "+str(sample.sampleID), status=status.HTTP_202_ACCEPTED)
@@ -143,9 +143,7 @@ class GetBatch(APIView) :
         if request.user.is_authenticated() :
             problem = get_object_or_404(Problem,problemID = problemID)
             batch = get_object_or_404(Batch,batchID = batchID, problem = problem)
-            ser = BatchSerializer(obj)
-            num = len(TestFiles.objects.filter(batch=batch))
-            ser.data['numTestFiles'] = num
+            ser = BatchSerializer(batch)
             return Response(ser.data, status=status.HTTP_202_ACCEPTED)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
@@ -166,13 +164,13 @@ class AddBatch(generics.GenericAPIView) :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
             
 class SetBatch(generics.GenericAPIView) :
-    serializer_class = SetBatchSerializer
+    serializer_class = BatchSerializer
     queryset = {}
     def post(self, request, problemID, batchID, format = None) :
         if request.user.is_authenticated() :
             problem = get_object_or_404(Problem,problemID = problemID)
             batch = get_object_or_404(Batch,problem = problem,batchID = batchID)
-            ser = SetBatchSerializer(batch, data = request.data, partial = True)
+            ser = BatchSerializer(batch, data = request.data, partial = True)
             if ser.is_valid() :
                 ser.save()                
                 return Response("Updated Batch "+str(batch.batchID), status=status.HTTP_202_ACCEPTED)
@@ -237,14 +235,14 @@ class AddTestFile(generics.GenericAPIView) :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
             
 class SetTestFile(generics.GenericAPIView) :
-    serializer_class = SetTestFileSerializer
+    serializer_class = TestFileSerializer
     queryset = {}
     def post(self, request, problemID, batchID, testFileID, format = None) :
         if request.user.is_authenticated() :
             problem = get_object_or_404(Problem,problemID = problemID)
             batch = get_object_or_404(Batch,problem = problem,batchID = batchID)
             tf = get_object_or_404(TestFile,batch = batch, testFileID = testFileID)
-            ser = SetTestFileSerializer(tf, data = request.data, partial = True)
+            ser = TestFileSerializer(tf, data = request.data, partial = True)
             if ser.is_valid() :
                 ser.save()                
                 return Response("Updated TestFile "+str(tf.testFileID), status=status.HTTP_202_ACCEPTED)
@@ -254,7 +252,7 @@ class SetTestFile(generics.GenericAPIView) :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
             
 class ReorderTestFiles(generics.GenericAPIView) :
-    serializer_class = TsetFileReorderSerializer
+    serializer_class = TestFileReorderSerializer
     queryset = {}
     def post(self, request, problemID, batchID, format = None) :
         if request.user.is_authenticated() :

@@ -73,6 +73,10 @@ class Batch(models.Model) :
     constraints = models.TextField(blank=True)
     timeLimitMS = models.IntegerField(default=0)
     memoryLimitBytes = models.BigIntegerField(default=100000000)
+
+    def getNumTestFiles(self) :
+        return len(TestFile.objects.filter(batch = self))
+
     class Meta:
         ordering = ('batchID',)
     
@@ -80,7 +84,7 @@ class TestFile(models.Model) :
     testFileID = models.IntegerField()
     batch = models.ForeignKey(
         Batch,
-        related_name='testfiles',
+        related_name='testFiles',
         on_delete = models.CASCADE
     )
     #think about upload path of files
