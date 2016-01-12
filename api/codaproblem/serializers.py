@@ -1,7 +1,5 @@
 from __future__ import unicode_literals
 
-import sys
-
 from rest_framework import serializers
 from rest_framework.exceptions import *
 from django.contrib.auth.models import User, Group

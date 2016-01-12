@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 
 from codaproblem.models import *
 from codaproblem.serializers import *
-from api.error import ErrorResponse
+from api.response import ErrorResponse, FileResponse
 
 class CheckerTypes(generics.GenericAPIView) :
     serializer_class = CheckerTypeSerializer
@@ -52,6 +52,19 @@ class GetProblem(APIView) :
             return Response(ser.data, status=status.HTTP_202_ACCEPTED)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class GetPDFStatement(APIView) :
+    def get(self, request, problemID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            pdfStatement = problem.pdfStatement
+            if pdfStatement :
+                return FileResponse(pdfStatement, status=status.HTTP_202_ACCEPTED)
+            else :
+                return ErrorResponse("File Not Found", status=status.HTTP_404_NOT_FOUND)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+    
     
 class SetProblem(generics.GenericAPIView) :
     serializer_class = ProblemSerializer

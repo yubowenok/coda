@@ -9,7 +9,7 @@ import django.contrib.auth as auth
 
 from codaauth.models import CodaUser, CodaGroup
 from codaauth.serializers import CodaUserSerializer, CodaLoginSerializer, CodaChangePasswordSerializer
-from api.error import ErrorResponse
+from api.response import ErrorResponse
 
 
 def login(username, password, request) :

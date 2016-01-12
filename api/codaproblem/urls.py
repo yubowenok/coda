@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^createProblem/$', views.CreateProblem.as_view()),
     url(r'^getProblemIDs/$', views.GetProblemIDs.as_view()),
     url(r'^getProblemInfo/(?P<problemID>.+)$', views.GetProblem.as_view()),
+    url(r'^getPDFStatement/(?P<problemID>.+)$', views.GetPDFStatement.as_view()),
     url(r'^setProblemInfo/(?P<problemID>.+)$', views.SetProblem.as_view()),
     url(r'^addSample/(?P<problemID>.+)$', views.AddSample.as_view()),
     url(r'^setSample/(?P<problemID>.+)/(?P<sampleID>.+)$', views.SetSample.as_view()),
