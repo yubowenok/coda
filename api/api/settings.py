@@ -29,6 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SENDFILE_BACKEND = 'sendfile.backends.xsendfile'
 
 # Application definition
 

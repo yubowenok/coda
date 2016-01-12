@@ -15,9 +15,8 @@ class ErrorResponse(Response) :
 
 class FileResponse(HttpResponse) :
     def __init__(self, filefield, *args, **kw) :
-        HttpResponse.__init__(self,content_type='application/octet-stream',*args,**kw)
+        HttpResponse.__init__(self,content_type='application/pdf')
         path = os.path.normpath(filefield.path)
         filename = os.path.basename(path)
-        print >> sys.stderr, smart_str(filename) + " & "+smart_str(path)
-        self['Content-disposition'] = 'attachment; filename=Exercises9.pdf'
-        self['X-Sendfile'] = 'C:/xampp/htdocs/coda/datafiles/problems/Test Problem/Exercises9.pdf'
+        self['Content-Disposition'] = 'attachment; filename="%s"'%(filename)
+        self['X-Sendfile'] = path

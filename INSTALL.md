@@ -6,7 +6,7 @@ The following shall setup the server from a raw Ubuntu 14.04 Server installation
 
 ```bash 
 sudo apt-get update
-sudo apt-get install python-pip apache2 libapache2-mod-wsgi
+sudo apt-get install python-pip apache2 libapache2-mod-wsgi libapache2-mod-xsendfile
 sudo apt-get install mysql-server libapache2-mod-auth-mysql php5-mysql
 sudo mysql_install_db
 sudo /usr/bin/mysql_secure_installation
@@ -40,6 +40,7 @@ sudo apt-get install python-mysqldb
 ## Install Django
 ```bash
 pip install django
+pip install django-sendfile
 pip install djangorestframework
 ```
 

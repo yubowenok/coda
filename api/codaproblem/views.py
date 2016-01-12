@@ -5,11 +5,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
 
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 
 from codaproblem.models import *
 from codaproblem.serializers import *
 from api.response import ErrorResponse, FileResponse
+
+from sendfile import sendfile
 
 class CheckerTypes(generics.GenericAPIView) :
     serializer_class = CheckerTypeSerializer
@@ -59,7 +62,7 @@ class GetPDFStatement(APIView) :
             problem = get_object_or_404(Problem,problemID = problemID)
             pdfStatement = problem.pdfStatement
             if pdfStatement :
-                return FileResponse(pdfStatement, status=status.HTTP_202_ACCEPTED)
+                return sendfile(request, pdfStatement.path, attachment = True)
             else :
                 return ErrorResponse("File Not Found", status=status.HTTP_404_NOT_FOUND)
         else :
