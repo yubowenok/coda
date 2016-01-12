@@ -51,7 +51,12 @@ class TestFileSerializer(serializers.ModelSerializer) :
 
     class Meta:
         model = TestFile
-        exclude = ('id','batch',)
+        exclude = ('id','batch','testFileID')
+        extra_kwargs = {
+            'input' : {'allow_empty_file' : True},
+            'output' : {'allow_empty_file' : True},
+            'resources' : {'allow_empty_file' : True},
+        }
     
 class TestFileReorderSerializer(serializers.Serializer) :
     newTestFileIDs = serializers.ListField(child = serializers.IntegerField())

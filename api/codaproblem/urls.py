@@ -22,6 +22,10 @@ urlpatterns = [
     url(r'^setTestFile/(?P<problemID>.+)/(?P<batchID>.+)/(?P<testFileID>.+)$', views.SetTestFile.as_view()),
     url(r'^reorderTestFiles/(?P<problemID>.+)/(?P<batchID>.+)$', views.ReorderTestFiles.as_view()),
     url(r'^deleteTestFile/(?P<problemID>.+)/(?P<batchID>.+)/(?P<testFileID>.+)$', views.DeleteTestFile.as_view()),
+    url(r'^getTestFileInput/(?P<problemID>.+)/(?P<batchID>.+)/(?P<testFileID>.+)$', views.GetTestFileInput.as_view()),
+    url(r'^getTestFileOutput/(?P<problemID>.+)/(?P<batchID>.+)/(?P<testFileID>.+)$', views.GetTestFileInput.as_view()),
+    url(r'^getTestFileResources/(?P<problemID>.+)/(?P<batchID>.+)/(?P<testFileID>.+)$', views.GetTestFileInput.as_view()),
+
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

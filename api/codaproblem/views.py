@@ -307,3 +307,29 @@ class DeleteTestFile(APIView) :
             return Response("Deleted TestFile %s and renumbered %d testfiles"%(testFileID,num), status=status.HTTP_202_ACCEPTED)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+def testfileget(self, request, field, problemID, batchID, testFileID, format = None) :
+    if request.user.is_authenticated() :
+        problem = get_object_or_404(Problem,problemID = problemID)
+        batch = get_object_or_404(Batch,problem = problem, batchID = batchID)
+        testFile = get_object_or_404(TestFile,batch = batch, testFileID = testFileID)
+        f = getattr(testFile,field)
+        if f :
+            return sendfile(request, f.path, attachment = True)
+        else :
+            return ErrorResponse("File Not Found", status=status.HTTP_404_NOT_FOUND)
+    else :
+        return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+    
+
+class GetTestFileInput(APIView) :
+    def get(self, request, problemID, batchID, testFileID, format = None) :
+        return testfileget(self,request,'input',problemID,batchID,testFileID,format)
+
+class GetTestFileOutput(APIView) :
+    def get(self, request, problemID, batchID, testFileID, format = None) :
+        return testfileget(self,request,'output',problemID,batchID,testFileID,format)
+
+class GetTestFileResources(APIView) :
+    def get(self, request, problemID, batchID, testFileID, format = None) :
+        return testfileget(self,request,'resources',problemID,batchID,testFileID,format)
