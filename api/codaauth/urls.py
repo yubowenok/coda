@@ -10,6 +10,8 @@ urlpatterns = [
     url(r'^createUserGroup/$', views.CreateUserGroup.as_view()),
     url(r'^addUserToGroup/(?P<username>.+)/(?P<groupname>.+)$', views.AddUserToGroup.as_view()),
     url(r'^removeUserFromGroup/(?P<username>.+)/(?P<groupname>.+)$', views.RemoveUserFromGroup.as_view()),
+    url(r'^removeGroup/(?P<groupname>.+)$', views.RemoveGroup.as_view()),
+    url(r'^renameGroup/(?P<groupname>.+)$', views.RenameGroup.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

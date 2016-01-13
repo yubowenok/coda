@@ -6,7 +6,7 @@ from django.contrib.auth.models import User, Group
 from codaauth.models import CodaUser, CodaGroup
 from api.constants import DEFAULT_MAX_LENGTH
 
-class CodaUserSerializer(serializers.ModelSerializer) :
+class UserSerializer(serializers.ModelSerializer) :
     affiliation = serializers.CharField(
         max_length = DEFAULT_MAX_LENGTH,
         required = False
@@ -30,14 +30,14 @@ class CodaUserSerializer(serializers.ModelSerializer) :
         )
         cuser.save()
 
-class CodaLoginSerializer(serializers.Serializer) :
+class LoginSerializer(serializers.Serializer) :
     username = serializers.CharField(max_length=30)
     password = serializers.CharField(style={'input_type': 'password'})
 
-class CodaChangePasswordSerializer(serializers.Serializer) :
+class ChangePasswordSerializer(serializers.Serializer) :
     password = serializers.CharField(style={'input_type': 'password'})
 
-class CreateCodaGroupSerializer(serializers.ModelSerializer) :
+class CreateGroupSerializer(serializers.ModelSerializer) :
     class Meta:
         model = Group
         fields = ('name',)
@@ -50,5 +50,9 @@ class CreateCodaGroupSerializer(serializers.ModelSerializer) :
         cgroup = CodaGroup(owner=owner,group=group)
         cgroup.save()
 
-        
+class GroupSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = Group
+        fields = ('name',)
+    
     

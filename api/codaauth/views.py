@@ -26,10 +26,10 @@ def login(username, password, request) :
     
 
 class RegisterUser(generics.GenericAPIView) :
-    serializer_class = CodaUserSerializer
+    serializer_class = UserSerializer
     queryset = {}
     def post(self, request, format=None) :
-        ser = CodaUserSerializer(data = request.data)
+        ser = UserSerializer(data = request.data)
         if ser.is_valid() :
             ser.save()
             username = request.data['username']
@@ -38,10 +38,10 @@ class RegisterUser(generics.GenericAPIView) :
         return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class Login(generics.GenericAPIView) :
-    serializer_class = CodaLoginSerializer
+    serializer_class = LoginSerializer
     queryset = {}
     def post(self, request, format=None) :
-        ser = CodaLoginSerializer(data = request.data)
+        ser = LoginSerializer(data = request.data)
         if ser.is_valid() :
             username = request.data['username']
             password = request.data['password']
@@ -55,12 +55,12 @@ class Logout(APIView) :
         return Response("Logout successful", status=status.HTTP_202_ACCEPTED)
 
 class ChangePassword(generics.GenericAPIView) :
-    serializer_class = CodaChangePasswordSerializer
+    serializer_class = ChangePasswordSerializer
     queryset = {}
     def post(self, request, format=None) :
         if request.user.is_authenticated() :
             user = request.user
-            ser = CodaChangePasswordSerializer(data = request.data)
+            ser = ChangePasswordSerializer(data = request.data)
             if ser.is_valid() :
                 user.set_password(request.data['password'])
                 user.save()
@@ -71,13 +71,13 @@ class ChangePassword(generics.GenericAPIView) :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
 class CreateUserGroup(generics.GenericAPIView) :
-    serializer_class = CreateCodaGroupSerializer
+    serializer_class = CreateGroupSerializer
     queryset = {}
     def post(self, request, format=None) :
         if request.user.is_authenticated() :
             user = request.user
             cuser = get_object_or_404(CodaUser,user=user)
-            ser = CreateCodaGroupSerializer(data = request.data)
+            ser = CreateGroupSerializer(data = request.data)
             if ser.is_valid() :
                 ser.save(owner = cuser)
                 return Response("Create User Group Successful", status=status.HTTP_202_ACCEPTED)
@@ -113,5 +113,33 @@ class RemoveUserFromGroup(APIView) :
             groupuser.groups.remove(group)
             groupuser.save()
             return Response("User removed successfully", status=status.HTTP_202_ACCEPTED)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class RemoveGroup(APIView) :
+    def post(self, request, groupname, format=None) :
+        if request.user.is_authenticated() :
+            group = get_object_or_404(Group,name=groupname)
+            codagroup = get_object_or_404(CodaGroup,group=group)
+            #check owner            
+            group.delete()
+            return Response("Group removed successfully", status=status.HTTP_202_ACCEPTED)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class RenameGroup(generics.GenericAPIView) :
+    serializer_class = GroupSerializer
+    queryset = {}
+    def post(self, request, groupname, format=None) :
+        if request.user.is_authenticated() :
+            group = get_object_or_404(Group,name=groupname)
+            codagroup = get_object_or_404(CodaGroup,group=group)
+            #check owner            
+            ser = GroupSerializer(group, data = request.data, partial = True)
+            if ser.is_valid() :
+                ser.save()
+                return Response("Group renamed successfully", status=status.HTTP_202_ACCEPTED)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)                
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
