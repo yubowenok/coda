@@ -1,6 +1,12 @@
 import sys
 from codaproblem.serializers import *
 
+languages = [
+    {"name" : "Java"},
+    {"name" : "C++"},
+    {"name" : "Python"}
+]
+
 checkerTypes = [
     {
 	"checkerID" : "diff",
@@ -55,6 +61,14 @@ batches = [
     },
     
 ]
+
+for lan in languages :
+    ser = LanguageSerializer(data = lan)
+    if ser.is_valid() :
+        ser.save()
+    else :
+        print >> sys.stderr, ser.errors        
+
 for c in checkerTypes :
     ser = CheckerTypeSerializer(data = c)
     if ser.is_valid() :

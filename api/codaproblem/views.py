@@ -25,6 +25,16 @@ class CheckerTypes(generics.GenericAPIView) :
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
+class Languages(generics.GenericAPIView) :
+    serializer_class = LanguageSerializer
+    queryset = {}
+    def get(self, request, format = None) :
+        if request.user.is_authenticated() :
+            ser = LanguageSerializer(Language.objects.all(), many=True)
+            return Response(ser.data, status=status.HTTP_200_OK)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
 class CreateProblem(generics.GenericAPIView) :
     serializer_class = CreateProblemSerializer
     queryset = {}
