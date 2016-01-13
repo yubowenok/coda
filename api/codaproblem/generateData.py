@@ -4,15 +4,18 @@ from codaproblem.serializers import *
 checkerTypes = [
     {
 	"checkerID" : "diff",
-	"onlyExecChecker" : False
+	"onlyExecChecker" : False,
+        "needsFile" : False
     },
     {
 	"checkerID" : "User diff",
-	"onlyExecChecker" : False
+	"onlyExecChecker" : False,
+        "needsFile" : True
     },
     {
 	"checkerID" : "User Checker",
-	"onlyExecChecker" : True
+	"onlyExecChecker" : True,
+        "needsFile" : True
     }
 ]
 problems = [

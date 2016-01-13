@@ -15,6 +15,8 @@ class CodaUser(models.Model) :
         max_length=DEFAULT_MAX_LENGTH,
         blank = True
     )
+    def __str__(self) :
+        return str(self.user.username)
 
 class CodaGroup(models.Model) :
     group = models.OneToOneField(

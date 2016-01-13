@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+import sys
+
 from rest_framework import serializers
 from rest_framework.exceptions import *
 from django.contrib.auth.models import User, Group
@@ -10,13 +12,11 @@ from codaproblem.models import *
 class CheckerTypeSerializer(serializers.ModelSerializer) :    
     class Meta:
         model = CheckerType
-        fields = ('checkerID','onlyExecChecker')    
 
 class SampleSerializer(serializers.ModelSerializer) :
     def create(self, validated_data) :
         problem = validated_data['problem']
-        samples = problem.samples.all()
-        sampleID = len(samples)+1
+        sampleID = problem.samples.all().count()+1
         return Sample.objects.create(sampleID = sampleID,**validated_data)
 
     class Meta:
@@ -31,8 +31,7 @@ class BatchSerializer(serializers.ModelSerializer) :
 
     def create(self, validated_data) :
         problem = validated_data['problem']
-        batches = problem.batches.all()
-        batchID = len(batches)+1
+        batchID = problem.batches.all().count()+1
         return Batch.objects.create(batchID = batchID,**validated_data)
 
     class Meta:
@@ -70,6 +69,20 @@ class ProblemSerializer(serializers.ModelSerializer) :
     owner = serializers.CharField(source = 'owner.user.username', read_only=True)
     samples = SampleSerializer(many = True, read_only = True)
     batches = BatchSerializer(many = True, read_only = True)
+
+    def update(self, instance, validated_data):
+        ct = validated_data.get('checkerType',instance.checkerType)
+        c = validated_data.get('checker',instance.checker)
+        if ct.needsFile and not c :
+            raise serializers.ValidationError('checkerType '+str(ct)+' requires a checker file')
+
+        usepdf = validated_data.get('usePDF',instance.usePDF)
+        pdf = validated_data.get('pdfStatement',instance.pdfStatement)
+        if usepdf and not pdf :
+            raise serializers.ValidationError('usePDF=True requires a pdfStatement')
+
+        return super(ProblemSerializer,self).update(instance,validated_data)
+
     class Meta:
         model = Problem
         fields = ('problemID','checkerType','checker','owner','title','statement','pdfStatement',

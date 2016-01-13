@@ -7,6 +7,9 @@ urlpatterns = [
     url(r'^login/$', views.Login.as_view()),
     url(r'^logout/$', views.Logout.as_view()),
     url(r'^changePassword/$', views.ChangePassword.as_view()),
+    url(r'^createUserGroup/$', views.CreateUserGroup.as_view()),
+    url(r'^addUserToGroup/(?P<username>.+)/(?P<groupname>.+)$', views.AddUserToGroup.as_view()),
+    url(r'^removeUserFromGroup/(?P<username>.+)/(?P<groupname>.+)$', views.RemoveUserFromGroup.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -10,6 +10,7 @@ class CheckerType(models.Model) :
         primary_key = True
     )
     onlyExecChecker = models.BooleanField()
+    needsFile = models.BooleanField()
     
     def __str__(self) :
         return str(self.checkerID)

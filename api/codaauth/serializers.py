@@ -36,3 +36,19 @@ class CodaLoginSerializer(serializers.Serializer) :
 
 class CodaChangePasswordSerializer(serializers.Serializer) :
     password = serializers.CharField(style={'input_type': 'password'})
+
+class CreateCodaGroupSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = Group
+        fields = ('name',)
+
+    def save(self, **kw):
+        vdata = self.validated_data
+        owner = kw['owner']
+        group = Group.objects.create(**vdata)
+        group.save()
+        cgroup = CodaGroup(owner=owner,group=group)
+        cgroup.save()
+
+        
+    
