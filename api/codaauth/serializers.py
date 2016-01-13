@@ -37,6 +37,16 @@ class LoginSerializer(serializers.Serializer) :
 class ChangePasswordSerializer(serializers.Serializer) :
     password = serializers.CharField(style={'input_type': 'password'})
 
+class UserListSerializer(serializers.Serializer) :
+    username = serializers.CharField()    
+    groups = serializers.SlugRelatedField(
+        many = True,
+        read_only = True,
+        slug_field = 'name',
+    )
+    affiliation = serializers.CharField(source='codauser.affiliation')
+    
+
 class CreateGroupSerializer(serializers.ModelSerializer) :
     class Meta:
         model = Group

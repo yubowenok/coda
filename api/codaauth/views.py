@@ -18,7 +18,7 @@ def login(username, password, request) :
     if user is not None :
         if user.is_active :
             auth.login(request,user)
-            return Response("Login Successful", status=status.HTTP_202_ACCEPTED)
+            return Response("Login Successful", status=status.HTTP_200_OK)
         else :
             return ErrorResponse("Account Disabled", status=status.HTTP_403_FORBIDDEN)
     else :
@@ -52,7 +52,7 @@ class Login(generics.GenericAPIView) :
 class Logout(APIView) :
     def post(self, request, format=None) :
         auth.logout(request)
-        return Response("Logout successful", status=status.HTTP_202_ACCEPTED)
+        return Response("Logout successful", status=status.HTTP_200_OK)
 
 class ChangePassword(generics.GenericAPIView) :
     serializer_class = ChangePasswordSerializer
@@ -64,11 +64,22 @@ class ChangePassword(generics.GenericAPIView) :
             if ser.is_valid() :
                 user.set_password(request.data['password'])
                 user.save()
-                return Response("Change Password Successful", status=status.HTTP_202_ACCEPTED)
+                return Response("Change Password Successful", status=status.HTTP_200_OK)
             else :
                 return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class GetAllUsers(APIView) :
+    def get(self, request, format = None) :
+        if request.user.is_authenticated() :
+            user = request.user
+            #check if super user
+            ser = UserListSerializer(User.objects.all(),many = True)
+            return Response(ser.data,status=status.HTTP_200_OK)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+            
 
 class CreateUserGroup(generics.GenericAPIView) :
     serializer_class = CreateGroupSerializer
@@ -80,9 +91,9 @@ class CreateUserGroup(generics.GenericAPIView) :
             ser = CreateGroupSerializer(data = request.data)
             if ser.is_valid() :
                 ser.save(owner = cuser)
-                return Response("Create User Group Successful", status=status.HTTP_202_ACCEPTED)
+                return Response("Create User Group Successful", status=status.HTTP_200_OK)
             else :
-                return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
@@ -94,10 +105,10 @@ class AddUserToGroup(APIView) :
             codagroup = get_object_or_404(CodaGroup,group=group)
             #check owner
             if group in groupuser.groups.all() :
-                return ErrorResponse("User already in Group", status=status.HTTP_403_FORBIDDEN)            
+                return ErrorResponse("User already in Group", status=status.HTTP_400_BAD_REQUEST)
             groupuser.groups.add(group)
             groupuser.save()
-            return Response("User added successfully", status=status.HTTP_202_ACCEPTED)
+            return Response("User added successfully", status=status.HTTP_200_OK)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
         
@@ -109,10 +120,10 @@ class RemoveUserFromGroup(APIView) :
             codagroup = get_object_or_404(CodaGroup,group=group)
             #check owner            
             if group not in groupuser.groups.all() :
-                return ErrorResponse("User not in group", status=status.HTTP_403_FORBIDDEN)
+                return ErrorResponse("User not in group", status=status.HTTP_400_BAD_REQUEST)
             groupuser.groups.remove(group)
             groupuser.save()
-            return Response("User removed successfully", status=status.HTTP_202_ACCEPTED)
+            return Response("User removed successfully", status=status.HTTP_200_OK)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
@@ -123,7 +134,7 @@ class RemoveGroup(APIView) :
             codagroup = get_object_or_404(CodaGroup,group=group)
             #check owner            
             group.delete()
-            return Response("Group removed successfully", status=status.HTTP_202_ACCEPTED)
+            return Response("Group removed successfully", status=status.HTTP_200_OK)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
@@ -138,8 +149,8 @@ class RenameGroup(generics.GenericAPIView) :
             ser = GroupSerializer(group, data = request.data, partial = True)
             if ser.is_valid() :
                 ser.save()
-                return Response("Group renamed successfully", status=status.HTTP_202_ACCEPTED)
+                return Response("Group renamed successfully", status=status.HTTP_200_OK)
             else :
-                return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)                
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)                
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
