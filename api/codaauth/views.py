@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404
 from codaauth.models import *
 from codaauth.serializers import *
 from api.response import ErrorResponse
+from api.permissions import *
 
 
 def login(username, password, request) :
@@ -72,20 +73,19 @@ class ChangePassword(generics.GenericAPIView) :
 
 class GetAllUsers(APIView) :
     def get(self, request, format = None) :
-        if request.user.is_authenticated() :
+        if request.user.is_authenticated() and is_super(request.user):
             user = request.user
-            #check if super user
             ser = UserListSerializer(User.objects.all(),many = True)
             return Response(ser.data,status=status.HTTP_200_OK)
         else :
-            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+            return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)
             
 
 class CreateUserGroup(generics.GenericAPIView) :
     serializer_class = CreateGroupSerializer
     queryset = {}
     def post(self, request, format=None) :
-        if request.user.is_authenticated() :
+        if request.user.is_authenticated() and is_moderator(request.user):
             user = request.user
             ser = CreateGroupSerializer(data = request.data)
             if ser.is_valid() :
@@ -94,7 +94,7 @@ class CreateUserGroup(generics.GenericAPIView) :
             else :
                 return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
         else :
-            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+            return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)
 
 class AddUserToGroup(APIView) :
     def post(self, request, username, groupname, format=None) :
@@ -102,7 +102,8 @@ class AddUserToGroup(APIView) :
             groupuser = get_object_or_404(User,username=username)
             group = get_object_or_404(Group,name=groupname)
             codagroup = get_object_or_404(CodaGroup,group=group)
-            #check owner
+            if not is_owner(request.user, codagroup) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)
             if group in groupuser.groups.all() :
                 return ErrorResponse("User already in Group", status=status.HTTP_400_BAD_REQUEST)
             groupuser.groups.add(group)
@@ -117,7 +118,8 @@ class RemoveUserFromGroup(APIView) :
             groupuser = get_object_or_404(User,username=username)
             group = get_object_or_404(Group,name=groupname)
             codagroup = get_object_or_404(CodaGroup,group=group)
-            #check owner            
+            if not is_owner(request.user, codagroup) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)
             if group not in groupuser.groups.all() :
                 return ErrorResponse("User not in group", status=status.HTTP_400_BAD_REQUEST)
             groupuser.groups.remove(group)
@@ -131,7 +133,8 @@ class RemoveGroup(APIView) :
         if request.user.is_authenticated() :
             group = get_object_or_404(Group,name=groupname)
             codagroup = get_object_or_404(CodaGroup,group=group)
-            #check owner            
+            if not is_owner(request.user, codagroup) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)
             group.delete()
             return Response("Group removed successfully", status=status.HTTP_200_OK)
         else :
@@ -144,7 +147,8 @@ class RenameGroup(generics.GenericAPIView) :
         if request.user.is_authenticated() :
             group = get_object_or_404(Group,name=groupname)
             codagroup = get_object_or_404(CodaGroup,group=group)
-            #check owner            
+            if not is_owner(request.user, codagroup) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)
             ser = GroupSerializer(group, data = request.data, partial = True)
             if ser.is_valid() :
                 ser.save()

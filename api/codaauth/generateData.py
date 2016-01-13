@@ -1,11 +1,12 @@
 import sys
 from django.contrib.auth.models import User
 from codaauth.models import *
+from api.permissions import *
 
 user = User.objects.create_superuser('brett','','brett')
 codauser = CodaUser(user = user)
 codauser.save()
-group = Group.objects.create(name = 'Sgroup')
+group = Group.objects.create(name = MOD_GROUP_NAME)
 codagroup = CodaGroup(owner = user, group = group)
 
 users = ['Auser','Buser','Cuser']
@@ -21,12 +22,10 @@ for i in xrange(len(users)) :
     codagroup = CodaGroup(group = group, owner = user)
     codagroup.save()
 
-groups.append('Sgroup')
-
 for u in users : 
     user = User.objects.get(username = u)
     for g in groups :
         group  = Group.objects.get(name = g)
         user.groups.add(group)
 
-
+User.objects.get(username = 'Auser').groups.add(Group.objects.get(name = 'Moderators'))
