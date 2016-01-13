@@ -8,7 +8,7 @@ from rest_framework import generics
 import django.contrib.auth as auth
 from django.shortcuts import get_object_or_404
 
-from codaauth.models import CodaUser, CodaGroup
+from codaauth.models import *
 from codaauth.serializers import *
 from api.response import ErrorResponse
 
@@ -87,10 +87,9 @@ class CreateUserGroup(generics.GenericAPIView) :
     def post(self, request, format=None) :
         if request.user.is_authenticated() :
             user = request.user
-            cuser = get_object_or_404(CodaUser,user=user)
             ser = CreateGroupSerializer(data = request.data)
             if ser.is_valid() :
-                ser.save(owner = cuser)
+                ser.save(owner = user)
                 return Response("Create User Group Successful", status=status.HTTP_200_OK)
             else :
                 return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)

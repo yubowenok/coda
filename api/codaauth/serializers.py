@@ -39,6 +39,7 @@ class ChangePasswordSerializer(serializers.Serializer) :
 
 class UserListSerializer(serializers.Serializer) :
     username = serializers.CharField()    
+    is_superuser = serializers.BooleanField()
     groups = serializers.SlugRelatedField(
         many = True,
         read_only = True,

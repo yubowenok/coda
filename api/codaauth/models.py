@@ -25,7 +25,7 @@ class CodaGroup(models.Model) :
         primary_key = True
     )
     owner = models.ForeignKey(
-        CodaUser, 
+        User, 
         on_delete = models.SET_NULL, 
         null = True
     )
