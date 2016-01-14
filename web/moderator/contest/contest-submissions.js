@@ -1,8 +1,8 @@
-coda.controller('SessionSubmissionsCtrl', [
+coda.controller('ContestSubmissionsCtrl', [
   '$scope', '$location', '$routeParams', 'page',
   function($scope, $location, $routeParams, page) {
     page.setNav('moderator');
 
-    $scope.sessionId = $routeParams.sessionId;
+    $scope.contestId = $routeParams.contestId;
   }
 ]);

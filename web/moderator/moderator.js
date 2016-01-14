@@ -3,15 +3,8 @@ coda.controller('ModeratorCtrl', [
   function($scope, $location, page) {
     page.setNav('moderator');
 
-    $scope.sessions = [
-      {id: 'HW122315', text: 'Homework 12/23/2015'},
-      {id: 'DL122315', text: 'Daily Challenge 12/23/2015'}
-    ];
-
-    $scope.problems = [
-      {id: 'APLUSB', title: 'A + B', successRate: 91.62},
-      {id: 'MUL', title: 'Integer Multiplication', successRate: 75.26},
-    ];
+    coda.moderatorContests($scope);
+    coda.moderatorProblems($scope);
 
     /**
      * Opens a problem editing page.
@@ -22,11 +15,11 @@ coda.controller('ModeratorCtrl', [
     };
 
     /**
-     * Opens a session editing page.
+     * Opens a contest editing page.
      * @param {string} id
      */
-    $scope.editSession = function(id) {
-      $location.path('moderator/session/' + id);
+    $scope.editContest = function(id) {
+      $location.path('moderator/contest/' + id);
     };
   }
 ]);

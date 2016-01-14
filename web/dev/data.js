@@ -4,7 +4,7 @@
 
 /**
  * Writes dummy problem data under $scope.
- * @param {!angular.scope} $scope
+ * @param {!angular.Scope} $scope
  */
 coda.problemInfo = function($scope) {
   $scope.problemId = 'APLUSB';
@@ -25,33 +25,45 @@ coda.problemInfo = function($scope) {
 };
 
 /**
- * Writes dummy active sessions under $scope.
- * @param {!angular.scope} $scope
+ * Writes dummy active contests under $scope.
+ * @param {!angular.Scope} $scope
+ * @param {string} type
  */
-coda.activeSession = function($scope) {
-  $scope.activeSessions = [
-    {
-      id: 'HW122315',
-      text: 'Homework 12/23/2015'
-    },
-    {
-      id: 'AMRITAPURI15',
-      text: 'ACM-ICPC Asia-Amritapuri Onsite Mirror Contest 2015'
-    },
-    {
-      id: 'DL122315',
-      text: 'Daily Challenge 12/23/2015'
-    }
-  ];
+coda.contests = function($scope, type) {
+  if (type == 'active') {
+    $scope.activeContests = [
+      {
+        id: 'HW122315',
+        text: 'Homework 12/23/2015'
+      },
+      {
+        id: 'AMRITAPURI15',
+        text: 'ACM-ICPC Asia-Amritapuri Onsite Mirror Contest 2015'
+      },
+      {
+        id: 'DL122315',
+        text: 'Daily Challenge 12/23/2015'
+      }
+    ];
+  } else if (type == 'scheduled') {
+    $scope.scheduledContests = [
+      {id: 'FN122515', text: 'Friday Night 12/25/2015'}
+    ];
+  } else if (type == 'past') {
+    $scope.pastContests = [
+      {id: 'HW121615', text: 'Homework 12/16/2015'},
+      {id: 'HW120915', text: 'Homework 12/09/2015'}
+    ];
+  }
 };
 
 
 /**
- * Writes dummy session info under $scope.
- * @param {!angular.scope} $scope
+ * Writes dummy contest info under $scope.
+ * @param {!angular.Scope} $scope
  */
-coda.sessionInfo = function($scope) {
-  $scope.sessionTitle = 'Session Title';
+coda.contestInfo = function($scope) {
+  $scope.contestTitle = 'Contest Title';
   $scope.problems = [
     {id: 'APLUSB', title: 'A + B', successRate: 91.62},
     {id: 'MUL', title: 'Integer Multiplication', successRate: 75.26},
@@ -61,3 +73,24 @@ coda.sessionInfo = function($scope) {
   ];
 };
 
+/**
+ * Writes dummy moderator contests data under $scope.
+ * @param {!angular.Scope} $scope
+ */
+coda.moderatorContests = function($scope) {
+  $scope.contests = [
+    {id: 'HW122315', text: 'Homework 12/23/2015'},
+    {id: 'DL122315', text: 'Daily Challenge 12/23/2015'}
+  ];
+};
+
+/**
+ * Writes dummy moderator problems data under $scope.
+ * @param {!angular.Scope} $scope
+ */
+coda.moderatorProblems = function($scope) {
+  $scope.problems = [
+    {id: 'APLUSB', title: 'A + B', successRate: 91.62},
+    {id: 'MUL', title: 'Integer Multiplication', successRate: 75.26},
+  ];
+};

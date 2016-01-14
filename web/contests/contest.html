@@ -1,12 +1,12 @@
-<div class="label label-default">{{sessionId}}</div>
-<h3>{{sessionTitle}}</h3>
-<p>Session description</p>
+<div class="label label-default">{{contestId}}</div>
+<h3>{{contestTitle}}</h3>
+<p>Contest description</p>
 <div class="progress">
   <div class="progress-bar" role="progressbar" style="width: 60%;">
   </div>
 </div>
 <h4>Problems</h4>
-<a class="problem session-problem list-group-item" ng-repeat="problem in problems" ng-click="gotoProblem(charFromIndex($index))">
+<a class="problem contest-problem list-group-item" ng-repeat="problem in problems" ng-click="gotoProblem(charFromIndex($index))">
   <span class="id label label-default">{{charFromIndex($index)}}</span>
   {{problem.title}}
   <span class="success-rate">

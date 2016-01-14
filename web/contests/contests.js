@@ -1,12 +1,13 @@
-coda.controller('HomeCtrl', [
-  '$scope', '$location', 'page',
+coda.controller('ContestsCtrl', ['$scope', '$location', 'page',
   function($scope, $location, page) {
-    page.setNav('home');
+    page.setNav('contests');
 
     coda.contests($scope, 'active');
+    coda.contests($scope, 'scheduled');
+    coda.contests($scope, 'past');
 
     /**
-     * Opens a contest with a given id.
+     * Opens a contest with the given id.
      * @param {string} id
      */
     $scope.gotoContest = function(id) {

@@ -12,18 +12,18 @@ coda.config(['$routeProvider', '$locationProvider',
         controller: 'HomeCtrl'
       })
 
-      // Sessions pages
-      .when('/sessions', {
-        templateUrl: 'dist/html/sessions/sessions.html',
-        controller: 'SessionsCtrl'
+      // Contests pages
+      .when('/contests', {
+        templateUrl: 'dist/html/contests/contests.html',
+        controller: 'ContestsCtrl'
       })
-      .when('/sessions/:sessionId', {
-        templateUrl: 'dist/html/sessions/session.html',
-        controller: 'SessionCtrl'
+      .when('/contests/:contestId', {
+        templateUrl: 'dist/html/contests/contest.html',
+        controller: 'ContestCtrl'
       })
-      .when('/sessions/:sessionId/:problemIndex', {
-        templateUrl: 'dist/html/sessions/problem.html',
-        controller: 'SessionProblemCtrl'
+      .when('/contests/:contestId/:problemIndex', {
+        templateUrl: 'dist/html/contests/problem.html',
+        controller: 'ContestProblemCtrl'
       })
 
       // Archive pages
@@ -58,18 +58,18 @@ coda.config(['$routeProvider', '$locationProvider',
         templateUrl: 'dist/html/moderator/tests/tests.html',
         controller: 'TestsCtrl'
       })
-      // Moderator - session
-      .when('/moderator/session', {
-        templateUrl: 'dist/html/moderator/session/session.html',
-        controller: 'AddSessionCtrl'
+      // Moderator - contest
+      .when('/moderator/contest', {
+        templateUrl: 'dist/html/moderator/contest/contest.html',
+        controller: 'AddContestCtrl'
       })
-      .when('/moderator/session/:sessionId', {
-        templateUrl: 'dist/html/moderator/session/session.html',
-        controller: 'EditSessionCtrl'
+      .when('/moderator/contest/:contestId', {
+        templateUrl: 'dist/html/moderator/contest/contest.html',
+        controller: 'EditContestCtrl'
       })
-      .when('/moderator/session/:sessionId/submissions', {
-        templateUrl: 'dist/html/moderator/session/session-submissions.html',
-        controller: 'SessionSubmissionsCtrl'
+      .when('/moderator/contest/:contestId/submissions', {
+        templateUrl: 'dist/html/moderator/contest/contest-submissions.html',
+        controller: 'ContestSubmissionsCtrl'
       })
 
       // Admin pages
