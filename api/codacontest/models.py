@@ -2,7 +2,8 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.contrib.auth.models import User, Group
-from codaproblem.models import Problem, Batch
+from codaproblem.models import Problem, Batch, Language
+from api.constants import *
 
 class ScoringSystem(models.Model) :
     name = models.CharField(
@@ -14,10 +15,10 @@ class ScoringSystem(models.Model) :
 
 class Contest(models.Model) :
     name = models.CharField(
-        max_length = 200,
+        max_length = CONTEST_NAME_LENGTH,
         unique = True
     )
-    languages = models.ManyToManyField(Langauge)
+    languages = models.ManyToManyField(Language)
     scoringSystem = models.ForeignKey(
         ScoringSystem,
         on_delete = models.PROTECT,
@@ -31,8 +32,14 @@ class Contest(models.Model) :
         null = True,
         on_delete = models.SET_NULL
     )
-    userGroups = models.ManyToManyField(Group)
-    graderGroups = models.ManyToManyField(Group)
+    userGroups = models.ManyToManyField(
+        Group,
+        related_name = 'contestusers'
+    )
+    graderGroups = models.ManyToManyField(
+        Group,
+        related_name = 'contestgraders'        
+    )
 
 class ContestProblem(models.Model) :
     problem = models.ForeignKey(
@@ -59,6 +66,6 @@ class ContestBatch(models.Model) :
         on_delete = models.PROTECT
     )
     points = models.IntegerField(default = 0)
-    canViewInput = models.BooleanField(default = false)
-    canViewOutput = models.BooleanField(default = false)
+    canViewInput = models.BooleanField(default = False)
+    canViewOutput = models.BooleanField(default = False)
     

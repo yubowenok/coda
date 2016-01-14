@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from api.constants import DEFAULT_MAX_LENGTH
-from codaauth.models import CodaUser
+from django.contrib.auth.models import User, Group
 
 class Language(models.Model) :
     name = models.CharField(
