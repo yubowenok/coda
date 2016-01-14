@@ -42,7 +42,7 @@ class Problem(models.Model) :
         null=True
     )
     owner = models.ForeignKey(
-        CodaUser,
+        User,
         null = True,
         on_delete = models.SET_NULL
     )

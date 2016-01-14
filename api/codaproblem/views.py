@@ -43,7 +43,7 @@ class CreateProblem(generics.GenericAPIView) :
             user = request.user
             ser = CreateProblemSerializer(data = request.data)
             if ser.is_valid() :
-                ser.save(owner=user.codauser)
+                ser.save(owner=user)
                 return Response("Create Problem Successful", status=status.HTTP_200_OK)
             else :
                 return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)

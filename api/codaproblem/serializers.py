@@ -70,7 +70,7 @@ class CreateProblemSerializer(serializers.ModelSerializer) :
         fields = ('problemID',)
 
 class ProblemSerializer(serializers.ModelSerializer) :
-    owner = serializers.CharField(source = 'owner.user.username', read_only=True)
+    owner = serializers.CharField(source = 'owner.username', read_only=True)
     samples = SampleSerializer(many = True, read_only = True)
     batches = BatchSerializer(many = True, read_only = True)
     
