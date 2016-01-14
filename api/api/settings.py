@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'codaauth.apps.CodaAuthConfig',
-    'codaproblem.apps.CodaProblemConfig'
+    'codaproblem.apps.CodaProblemConfig',
+    'codacontest.apps.CodaContestConfig',
 ]
 
 MIDDLEWARE_CLASSES = [

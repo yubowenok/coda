@@ -2,7 +2,15 @@ from __future__ import unicode_literals
 
 from django.db import models
 from api.constants import DEFAULT_MAX_LENGTH
-from codaauth.models import CodaUser
+from django.contrib.auth.models import User, Group
+
+class Language(models.Model) :
+    name = models.CharField(
+        max_length=DEFAULT_MAX_LENGTH, 
+        primary_key = True
+    )
+    def __str__(self) :
+        return str(self.name)
 
 class CheckerType(models.Model) :
     checkerID = models.CharField(
@@ -23,9 +31,10 @@ class Problem(models.Model) :
         max_length=DEFAULT_MAX_LENGTH, 
         unique = True
     )
+    languages = models.ManyToManyField(Language)
     checkerType = models.ForeignKey(
         CheckerType,
-        on_delete = models.CASCADE,
+        on_delete = models.PROTECT,
         default = "diff"
     )
     checker = models.FileField(
@@ -33,7 +42,7 @@ class Problem(models.Model) :
         null=True
     )
     owner = models.ForeignKey(
-        CodaUser,
+        User,
         null = True,
         on_delete = models.SET_NULL
     )

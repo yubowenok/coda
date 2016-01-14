@@ -13,6 +13,10 @@ class CheckerTypeSerializer(serializers.ModelSerializer) :
     class Meta:
         model = CheckerType
 
+class LanguageSerializer(serializers.ModelSerializer) :    
+    class Meta:
+        model = Language
+
 class SampleSerializer(serializers.ModelSerializer) :
     def create(self, validated_data) :
         problem = validated_data['problem']
@@ -66,10 +70,10 @@ class CreateProblemSerializer(serializers.ModelSerializer) :
         fields = ('problemID',)
 
 class ProblemSerializer(serializers.ModelSerializer) :
-    owner = serializers.CharField(source = 'owner.user.username', read_only=True)
+    owner = serializers.CharField(source = 'owner.username', read_only=True)
     samples = SampleSerializer(many = True, read_only = True)
     batches = BatchSerializer(many = True, read_only = True)
-
+    
     def update(self, instance, validated_data):
         ct = validated_data.get('checkerType',instance.checkerType)
         c = validated_data.get('checker',instance.checker)
@@ -85,11 +89,10 @@ class ProblemSerializer(serializers.ModelSerializer) :
 
     class Meta:
         model = Problem
-        fields = ('problemID','checkerType','checker','owner','title','statement','pdfStatement',
+        fields = ('problemID','checkerType','checker','owner','title','statement','pdfStatement','languages',
                   'usePDF', 'input', 'output', 'timeLimitMS', 'memoryLimitBytes', 'samples', 'batches')
-        read_only_fields = ('problemID',)
+        read_only_fields = ('problemID','languages',)
         extra_kwargs = {
             'pdfStatement': {'write_only': True},
             'checker' : {'write_only': True},
         }
-

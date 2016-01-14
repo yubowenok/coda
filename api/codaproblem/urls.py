@@ -4,6 +4,7 @@ import codaproblem.views as views
 
 urlpatterns = [
     url(r'^getCheckerTypes/$', views.CheckerTypes.as_view()),
+    url(r'^getLanguages/$', views.Languages.as_view()),
     url(r'^createProblem/$', views.CreateProblem.as_view()),
     url(r'^getProblemIDs/$', views.GetProblemIDs.as_view()),
     url(r'^getProblemInfo/(?P<problemID>.+)$', views.GetProblem.as_view()),

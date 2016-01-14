@@ -1,5 +1,12 @@
 import sys
+from django.contrib.auth.models import User, Group
 from codaproblem.serializers import *
+
+languages = [
+    {"name" : "Java"},
+    {"name" : "C++"},
+    {"name" : "Python"}
+]
 
 checkerTypes = [
     {
@@ -55,6 +62,14 @@ batches = [
     },
     
 ]
+
+for lan in languages :
+    ser = LanguageSerializer(data = lan)
+    if ser.is_valid() :
+        ser.save()
+    else :
+        print >> sys.stderr, ser.errors        
+
 for c in checkerTypes :
     ser = CheckerTypeSerializer(data = c)
     if ser.is_valid() :
@@ -63,10 +78,10 @@ for c in checkerTypes :
         print >> sys.stderr, ser.errors
 
 for p in problems :
-    codauser = CodaUser.objects.all()[0]
+    user = User.objects.all()[0]
     ser = CreateProblemSerializer(data = p)
     if ser.is_valid() :
-        prob = ser.save(owner = codauser)
+        prob = ser.save(owner = user)
         for sa in samples :
             ser2 = SampleSerializer(data = sa)
             if ser2.is_valid() :
