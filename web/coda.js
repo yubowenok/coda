@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Coda module and routes.
+ */
+
+/** @type {!angular.Module} */
 var coda = angular.module('coda', [
   'ngRoute'
 ]);

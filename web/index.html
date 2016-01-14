@@ -19,6 +19,8 @@
   <link rel="stylesheet" href="bower_components/datatables.net-select-bs/css/select.bootstrap.min.css"/>
   <script src="bower_components/showdown/dist/showdown.min.js"></script>
   <script src="bower_components/MathJax/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script src="bower_components/MathJax/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script src="bower_components/crypto-js/crypto-js.js"></script>
 
   <script src="dist/coda.js"></script>
   <link rel="stylesheet" href="dist/coda.css">
@@ -48,6 +50,11 @@
       </div>
     </div>
   </nav>
+  <div class="col-xs-12" ng-controller="MessageCtrl">
+    <div class="alert alert-success" ng-show="success">{{success}}</div>
+    <div class="alert alert-warning" ng-show="warning">{{warning}}</div>
+    <div class="alert alert-danger" ng-show="error">{{error}}</div>
+  </div>
   <div class="col-xs-12">
     <div ng-view></div>
   </div>
