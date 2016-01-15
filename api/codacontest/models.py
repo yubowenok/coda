@@ -34,9 +34,19 @@ class Contest(models.Model) :
     )
     isPublicViewable = models.BooleanField(default = True)
     isPublicSubmittable = models.BooleanField(default = True)
+    userGroup = models.ForeignKey(
+        Group,
+        on_delete = models.PROTECT,
+        related_name = 'contestuser'
+    )
     userGroups = models.ManyToManyField(
         Group,
         related_name = 'contestusers'
+    )
+    graderGroup = models.ForeignKey(
+        Group,
+        on_delete = models.PROTECT,
+        related_name = 'contestgrader'
     )
     graderGroups = models.ManyToManyField(
         Group,

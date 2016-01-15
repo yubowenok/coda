@@ -22,5 +22,6 @@ import api.settings as settings
 urlpatterns = [
     url(r'^auth/', include('codaauth.urls')),
     url(r'^problem/', include('codaproblem.urls')),
+    url(r'^contest/', include('codacontest.urls')),
     url(r'^admin/', admin.site.urls),
 ]
