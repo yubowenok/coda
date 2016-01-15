@@ -17,11 +17,18 @@ WSGIPassAuthorization On
         </Files>
     </Directory>
 
+    <Directory "/Applications/XAMPP/htdocs">
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+
 LoadModule xsendfile_module modules/mod_xsendfile.so
 
 XSendFile On
 
 XSendFilePath "C:/xampp/htdocs/coda/datafiles"
+
+We can be more restrictive with the directory access
 ##Windows info
 Make sure to download the windows mod_wsgi (32-bit) and place the .so file in the apache modules folder
 Also make sure your python is 32-bit to match Apache
