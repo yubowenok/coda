@@ -11,15 +11,11 @@ WSGIPythonPath "C:/xampp/htdocs/coda/api"
 
 WSGIPassAuthorization On
 
-<Directory "C:/xampp/htdocs/coda/api/api">
-
-<Files wsgi.py>
-
-Require all granted
-
-</Files>
-
-</Directory>
+    <Directory "C:/xampp/htdocs/coda/api/api">
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+    </Directory>
 
 LoadModule xsendfile_module modules/mod_xsendfile.so
 
