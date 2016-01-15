@@ -2,37 +2,105 @@
  * @fileoverview Coda system message controller and factory.
  */
 
-coda.controller('MessageCtrl', ['$scope', function($scope) {
+/**
+ * @param {!angular.Scope} $scope
+ * @param {!angular.$timeout} $timeout
+ * @constructor
+ */
+var MessageCtrl = function($scope, $timeout) {
   /** @type {string} */
-  $scope.success = '';
-
+  this.success = '';
   /** @type {string} */
-  $scope.warning = '';
-
+  this.warning = '';
   /** @type {string} */
-  $scope.error = '';
-}]);
+  this.error = '';
 
-coda.factory('message', function() {
-  var $scope = angular.element('#message').scope();
+  /** @const {!jQuery} */
+  this.container = $('#message');
+
+  /** @type {!angular.$timeout} */
+  this.$timeout = $timeout;
+
+  $scope.$on('message.success', this.success_.bind(this));
+  $scope.$on('message.warning', this.warning_.bind(this));
+  $scope.$on('message.error', this.error_.bind(this));
+};
+
+/** @private @const {number} */
+MessageCtrl.prototype.DEFAULT_TIMEOUT_ = 2000;
+
+/**
+ * @param {!angular.Scope.Event} event
+ * @param {{
+ *   text: string,
+ *   timeout: (number|undefined)
+ * }} params text
+ * @private
+ */
+MessageCtrl.prototype.success_ = function(event, params) {
+  var div = this.container.children('.alert-success').show();
+  this.success = params.text;
+  this.$timeout(function() {
+    div.slideUp();
+  }, params.timeout != undefined ? params.timeout : this.DEFAULT_TIMEOUT_);
+};
+
+/**
+ * @param {!angular.Scope.Event} event
+ * @param {{
+ *   text: string,
+ *   timeout: (number|undefined)
+ * }} params text
+ * @private
+ */
+MessageCtrl.prototype.warning_ = function(event, params) {
+  var div = this.container.children('.alert-warning').show();
+  this.warning = params.text;
+  this.$timeout(function() {
+    div.slideUp();
+  }, params.timeout != undefined ? params.timeout : this.DEFAULT_TIMEOUT_);
+};
+
+/**
+ * @param {!angular.Scope.Event} event
+ * @param {{
+ *   text: string,
+ *   timeout: (number|undefined)
+ * }} params text
+ * @private
+ */
+MessageCtrl.prototype.error_ = function(event, params) {
+  var div = this.container.children('.alert-error').show();
+  this.error = params.text;
+  this.$timeout(function() {
+    div.slideUp();
+  }, params.timeout != undefined ? params.timeout : this.DEFAULT_TIMEOUT_);
+};
+
+/** @type {!Array<string>} */
+MessageCtrl.$inject = ['$scope', '$timeout'];
+
+coda.controller('MessageCtrl', MessageCtrl);
+
+coda.factory('message', ['$rootScope', function($rootScope) {
   return {
-    /**
-     * @param {string} text
-     */
-    success: function(text) {
-      $scope.success = text;
+    success: function(text, opt_timeout) {
+      $rootScope.$broadcast('message.success', {
+        text: text,
+        timeout: opt_timeout
+      });
     },
-    /**
-     * @param {string} text
-     */
-    warning: function(text) {
-      $scope.warning = text;
+    warning: function(text, opt_timeout) {
+      $rootScope.$broadcast('message.warning', {
+        text: text,
+        timeout: opt_timeout
+      });
     },
-    /**
-     * @param {string} text
-     */
-    error: function(text) {
-      $scope.error = text;
+    error: function(text, opt_timeout) {
+      $rootScope.$broadcast('message.error', {
+        text: text,
+        timeout: opt_timeout
+      });
     }
   };
-});
+}]);

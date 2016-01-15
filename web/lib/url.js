@@ -6,10 +6,19 @@
 coda.url = {};
 
 /** @const {string} */
-coda.url.server = 'http://127.0.0.1:8000/api/';
+coda.url.server = 'https://localhost/coda/api/';
 
 /** @const {string} */
-coda.url.registerUser = coda.url.server + 'registerUser';
+coda.url.auth = coda.url.server + 'auth/';
 
 /** @const {string} */
-coda.url.existUsername = coda.url.server + 'existUsername';
+coda.url.login = coda.url.auth + 'login/';
+
+/** @const {string} */
+coda.url.logout = coda.url.auth + 'logout/';
+
+/** @const {string} */
+coda.url.registerUser = coda.url.auth + 'registerUser/';
+
+/** @const {string} */
+coda.url.existUsername = coda.url.auth + 'existUsername/';

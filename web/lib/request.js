@@ -2,58 +2,51 @@
  * @fileoverview Coda request factory that provides network request wrappers.
  */
 
-coda.factory('request', ['message', function(message) {
-  return {
-    /**
-     * @param {string} url
-     * @param {!Object} params
-     * @param {{
-     *   callback: (Function|undefined),
-     *   successMessage: (string|undefined),
-     *   failureMessage: (string|undefined),
-     * }} options
-     */
-    get: function(url, params, options) {
-      $.get(url, params)
-        .done(function() {
+/**
+ * @typedef {{
+ *   status: number,
+ *   responseJSON: *
+ * }}
+ */
+coda.RequestResult;
+
+coda.factory('request', ['$http', '$rootScope', 'message',
+  function($http, $rootScope, message) {
+    return {
+      /**
+       * @param {string} url
+       * @param {!Object} params
+       * @param {{
+       *   success: (Function|undefined),
+       *   successMessage: (string|undefined),
+       *   failureMessage: (string|undefined),
+       * }} options
+       */
+      post: function(url, params, options) {
+        $http({
+          url: url,
+          method: 'POST',
+          data: params
+        }).success(function(data, status, headers, config) {
+          console.log(data, status, headers, config);
           if (options.successMessage) {
             message.success(options.successMessage);
           }
-          if (options.callback) {
-            options.callback();
+          if (options.success) {
+            options.success(data);
           }
-        })
-        .fail(function() {
-          var messages = [];
+        }).error(function(data, status, headers, config) {
+          console.log(data, status, headers, config);
+          var messages = [
+            '[' + status + ']',
+            data.detail
+          ];
           if (options.failureMessage) {
             messages.push(options.failureMessage);
           }
-          message.error(messages.join(', '));
+          message.error(messages.join(' '));
         });
-    },
-    /**
-     * @param {string} url
-     * @param {!Object} params
-     * @param {{
-     *   callback: (Function|undefined),
-     *   successMessage: (string|undefined),
-     *   failureMessage: (string|undefined),
-     * }} options
-     */
-    post: function(url, params, options) {
-      $.post(url, params)
-        .done(function() {
-          if (options.callback) {
-            options.callback();
-          }
-        })
-        .fail(function() {
-          var messages = [];
-          if (options.failureMessage) {
-            messages.push(options.failureMessage);
-          }
-          message.error(messages.join(', '));
-        });
-    }
-  };
-}]);
+      }
+    };
+  }
+]);

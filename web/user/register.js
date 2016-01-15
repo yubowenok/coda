@@ -1,6 +1,6 @@
 coda.controller('RegisterCtrl', [
-  '$scope', '$location', 'page', 'request',
-  function($scope, $location, page, request) {
+  '$scope', '$location', 'page', 'request', 'user',
+  function($scope, $location, page, request, user) {
     page.setNav('register');
 
     /** @type {string} */
@@ -28,7 +28,6 @@ coda.controller('RegisterCtrl', [
       }
       // TODO(bowen): check with server that the username has not been used
       // before.
-      /*
       request.get(coda.url.existUsername, {
         username: $scope.username
       }, {
@@ -38,7 +37,6 @@ coda.controller('RegisterCtrl', [
           });
         }
       });
-      */
     });
 
     /**
@@ -81,8 +79,9 @@ coda.controller('RegisterCtrl', [
         email: $scope.email,
         affiliation: $scope.affiliation
       }, {
-        callback: function() {
-          // TODO(bowen): login user
+        success: function() {
+          user.login($scope.username);
+          $location.path('/');
         },
         successMessage: 'registration successful'
       });

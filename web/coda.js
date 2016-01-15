@@ -4,11 +4,13 @@
 
 /** @type {!angular.Module} */
 var coda = angular.module('coda', [
-  'ngRoute'
+  'ngRoute', 'ngCookies'
 ]);
 
-coda.config(['$routeProvider', '$locationProvider',
-  function($routeProvider, $locationProvider) {
+coda.config(['$httpProvider', '$routeProvider', '$locationProvider',
+  function($httpProvider, $routeProvider, $locationProvider) {
+    //$httpProvider.defaults.withCredentials = true;
+
     $locationProvider.html5Mode(true);
     $routeProvider
       // Home page
@@ -96,4 +98,21 @@ coda.config(['$routeProvider', '$locationProvider',
       .otherwise({
         redirectTo: '/'
       });
-  }]);
+  }
+]);
+
+/**
+ * @typedef {{
+ *   csrftoken: string
+ * }}
+ */
+coda.Cookies;
+
+coda.run(['$http', '$cookies',
+  function($http, $cookies) {
+    var csrftoken = $cookies.get('csrftoken');
+    if (csrftoken != undefined) {
+      $http.defaults.headers.post['X-CSRFToken'] = csrftoken;
+    }
+  }
+]);
