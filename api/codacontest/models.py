@@ -32,6 +32,7 @@ class Contest(models.Model) :
         null = True,
         on_delete = models.SET_NULL
     )
+    isPublicViewable = models.BooleanField(default = True)
     userGroups = models.ManyToManyField(
         Group,
         related_name = 'contestusers'
