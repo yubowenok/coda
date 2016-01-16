@@ -37,6 +37,14 @@ class RegisterUser(generics.GenericAPIView) :
             return login(username,password,request)
         return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class GetUserInfo(APIView) :
+    def get(self, request, format=None) :        
+        if request.user.is_authenticated() :
+            ser = UserSerializer(request.user)
+            return Response(ser.data, status=status.HTTP_200_OK)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
 class ExistsUsername(APIView) :
     def get(self, request, username, format=None) :        
         user = get_object_or_404(User,username=username)

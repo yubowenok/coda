@@ -11,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer) :
         max_length = DEFAULT_MAX_LENGTH,
         required = False,
         allow_blank = True,
+        source = 'codauser.affiliation',
     )
 
     class Meta:
