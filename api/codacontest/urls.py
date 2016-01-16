@@ -20,7 +20,9 @@ urlpatterns = [
     url(r'^addContestProblem/(?P<name>.+)/(?P<problemID>.+)$', views.AddContestProblem.as_view()),
     url(r'^deleteContestProblem/(?P<name>.+)/(?P<contestProblemID>.+)$', views.DeleteContestProblem.as_view()),
     url(r'^reorderContestProblems/(?P<name>.+)$', views.ReorderContestProblems.as_view()),
-    url(r'^setContestProblem/(?P<name>.+)/(?P<contestProblemID>.+)$', views.SetContestProblem.as_view()),
+    url(r'^setContestProblem/(?P<name>.+)/(?P<contestProblemID>.+)/(?P<problemID>.+)$', views.SetContestProblem.as_view()),
+
+    url(r'^setContestBatch/(?P<name>.+)/(?P<contestProblemID>.+)/(?P<batchID>.+)$', views.SetContestBatch.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

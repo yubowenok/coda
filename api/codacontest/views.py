@@ -185,11 +185,12 @@ class AddContestProblem(APIView) :
             if not is_owner(request.user, contest) :
                 return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)          
             problem = get_object_or_404(Problem, problemID = problemID)
-            id = contest.problems.count()+1
-            cproblem = ContestProblem.objects.create(contest=contest,problem=problem,
-                                                     contestProblemID = id)
-            cproblem.save()
-            return Response("Contest Problem added", status=status.HTTP_200_OK)
+            ser = CreateContestProblemSerializer()
+            if ser.is_valid() :
+                ser.save(contest = contest, problem = problem)
+                return Response("Contest Problem added", status=status.HTTP_200_OK)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
@@ -242,17 +243,39 @@ class ReorderContestProblems(generics.GenericAPIView) :
 class SetContestProblem(generics.GenericAPIView) :
     serializer_class = ContestProblemSerializer
     queryset = {}
-    def post(self, request, name, contestProblemID, format = None) :
+    def post(self, request, name, contestProblemID, problemID, format = None) :
         if request.user.is_authenticated() :
             contest = get_object_or_404(Contest, name = name)
             if not is_owner(request.user, contest) :
                 return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                      
-            problem = get_object_or_404(ContestProblem,contest=contest, 
+            cproblem = get_object_or_404(ContestProblem,contest=contest, 
                                         contestProblemID = contestProblemID)
-            ser = ContestProblemSerializer(problem,data = request.data, partial = true)
+            problem = get_object_or_404(Problem,problemID = problemID)
+            ser = ContestProblemSerializer(cproblem,data = request.data, partial = true)
+            if ser.is_valid() :
+                ser.save(problem = problem)
+                return Response("Contest Problem Updated",status=status.HTTP_200_OK)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class SetContestBatch(generics.GenericAPIView) :
+    serializer_class = ContestBatchSerializer
+    queryset = {}
+    def post(self, request, name, contestProblemID, batchID, format = None) :
+        if request.user.is_authenticated() :
+            contest = get_object_or_404(Contest, name = name)
+            if not is_owner(request.user, contest) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                      
+            cproblem = get_object_or_404(ContestProblem,contest=contest, 
+                                        contestProblemID = contestProblemID)
+            batch = get_object_or_404(Batch,problem = cproblem.problem, batchID = batchID)
+            cbatch = get_object_or_404(ContestBatch,contestProblem = cproblem, batch = batch)
+            ser = ContestBatchSerializer(cbatch,data = request.data, partial = true)
             if ser.is_valid() :
                 ser.save()
-                return Response("Contest Problem Updated",status=status.HTTP_200_OK)
+                return Response("Contest Batch Updated",status=status.HTTP_200_OK)
             else :
                 return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
         else :

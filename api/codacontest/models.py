@@ -75,7 +75,8 @@ class ContestBatch(models.Model) :
     )
     batch = models.ForeignKey(
         Batch,
-        on_delete = models.PROTECT
+        on_delete = models.PROTECT,
+        related_name = 'batches'
     )
     points = models.IntegerField(default = 0)
     canViewInput = models.BooleanField(default = False)

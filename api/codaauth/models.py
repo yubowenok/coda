@@ -20,12 +20,14 @@ class CodaUser(models.Model) :
         return str(self.user.username)
 
 
-def createuser(**kwargs) :
+def createuserandsave(**kwargs) :
     affiliation = kwargs.pop(affiliation,None)
     u = User.objects.create(**kwargs)
-    return CodaUser.objects.create(user = u, affiliation = affiliation)
+    u.save()
+    cu = CodaUser.objects.create(user = u, affiliation = affiliation)
+    cu.save()
+    return cu
     
-
 class CodaGroup(models.Model) :
     group = models.OneToOneField(
         Group,
@@ -38,7 +40,10 @@ class CodaGroup(models.Model) :
         null = True
     )
 
-def creategroup(**kwargs) :
+def creategroupandsave(**kwargs) :
     owner = kwargs.pop('owner',None)
     g = Group.objects.create(**kwargs)
-    return CodaGroup.objects.create(group = g, owner = owner)
+    g.save()
+    cg = CodaGroup.objects.create(group = g, owner = owner)
+    cg.save()
+    return cg

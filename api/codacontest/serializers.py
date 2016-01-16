@@ -9,16 +9,38 @@ from django.utils import timezone
 from django.contrib.auth.models import User, Group
 
 from codaauth.models import CodaGroup, creategroup
+from codaproblem.serializers import BatchSerializer
 from codacontest.models import *
 
 class ScoringSystemSerializer(serializers.ModelSerializer) :    
     class Meta:
         model = ScoringSystem
 
-class ContestProblemSerializer(serializers.ModelSerializer):
+class ContestBatchSerializer(serializers.ModelSerializer) :
+    batch = BatchSerializer(read_only = True)
+    class Meta :
+        model = ContestBatch
+        fields = ('batch', 'points', 'canViewInput', 'canViewOutput')
+
+class ContestProblemSerializer(serializers.ModelSerializer) :
+    batches = ContestBatchSerializer(many = True, read_only = True)
     class Meta :
         model = ContestProblem
-        read_only_fields = ('contest','contestProblemID')
+        fields = ('problem','contestProblemID','batches')
+        read_only_fields = ('problem','contestProblemID')
+
+class CreateContestProblemSerializer(serializers.Serializer):
+    def save(self, **kw) :
+        problem = kw['problem']
+        contest = kw['contest']
+        id = contest.problems.count()+1
+        cproblem = ContestProblem.objects.create(contest=contest,problem=problem,
+                                                     contestProblemID = id)
+        cproblem.save()
+        for b in problem.batches.all() :
+            cbatch = ContestBatch.objects.create(contestProblem = cproblem, batch = b)
+            cbatch.save()
+        return cproblem
 
 class ContestProblemReorderSerializer(serializers.Serializer) :
     newContestProblemIDs = serializers.ListField(child = serializers.IntegerField())
@@ -70,14 +92,12 @@ class CreateContestSerializer(serializers.ModelSerializer) :
         vdata = self.validated_data
         checkContestTimes(**vdata)
         uid = uuid.uuid4()
-        ugroup = creategroup(name = 'ContestUserGroup-%s'%uid)
-        ggroup = creategroup(name = 'ContestGraderGroup-%s'%uid)
+        ugroup = creategroupandsave(name = 'ContestUserGroup-%s'%uid)
+        ggroup = creategroupandsave(name = 'ContestGraderGroup-%s'%uid)
         d = vdata.copy()
         d.update(kwargs)
         contest = Contest.objects.create(userGroup = ugroup.group,
                                          graderGroup = ggroup.group, 
                                          **d)
-        ugroup.save()
-        ggroup.save()
         contest.save()
         return contest
