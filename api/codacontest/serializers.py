@@ -8,7 +8,7 @@ from rest_framework.exceptions import *
 from django.utils import timezone
 from django.contrib.auth.models import User, Group
 
-from codaauth.models import CodaGroup, creategroup
+from codaauth.models import CodaGroup, creategroupandsave
 from codaproblem.serializers import BatchSerializer
 from codacontest.models import *
 
