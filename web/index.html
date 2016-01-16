@@ -10,6 +10,7 @@
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/angular-route/angular-route.js"></script>
+  <script src="bower_components/angular-cookies/angular-cookies.js"></script>
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css">
   <script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
@@ -19,6 +20,8 @@
   <link rel="stylesheet" href="bower_components/datatables.net-select-bs/css/select.bootstrap.min.css"/>
   <script src="bower_components/showdown/dist/showdown.min.js"></script>
   <script src="bower_components/MathJax/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script src="bower_components/MathJax/MathJax.js?config=TeX-AMS_CHTML"></script>
+  <script src="bower_components/crypto-js/crypto-js.js"></script>
 
   <script src="dist/coda.js"></script>
   <link rel="stylesheet" href="dist/coda.css">
@@ -36,18 +39,25 @@
       <div id="nav-pages" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
           <li id="home" class="active"><a href=".">Home</a></li>
-          <li id="sessions"><a href="sessions">Sessions</a></li>
+          <li id="contests"><a href="contests">Contests</a></li>
           <li id="archive"><a href="archive">Archive</a></li>
           <li id="moderator"><a href="moderator">Moderator</a></li>
           <li id="admin"><a href="admin">Admin</a></li>
         </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li id="register"><a href="register">Register</a></li>
-          <li id="login"><a href="login">Login</a></li>
+        <ul id="user" class="nav navbar-nav navbar-right" ng-controller="UserCtrl">
+          <li ng-show="!loggedIn"><a href="register">Register</a></li>
+          <li ng-show="!loggedIn"><a href="login">Login</a></li>
+          <li ng-show="loggedIn"><a href="profile">{{username}}</a></li>
+          <li ng-show="loggedIn"><a href="." ng-click="logout()">Logout</a></li>
         </ul>
       </div>
     </div>
   </nav>
+  <div id="message" class="col-xs-12" ng-controller="MessageCtrl as message">
+    <div class="alert alert-success" ng-show="message.success">{{message.success}}</div>
+    <div class="alert alert-warning" ng-show="message.warning">{{message.warning}}</div>
+    <div class="alert alert-danger" ng-show="message.error">{{message.error}}</div>
+  </div>
   <div class="col-xs-12">
     <div ng-view></div>
   </div>

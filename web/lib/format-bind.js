@@ -10,7 +10,13 @@ coda.directive('format', function() {
     restrict: 'E',
     controller: ['$scope', '$element', '$attrs',
       function($scope, $element, $attrs) {
-        $scope.$watch($attrs.textBind, function(text) {
+        /**
+         * @type {{
+         *   textBind: *
+         * }}
+         */
+        var attrs = $attrs;
+        $scope.$watch(attrs.textBind, function(text) {
           var converter = new showdown.Converter();
           var html = converter.makeHtml(text);
           $element.html(html);

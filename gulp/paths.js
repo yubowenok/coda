@@ -7,6 +7,7 @@ module.exports = {
     'web/**/*'
   ],
   webJs: [
+    '!web/externs/*.js',
     'web/**/*.js'
   ],
   webScss: [
@@ -14,7 +15,7 @@ module.exports = {
     'web/**/*.scss'
   ],
   dev: [
-    'dev/***.js'
+    'dev/**/*.js'
   ],
   index: [
     'web/index.html'
@@ -25,5 +26,8 @@ module.exports = {
   ],
   gulp: [
     'gulp/**/*.js'
+  ],
+  externs: [
+    'web/externs/*.js'
   ]
 };

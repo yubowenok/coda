@@ -10,10 +10,10 @@
 </div>
 <a class="btn btn-default" href="moderator/problem">Add Problem</a>
 <hr>
-<h3>Sessions Created</h3>
+<h3>Contests Created</h3>
 <div class="list-group">
-  <a class="list-group-item" ng-repeat="session in sessions" ng-click="editSession(session.id)">
-    <i class="glyphicon glyphicon-chevron-right"></i>{{session.text}}
+  <a class="list-group-item" ng-repeat="contest in contests" ng-click="editContest(contest.id)">
+    <i class="glyphicon glyphicon-chevron-right"></i>{{contest.text}}
   </a>
 </div>
-<a class="btn btn-default" href="moderator/session">Add Session</a>
+<a class="btn btn-default" href="moderator/contest">Add Contest</a>

@@ -1,12 +1,12 @@
-coda.controller('SessionCtrl', [
+coda.controller('ContestCtrl', [
   '$scope', '$location', '$routeParams', 'page',
   function($scope, $location, $routeParams, page) {
-    page.setNav('sessions');
+    page.setNav('contests');
 
-    coda.sessionInfo($scope);
+    coda.contestInfo($scope);
 
-    $scope.sessionId = $routeParams.sessionId;
-    $scope.sessionTitle = 'Session Title';
+    $scope.contestId = $routeParams.contestId;
+    $scope.contestTitle = 'Contest Title';
 
     /**
      * Gets an uppercase character by letter index.
@@ -27,11 +27,11 @@ coda.controller('SessionCtrl', [
     };
 
     /**
-     * Opens a problem with given index (letter) under the session.
-     * @param {string} id
+     * Opens a problem with given index (letter) under the contest.
+     * @param {string} index
      */
     $scope.gotoProblem = function(index) {
-      $location.path('sessions/' + $routeParams.sessionId + '/' + index);
+      $location.path('contests/' + $routeParams.contestId + '/' + index);
     };
   }
 ]);

@@ -10,7 +10,7 @@ import os.path, sys
 
 class ErrorResponse(Response) :
     def __init__(self, error, *args, **kw) :
-        newerror = {'detail' : error}
+        newerror = {'detail' : str(error)}
         Response.__init__(self,newerror,*args,**kw)
 
 class FileResponse(HttpResponse) :

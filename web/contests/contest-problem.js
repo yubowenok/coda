@@ -1,7 +1,7 @@
-coda.controller('SessionProblemCtrl', [
+coda.controller('ContestProblemCtrl', [
   '$scope', '$location', '$routeParams', 'page',
   function($scope, $location, $routeParams, page) {
-    page.setNav('sessions');
+    page.setNav('contests');
 
     coda.problemInfo($scope);
 

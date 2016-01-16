@@ -23,8 +23,7 @@ def login(username, password, request) :
         else :
             return ErrorResponse("Account Disabled", status=status.HTTP_403_FORBIDDEN)
     else :
-        return ErrorResponse("Bad Credentials", status=status.HTTP_403_FORBIDDEN)
-    
+        return ErrorResponse("Bad Credentials", status=status.HTTP_403_FORBIDDEN)    
 
 class RegisterUser(generics.GenericAPIView) :
     serializer_class = UserSerializer
@@ -37,6 +36,11 @@ class RegisterUser(generics.GenericAPIView) :
             password = request.data['password']
             return login(username,password,request)
         return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ExistsUsername(APIView) :
+    def get(self, request, username, format=None) :        
+        user = get_object_or_404(User,username=username)
+        return Response("User exists", status=status.HTTP_200_OK)
 
 class Login(generics.GenericAPIView) :
     serializer_class = LoginSerializer

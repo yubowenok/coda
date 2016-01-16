@@ -8,15 +8,15 @@
     <tbody>
     <tr>
       <td><h4>Username</h4></td>
-      <td><input id="username" class="form-control" value=""></td>
+      <td><input id="username" class="form-control" value="" ng-model="username"></td>
     </tr>
     <tr>
       <td><h4>Password</h4></td>
-      <td><input id="password" class="form-control" value=""></td>
+      <td><input id="password" type="password" class="form-control" value="" ng-model="password"></td>
     </tr>
     </tbody>
   </table>
 </form>
 </div>
 <hr>
-<a class="btn btn-primary" ng-click="login()">Login</a>
+<a class="btn btn-primary" ng-click="login()" ng-disabled="!username || !password">Login</a>

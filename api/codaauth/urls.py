@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^registerUser/$', views.RegisterUser.as_view()),
     url(r'^login/$', views.Login.as_view()),
     url(r'^logout/$', views.Logout.as_view()),
+    url(r'^existsUsername/(?P<username>.+)$', views.ExistsUsername.as_view()),
     url(r'^changePassword/$', views.ChangePassword.as_view()),
     url(r'^getAllUsers/$', views.GetAllUsers.as_view()),
     url(r'^createUserGroup/$', views.CreateUserGroup.as_view()),

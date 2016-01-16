@@ -1,5 +1,5 @@
-<h3>{{ (isAddSession ? 'Add' : 'Edit') + ' Session' }}</h3>
-<a class="btn btn-default" href="moderator/session/{{sessionId}}/submissions" ng-hide="isAddSession">Submissions</a>
+<h3>{{ (isAddContest ? 'Add' : 'Edit') + ' Contest' }}</h3>
+<a class="btn btn-default" href="moderator/contest/{{contestId}}/submissions" ng-hide="isAddContest">Submissions</a>
 <hr>
 <form class="moderator-form">
   <table>
@@ -9,11 +9,11 @@
     <thead></thead>
     <tbody>
     <tr>
-      <td><h4>Session ID</h4></td>
-      <td><input id="id" class="form-control" value="{{sessionId}}" ng-disabled="!isAddSession"></td>
+      <td><h4>Contest ID</h4></td>
+      <td><input id="id" class="form-control" value="{{contestId}}" ng-disabled="!isAddContest"></td>
     </tr>
     </tbody>
-    <tbody ng-hide="isAddSession">
+    <tbody ng-hide="isAddContest">
     <tr>
       <td><h4>Title</h4></td>
       <td><input id="title" class="form-control"></td>

@@ -1,0 +1,20 @@
+<h3>Active</h3>
+<div class="list-group">
+  <a class="list-group-item" ng-repeat="contest in activeContests" ng-click="gotoContest(contest.id)">
+    <i class="glyphicon glyphicon-chevron-right"></i>{{contest.text}}
+  </a>
+</div>
+<hr>
+<h3>Scheduled</h3>
+<div class="list-group">
+  <a class="list-group-item" ng-repeat="contest in scheduledContests" ng-click="gotoContest(contest.id)">
+    <i class="glyphicon glyphicon-chevron-right"></i>{{contest.text}}
+  </a>
+</div>
+<hr>
+<h3>Finished</h3>
+<div class="list-group">
+  <a class="list-group-item" ng-repeat="contest in pastContests" ng-click="gotoContest(contest.id)">
+    <i class="glyphicon glyphicon-chevron-right"></i>{{contest.text}}
+  </a>
+</div>
