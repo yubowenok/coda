@@ -18,6 +18,10 @@ class ScoringSystemSerializer(serializers.ModelSerializer) :
 class ContestProblemSerializer(serializers.ModelSerializer):
     class Meta :
         model = ContestProblem
+        read_only_fields = ('contest','contestProblemID')
+
+class ContestProblemReorderSerializer(serializers.Serializer) :
+    newContestProblemIDs = serializers.ListField(child = serializers.IntegerField())
 
 def checkContestTimes(startTime, endTime, **kw) :
     if startTime > endTime :

@@ -63,10 +63,10 @@ class ContestProblem(models.Model) :
         on_delete = models.CASCADE,
         related_name = 'problems'
     )
-    problemID = models.IntegerField()
+    contestProblemID = models.IntegerField()
     
     class Meta:
-        ordering = ('problemID',)
+        ordering = ('contestProblemID',)
 
 class ContestBatch(models.Model) :
     contestProblem = models.ForeignKey(

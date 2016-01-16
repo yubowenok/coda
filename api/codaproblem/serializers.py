@@ -20,7 +20,7 @@ class LanguageSerializer(serializers.ModelSerializer) :
 class SampleSerializer(serializers.ModelSerializer) :
     def create(self, validated_data) :
         problem = validated_data['problem']
-        sampleID = problem.samples.all().count()+1
+        sampleID = problem.samples.count()+1
         return Sample.objects.create(sampleID = sampleID,**validated_data)
 
     class Meta:
@@ -35,7 +35,7 @@ class BatchSerializer(serializers.ModelSerializer) :
 
     def create(self, validated_data) :
         problem = validated_data['problem']
-        batchID = problem.batches.all().count()+1
+        batchID = problem.batches.count()+1
         return Batch.objects.create(batchID = batchID,**validated_data)
 
     class Meta:
@@ -48,8 +48,7 @@ class BatchReorderSerializer(serializers.Serializer) :
 class TestFileSerializer(serializers.ModelSerializer) :
     def create(self, validated_data) :
         batch = validated_data['batch']
-        testFiles = batch.testFiles.all()
-        testFileID = len(testFiles)+1
+        testFileID = batch.testFiles.count()+1
         return TestFile.objects.create(testFileID = testFileID, **validated_data)
 
     class Meta:
