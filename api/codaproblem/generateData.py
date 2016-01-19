@@ -28,7 +28,10 @@ checkerTypes = [
 problems = [
     {
         "problemID" : "Test Problem"
-    }
+    },
+    {
+        "problemID" : "Test Problem 2"
+    },
 ]
 samples = [
     {

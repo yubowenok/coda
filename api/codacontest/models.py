@@ -71,14 +71,16 @@ class ContestProblem(models.Model) :
 class ContestBatch(models.Model) :
     contestProblem = models.ForeignKey(
         ContestProblem,
-        on_delete = models.CASCADE
+        on_delete = models.CASCADE,
+        related_name = 'batches'
     )
     batch = models.ForeignKey(
         Batch,
-        on_delete = models.PROTECT,
-        related_name = 'batches'
+        on_delete = models.PROTECT
     )
     points = models.IntegerField(default = 0)
     canViewInput = models.BooleanField(default = False)
     canViewOutput = models.BooleanField(default = False)
     
+    class Meta:
+        ordering = ('batch__batchID',)

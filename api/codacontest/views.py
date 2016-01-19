@@ -5,6 +5,8 @@ from rest_framework import generics
 
 from django.shortcuts import get_object_or_404
 
+import sys
+
 from codaproblem.models import Problem, Batch
 from codacontest.models import *
 from codacontest.serializers import *
@@ -77,8 +79,7 @@ class AddUserContest(APIView) :
             if not is_owner(request.user, contest) :
                 return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
             user = get_object_or_404(User, username = username)
-            contest.userGroup.add(user)
-            contest.save()
+            user.groups.add(contest.userGroup)
             return Response("User added", status=status.HTTP_200_OK)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
@@ -90,8 +91,7 @@ class AddGraderContest(APIView) :
             if not is_owner(request.user, contest) :
                 return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
             user = get_object_or_404(User, username = username)
-            contest.graderGroup.add(user)
-            contest.save()
+            user.groups.add(contest.graderGroup)
             return Response("Grader added", status=status.HTTP_200_OK)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
@@ -104,7 +104,6 @@ class AddUserGroupContest(APIView) :
                 return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
             group = get_object_or_404(Group, name = groupname)
             contest.userGroups.add(group)
-            contest.save()
             return Response("User group added", status=status.HTTP_200_OK)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
@@ -117,40 +116,41 @@ class AddGraderGroupContest(APIView) :
                 return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
             group = get_object_or_404(Group, name = groupname)
             contest.graderGroups.add(group)
-            contest.save()
             return Response("Grader group added", status=status.HTTP_200_OK)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
-class DeleteUserContest(APIView) :
+class RemoveUserContest(APIView) :
     def post(self, request, name, username, format = None) :
         if request.user.is_authenticated() :
             contest = get_object_or_404(Contest, name = name)
             if not is_owner(request.user, contest) :
                 return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)          
             user = get_object_or_404(User, username = username)
-            if not contest.userGroup.filter(id = user.id).exists() :
+            gp = contest.userGroup
+            if not user.groups.filter(id = gp.id).exists() :
                 return ErrorResponse("User not in group", status=status.HTTP_400_BAD_REQUEST)
-            contest.userGroup.remove(user)
+            user.groups.remove(gp)
             return Response("User removed", status=status.HTTP_200_OK)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
-class DeleteGraderContest(APIView) :
+class RemoveGraderContest(APIView) :
     def post(self, request, name, username, format = None) :
         if request.user.is_authenticated() :
             contest = get_object_or_404(Contest, name = name)
             if not is_owner(request.user, contest) :
                 return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)          
             user = get_object_or_404(User, username = username)
-            if not contest.graderGroup.filter(id = user.id).exists() :
+            gp = contest.graderGroup
+            if not user.groups.filter(id = gp.id).exists() :
                 return ErrorResponse("User not in group", status=status.HTTP_400_BAD_REQUEST)
-            contest.graderGroup.remove(user)
+            user.groups.remove(gp)
             return Response("Grader removed", status=status.HTTP_200_OK)
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
-class DeleteUserGroupContest(APIView) :
+class RemoveUserGroupContest(APIView) :
     def post(self, request, name, groupname, format = None) :
         if request.user.is_authenticated() :
             contest = get_object_or_404(Contest, name = name)
@@ -164,7 +164,7 @@ class DeleteUserGroupContest(APIView) :
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
-class DeleteGraderGroupContest(APIView) :
+class RemoveGraderGroupContest(APIView) :
     def post(self, request, name, groupname, format = None) :
         if request.user.is_authenticated() :
             contest = get_object_or_404(Contest, name = name)
@@ -185,7 +185,7 @@ class AddContestProblem(APIView) :
             if not is_owner(request.user, contest) :
                 return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)          
             problem = get_object_or_404(Problem, problemID = problemID)
-            ser = CreateContestProblemSerializer()
+            ser = CreateContestProblemSerializer(data={})
             if ser.is_valid() :
                 ser.save(contest = contest, problem = problem)
                 return Response("Contest Problem added", status=status.HTTP_200_OK)
@@ -243,17 +243,16 @@ class ReorderContestProblems(generics.GenericAPIView) :
 class SetContestProblem(generics.GenericAPIView) :
     serializer_class = ContestProblemSerializer
     queryset = {}
-    def post(self, request, name, contestProblemID, problemID, format = None) :
+    def post(self, request, name, contestProblemID, format = None) :
         if request.user.is_authenticated() :
             contest = get_object_or_404(Contest, name = name)
             if not is_owner(request.user, contest) :
                 return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                      
             cproblem = get_object_or_404(ContestProblem,contest=contest, 
                                         contestProblemID = contestProblemID)
-            problem = get_object_or_404(Problem,problemID = problemID)
-            ser = ContestProblemSerializer(cproblem,data = request.data, partial = true)
+            ser = ContestProblemSerializer(cproblem,data = request.data, partial = True)
             if ser.is_valid() :
-                ser.save(problem = problem)
+                ser.save()
                 return Response("Contest Problem Updated",status=status.HTTP_200_OK)
             else :
                 return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -272,7 +271,7 @@ class SetContestBatch(generics.GenericAPIView) :
                                         contestProblemID = contestProblemID)
             batch = get_object_or_404(Batch,problem = cproblem.problem, batchID = batchID)
             cbatch = get_object_or_404(ContestBatch,contestProblem = cproblem, batch = batch)
-            ser = ContestBatchSerializer(cbatch,data = request.data, partial = true)
+            ser = ContestBatchSerializer(cbatch,data = request.data, partial = True)
             if ser.is_valid() :
                 ser.save()
                 return Response("Contest Batch Updated",status=status.HTTP_200_OK)

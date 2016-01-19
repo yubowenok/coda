@@ -1,14 +1,17 @@
 from __future__ import unicode_literals
 
-import uuid
+import uuid, sys
 
 from rest_framework import serializers
 from rest_framework.exceptions import *
 
 from django.utils import timezone
 from django.contrib.auth.models import User, Group
+from django.shortcuts import get_object_or_404
 
+from api.constants import DEFAULT_MAX_LENGTH
 from codaauth.models import CodaGroup, creategroupandsave
+from codaproblem.models import Problem, Batch
 from codaproblem.serializers import BatchSerializer
 from codacontest.models import *
 
@@ -23,11 +26,19 @@ class ContestBatchSerializer(serializers.ModelSerializer) :
         fields = ('batch', 'points', 'canViewInput', 'canViewOutput')
 
 class ContestProblemSerializer(serializers.ModelSerializer) :
-    batches = ContestBatchSerializer(many = True, read_only = True)
+    batches = ContestBatchSerializer(many = True, read_only = True,)
+    problem = serializers.CharField(max_length = DEFAULT_MAX_LENGTH)
     class Meta :
         model = ContestProblem
-        fields = ('problem','contestProblemID','batches')
-        read_only_fields = ('problem','contestProblemID')
+        fields = ('problem','contestProblemID','batches',)
+        read_only_fields = ('contestProblemID',)
+
+    def update(self, instance, validated_data):
+        pID = validated_data['problem']
+        problem = get_object_or_404(Problem,problemID = pID)
+        validated_data['problem'] = problem
+        return super(ContestProblemSerializer,self).update(instance,validated_data)
+
 
 class CreateContestProblemSerializer(serializers.Serializer):
     def save(self, **kw) :

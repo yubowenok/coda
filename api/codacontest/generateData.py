@@ -2,6 +2,7 @@ import sys
 from datetime import *
 from django.contrib.auth.models import User, Group
 from codacontest.serializers import *
+from codaproblem.models import *
 from api.permissions import *
 from django.utils import timezone
 
@@ -44,3 +45,11 @@ for c in contests :
     g = Group.objects.get(name = MOD_GROUP_NAME)
     contest.userGroups.add(g)
     contest.graderGroups.add(g)
+
+    for p in Problem.objects.all() :
+        ser = CreateContestProblemSerializer(data={})
+        if ser.is_valid() :
+            ser.save(contest = contest, problem = p)
+        else :
+            print >> sys.stderr, ser.errors        
+
