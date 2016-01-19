@@ -1,4 +1,5 @@
 import sys
+from django.core.files import File
 from django.contrib.auth.models import User, Group
 from codaproblem.serializers import *
 
@@ -62,9 +63,16 @@ batches = [
     {
         "batchID" : 3,
         "name" : "Batch 3",
-    },
-    
+    },    
 ]
+testFiles = [
+    {
+        "input" : File(open("generateData.py",mode='r')),
+        "output" : File(open("generateData.py",mode='r')),
+        "resources" : File(open("generateData.py",mode='r')),
+    },
+]
+
 
 for lan in languages :
     ser = LanguageSerializer(data = lan)
@@ -94,8 +102,14 @@ for p in problems :
         for ba in batches :
             ser2 = BatchSerializer(data = ba)
             if ser2.is_valid() :
-                ser2.save(problem = prob)
+                b = ser2.save(problem = prob)
+                for tf in testFiles :
+                    ser3 = TestFileSerializer(data = tf)
+                    if ser3.is_valid() :                        
+                        ser3.save(batch = b)
+                    else :
+                        print >> sys.stderr, ser3.errors                
             else :
-                print >> sys.stderr, ser2.errors                
+                print >> sys.stderr, ser2.errors                            
     else :
         print >> sys.stderr, ser.errors
