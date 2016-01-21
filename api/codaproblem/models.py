@@ -57,6 +57,10 @@ class Problem(models.Model) :
     output = models.TextField(blank=True)
     timeLimitMS = models.BigIntegerField(default=0)  #in milliseconds
     memoryLimitBytes = models.BigIntegerField(default=100000000) #in bytes
+
+    def __str__(self) :
+        return str(self.problemID)
+
     
 class Sample(models.Model) :
     input = models.TextField(blank=True)

@@ -36,3 +36,4 @@ else :
     print "... but it didn't exist"
 print "Remaking ../datafiles"
 os.mkdir('../datafiles')
+os.chmod('../datafiles',7*64 + 7*8 + 7*1) #for test environment

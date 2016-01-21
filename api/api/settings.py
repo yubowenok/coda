@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'codaauth.apps.CodaAuthConfig',
     'codaproblem.apps.CodaProblemConfig',
     'codacontest.apps.CodaContestConfig',
+    'codasubmission.apps.CodaSubmissionConfig',
+    'codascorecard.apps.CodaScorecardConfig',
 ]
 
 MIDDLEWARE_CLASSES = [

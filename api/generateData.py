@@ -6,6 +6,7 @@ django.setup()
 
 import codaauth.generateData
 import codaproblem.generateData
+import codacontest.generateData
 
 import subprocess
 subprocess.call('python manage.py collectstatic --noinput',shell=True)

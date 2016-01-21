@@ -1,21 +1,34 @@
 ##Extra HTTPd setup
 Alias /static "C:/xampp/htdocs/coda/static"
+
 Alias /datafiles "C:/xampp/htdocs/coda/datafiles"
+
 LoadModule wsgi_module modules/mod_wsgi.so
 
 WSGIScriptAlias /coda/api "C:/xampp/htdocs/coda/api/api/wsgi.py"
+
 WSGIPythonPath "C:/xampp/htdocs/coda/api"
+
 WSGIPassAuthorization On
 
-<Directory "C:/xampp/htdocs/coda/api/api">
-<Files wsgi.py>
-Require all granted
-</Files>
-</Directory>
+    <Directory "C:/xampp/htdocs/coda/api/api">
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+    </Directory>
+
+    <Directory "/Applications/XAMPP/htdocs">
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
 
 LoadModule xsendfile_module modules/mod_xsendfile.so
+
 XSendFile On
+
 XSendFilePath "C:/xampp/htdocs/coda/datafiles"
+
+We can be more restrictive with the directory access
 ##Windows info
 Make sure to download the windows mod_wsgi (32-bit) and place the .so file in the apache modules folder
 Also make sure your python is 32-bit to match Apache

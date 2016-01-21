@@ -32,9 +32,21 @@ class Contest(models.Model) :
         null = True,
         on_delete = models.SET_NULL
     )
+    isPublicViewable = models.BooleanField(default = True)
+    isPublicSubmittable = models.BooleanField(default = True)
+    userGroup = models.ForeignKey(
+        Group,
+        on_delete = models.PROTECT,
+        related_name = 'contestuser'
+    )
     userGroups = models.ManyToManyField(
         Group,
         related_name = 'contestusers'
+    )
+    graderGroup = models.ForeignKey(
+        Group,
+        on_delete = models.PROTECT,
+        related_name = 'contestgrader'
     )
     graderGroups = models.ManyToManyField(
         Group,
@@ -51,15 +63,16 @@ class ContestProblem(models.Model) :
         on_delete = models.CASCADE,
         related_name = 'problems'
     )
-    problemID = models.IntegerField()
+    contestProblemID = models.IntegerField()
     
     class Meta:
-        ordering = ('problemID',)
+        ordering = ('contestProblemID',)
 
 class ContestBatch(models.Model) :
     contestProblem = models.ForeignKey(
         ContestProblem,
-        on_delete = models.CASCADE
+        on_delete = models.CASCADE,
+        related_name = 'batches'
     )
     batch = models.ForeignKey(
         Batch,
@@ -69,3 +82,5 @@ class ContestBatch(models.Model) :
     canViewInput = models.BooleanField(default = False)
     canViewOutput = models.BooleanField(default = False)
     
+    class Meta:
+        ordering = ('batch__batchID',)

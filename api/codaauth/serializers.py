@@ -9,7 +9,9 @@ from api.constants import DEFAULT_MAX_LENGTH
 class UserSerializer(serializers.ModelSerializer) :
     affiliation = serializers.CharField(
         max_length = DEFAULT_MAX_LENGTH,
-        required = False
+        required = False,
+        allow_blank = True,
+        source = 'codauser.affiliation',
     )
 
     class Meta:
