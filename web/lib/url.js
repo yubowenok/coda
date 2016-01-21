@@ -21,4 +21,7 @@ coda.url.logout = coda.url.auth + 'logout/';
 coda.url.registerUser = coda.url.auth + 'registerUser/';
 
 /** @const {string} */
-coda.url.existUsername = coda.url.auth + 'existUsername/';
+coda.url.existsUsername = coda.url.auth + 'existsUsername/';
+
+/** @const {string} */
+coda.url.getUserInfo = coda.url.auth + 'getUserInfo/';

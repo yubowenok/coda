@@ -2,12 +2,14 @@
  * @fileoverview Coda system message controller and factory.
  */
 
+coda.controller('MessageCtrl', MessageCtrl);
+
 /**
  * @param {!angular.Scope} $scope
  * @param {!angular.$timeout} $timeout
  * @constructor
  */
-var MessageCtrl = function($scope, $timeout) {
+function MessageCtrl($scope, $timeout) {
   /** @type {string} */
   this.success = '';
   /** @type {string} */
@@ -24,7 +26,7 @@ var MessageCtrl = function($scope, $timeout) {
   $scope.$on('message.success', this.success_.bind(this));
   $scope.$on('message.warning', this.warning_.bind(this));
   $scope.$on('message.error', this.error_.bind(this));
-};
+}
 
 /** @private @const {number} */
 MessageCtrl.prototype.DEFAULT_TIMEOUT_ = 2000;
@@ -80,7 +82,14 @@ MessageCtrl.prototype.error_ = function(event, params) {
 /** @type {!Array<string>} */
 MessageCtrl.$inject = ['$scope', '$timeout'];
 
-coda.controller('MessageCtrl', MessageCtrl);
+/**
+ * @typedef {{
+ *   success: function(string, number=),
+ *   warning: function(string, number=),
+ *   error: function(string, number=)
+ * }}
+ */
+coda.message;
 
 coda.factory('message', ['$rootScope', function($rootScope) {
   return {

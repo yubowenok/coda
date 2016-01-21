@@ -26,15 +26,13 @@ coda.controller('RegisterCtrl', [
         $scope.validUsername = true;
         return;
       }
-      // TODO(bowen): check with server that the username has not been used
-      // before.
-      request.get(coda.url.existUsername, {
-        username: $scope.username
-      }, {
-        callback: function(result) {
-          $scope.$apply(function() {
-            $scope.validUsername = result;
-          });
+      request.get(coda.url.existsUsername + $scope.username, {
+        noErrorDisplay: true,
+        success: function() {
+          $scope.validUsername = false;
+        },
+        error: function() {
+          $scope.validUsername = true;
         }
       });
     });

@@ -100,18 +100,3 @@ coda.config(['$httpProvider', '$routeProvider', '$locationProvider',
       });
   }
 ]);
-
-/**
- * @typedef {{
- *   csrftoken: string
- * }}
- */
-coda.Cookies;
-
-coda.run(['$http', function($http) {
-    var csrftoken = $.cookie('csrftoken');
-    if (csrftoken != undefined) {
-      $http.defaults.headers.post['X-CSRFToken'] = csrftoken;
-    }
-  }
-]);
