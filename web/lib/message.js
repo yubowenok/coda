@@ -70,7 +70,7 @@ MessageCtrl.prototype.warning_ = function(event, params) {
  * @private
  */
 MessageCtrl.prototype.error_ = function(event, params) {
-  var div = this.container.children('.alert-error').show();
+  var div = this.container.children('.alert-danger').show();
   this.error = params.text;
   this.$timeout(function() {
     div.slideUp();

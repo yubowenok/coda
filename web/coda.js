@@ -108,9 +108,8 @@ coda.config(['$httpProvider', '$routeProvider', '$locationProvider',
  */
 coda.Cookies;
 
-coda.run(['$http', '$cookies',
-  function($http, $cookies) {
-    var csrftoken = $cookies.get('csrftoken');
+coda.run(['$http', function($http) {
+    var csrftoken = $.cookie('csrftoken');
     if (csrftoken != undefined) {
       $http.defaults.headers.post['X-CSRFToken'] = csrftoken;
     }

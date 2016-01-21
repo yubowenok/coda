@@ -12,10 +12,9 @@ coda.controller('LoginCtrl', [
      * Logins the user.
      */
     $scope.login = function() {
-      var passwordHash = CryptoJS.SHA256($scope.username).toString();
       var params = {
         username: $scope.username,
-        password: passwordHash
+        password: $scope.password
       };
       request.post(coda.url.login, params, {
         success: function() {

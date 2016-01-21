@@ -3,14 +3,14 @@
  */
 
 coda.controller('UserCtrl', [
-  '$scope', '$http', '$cookies', 'request', 'user',
-  function($scope, $http, $cookies, request, user) {
+  '$scope', '$http', 'request', 'user',
+  function($scope, $http, request, user) {
     /** @type {boolean} */
     $scope.loggedIn = false;
     /** @type {string} */
     $scope.username = '';
 
-    var csrftoken = $cookies.get('csrftoken');
+    var csrftoken = $.cookie('csrftoken');
     if (csrftoken != undefined) {
       user.login('unknown');
     }
@@ -23,8 +23,8 @@ coda.controller('UserCtrl', [
         success: function() {
           $scope.loggedIn = false;
           $scope.username = '';
-          //$cookies.remove('csrftoken');
-          //$http.defaults.headers.post['X-CSRFToken'] = undefined;
+          $http.defaults.headers.post['X-CSRFToken'] = '';
+          $.removeCookie('csrftoken', {path: '/'});
         },
         successMessage: 'Logged Out'
       });
@@ -32,7 +32,7 @@ coda.controller('UserCtrl', [
   }
 ]);
 
-coda.factory('user', function() {
+coda.factory('user', ['$http', function($http) {
   var $scope = angular.element('#user').scope();
   return {
     /**
@@ -42,6 +42,7 @@ coda.factory('user', function() {
     login: function(username) {
       $scope.username = username;
       $scope.loggedIn = true;
+      $http.defaults.headers.post['X-CSRFToken'] = $.cookie('csrftoken');
     }
   };
-});
+}]);

@@ -72,10 +72,9 @@ coda.controller('RegisterCtrl', [
      * Registers the user.
      */
     $scope.register = function() {
-      var passwordHash = CryptoJS.SHA256($scope.password).toString();
       request.post(coda.url.registerUser, {
         username: $scope.username,
-        password: passwordHash,
+        password: $scope.password,
         email: $scope.email,
         affiliation: $scope.affiliation
       }, {
