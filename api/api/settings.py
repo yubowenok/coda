@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     'codaauth.apps.CodaAuthConfig',
     'codaproblem.apps.CodaProblemConfig',
     'codacontest.apps.CodaContestConfig',
-    'codasubmission.apps.CodaSubmissionConfig',
     'codascorecard.apps.CodaScorecardConfig',
+    'codasubmission.apps.CodaSubmissionConfig',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -86,6 +86,7 @@ WSGI_APPLICATION = 'api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'ATOMIC_REQUESTS': True,
         'OPTIONS': {
             'read_default_file': '%s/api/mysql.cfg' % BASE_DIR,
         },        
