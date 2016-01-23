@@ -94,7 +94,8 @@ class BatchResult(models.Model) :
     )
     problemResult = models.ForeignKey(
         ProblemResult,
-        on_delete = models.CASCADE
+        on_delete = models.CASCADE,
+        related_name = 'batchResults'
     )
     lastTestFileDone = models.IntegerField(default = 0)
     score = models.IntegerField(default = 0)
@@ -123,7 +124,8 @@ class TestFileResult(models.Model) :
     batchResult = models.ForeignKey(
         BatchResult,
         on_delete = models.CASCADE,
-        null = True
+        null = True,
+        related_name = 'testFileResults'
     )
 
 class TestFileJob(models.Model) :

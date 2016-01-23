@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 
-import uuid, sys
-
 from rest_framework import serializers
 from rest_framework.exceptions import *
+
+from django.contrib.auth.models import User, Group
 
 from codasubmission.models import *
 from codascorecard.models import *
@@ -22,9 +22,10 @@ class SubmitSerializer(serializers.ModelSerializer) :
         
         subser = SubmitSerializer.objects.create(**vdata)
         sub = subser.save()
-        
-        #Obtain user level lock? Maybe earlier?
-        
+
+        #Obtain user lock to serialize submissions by a single user
+        Users.objects.select_for_update().get(id = sub.user.id)
+                
         isFirst = True
         for cb in cp.batches.all() :
             bsc = getBatchSC(contestProblem = cp, contestBatch = cb)
@@ -34,6 +35,13 @@ class SubmitSerializer(serializers.ModelSerializer) :
                 #Create all results for first batch
                 br = createBatchResults(bsc,cp,cb,sub)
                 #create queue jobs
+                for tfr in br.testFileResults.all() :
+                    tfj = TestFileJob.objects.create(
+                        testFileResult = tfr,
+                        submission = sub,
+                        submissionTime = sub.submissionTime
+                    )
+                    tfj.save()
 
     class Meta:
         model = ContestSubmission
