@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 
 from django.contrib.auth.models import User, Group
+from codascorecard.models import *
 from codacontest.models import *
 from codaproblem.models import *
 from api.constants import DEFAULT_MAX_LENGTH, MAIN_CLASS_LENGTH, RESULT_LENGTH
@@ -53,10 +54,13 @@ class ContestSubmission(models.Model) :
     language = models.ManyToManyField(Language)
     mainClass = models.CharField(max_length = MAIN_CLASS_LENGTH)
 
-
 class ProblemResult(models.Model) :
     submission = models.ForeignKey(
         ContestSubmission,
+        on_delete = models.CASCADE
+    )
+    problemScorecard = models.ForeignKey(
+        ProblemScorecard,
         on_delete = models.CASCADE
     )
     contestProblem = models.ForeignKey(
@@ -78,10 +82,15 @@ class BatchResult(models.Model) :
         ResultType,
         on_delete = models.PROTECT
     )
+    batchScorecard = models.ForeignKey(
+        BatchScorecard,
+        on_delete = models.CASCADE
+    )
     problemResult = models.ForeignKey(
         ProblemResult,
         on_delete = models.CASCADE
     )
+    lastTestFileDone = models.IntegerField(default = 0)
     score = models.IntegerField(default = 0)
     
 class TestFileResult(models.Model) :
@@ -101,7 +110,8 @@ class TestFileResult(models.Model) :
     timeUsedMS = models.BigIntegerField()
     batchResult = models.ForeignKey(
         BatchResult,
-        on_delete = models.CASCADE
+        on_delete = models.CASCADE,
+        null = True
     )
 
 
