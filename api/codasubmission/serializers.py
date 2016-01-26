@@ -26,6 +26,8 @@ class SubmitSerializer(serializers.ModelSerializer) :
         #Obtain user lock to serialize submissions by a single user
         Users.objects.select_for_update().get(id = sub.user.id)
                 
+        prob = cp.problem
+
         isFirst = True
         for cb in cp.batches.all() :
             bsc = getBatchSC(contestProblem = cp, contestBatch = cb)
@@ -39,10 +41,19 @@ class SubmitSerializer(serializers.ModelSerializer) :
                     tfj = TestFileJob.objects.create(
                         testFileResult = tfr,
                         submission = sub,
-                        submissionTime = sub.submissionTime
+                        submissionTime = sub.submissionTime,
+                        timeLimitMS = prob.timeLimitMS,
+                        memoryLimitBytes = prob.memoryLimitBytes
                     )
                     tfj.save()
 
     class Meta:
         model = ContestSubmission
         read_only_fields = (user, submissionTime, problem)
+
+class TestFileJobSerializer(serializers.ModelSerializer) :
+    testFile = serializers.IntegerField(source = 'testFileResult.testFile')
+    class Meta:
+        model = TestFileJob
+        fields = ('storeEnvironment','submission','timeLimitMS',
+                  'memoryLimitBytes','testFileResult','testFile')

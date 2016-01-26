@@ -133,6 +133,8 @@ class TestFileJob(models.Model) :
         TestFileResult,
         on_delete = models.CASCADE
     )
+    memoryLimitBytes = models.BigIntegerField()
+    timeLimitMS = models.BigIntegerField()    
     submission = models.ForeignKey(
         ContestSubmission,
         on_delete = models.CASCADE
@@ -140,11 +142,6 @@ class TestFileJob(models.Model) :
     submissionTime = models.DateTimeField(
         db_index = True
     ) #duplicated for speed
-    result = models.ForeignKey(
-        ResultType,
-        on_delete = models.PROTECT,
-        default = "PENDING"
-    ) #can remove result and just have jobs deleted from queue
     storeEnvironment = models.BooleanField(default = False) #for one-off jobs
     class Meta:
         ordering = ('submissionTime',)

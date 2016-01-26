@@ -24,3 +24,14 @@ class SubmitProblem(generics.GenericAPIView) :
         else :
             return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
 
+class PopJobQueue(APIView) :
+    def post(self, request, format = None) :        
+        #check that user is a judge
+        if request.user.is_authenticated() :
+            job = TestFileJob.objects.select_for_update().all()[:1][0]
+            ser = TestFileJobSerializer(job)
+            job.delete()
+            return Response(ser.data, status=status.HTTP_200_OK)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+    
