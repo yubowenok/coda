@@ -71,11 +71,12 @@ coda.controller('RegisterCtrl', [
      */
     $scope.register = function() {
       request.post(coda.url.registerUser, {
-        username: $scope.username,
-        password: $scope.password,
-        email: $scope.email,
-        affiliation: $scope.affiliation
-      }, {
+        params: {
+          username: $scope.username,
+          password: $scope.password,
+          email: $scope.email,
+          affiliation: $scope.affiliation
+        },
         success: function() {
           user.login($scope.username);
           $location.path('/');

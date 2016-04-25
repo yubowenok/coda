@@ -2,7 +2,14 @@
  * @fileoverview Coda system message controller and factory.
  */
 
-coda.controller('MessageCtrl', MessageCtrl);
+coda.controller('MessageCtrl', ['$scope', '$timeout', MessageCtrl]);
+
+coda.factory('message', ['$rootScope', function($rootScope) {
+  return new MessageFactory($rootScope);
+}]);
+
+/** @typedef {MessageFactory} */
+coda.message;
 
 /**
  * @param {!angular.Scope} $scope
@@ -79,37 +86,44 @@ MessageCtrl.prototype.error_ = function(event, params) {
   }, params.timeout != undefined ? params.timeout : this.DEFAULT_TIMEOUT_);
 };
 
-/** @type {!Array<string>} */
-MessageCtrl.$inject = ['$scope', '$timeout'];
+/**
+ * @param {!angular.Scope} $rootScope
+ * @constructor
+ */
+function MessageFactory($rootScope) {
+  /** @type {!angular.Scope} */
+  this.$rootScope = $rootScope;
+}
 
 /**
- * @typedef {{
- *   success: function(string, number=),
- *   warning: function(string, number=),
- *   error: function(string, number=)
- * }}
+ * @param {string} text
+ * @param {number=} opt_timeout
  */
-coda.message;
+MessageFactory.prototype.success = function(text, opt_timeout) {
+  this.$rootScope.$broadcast('message.success', {
+    text: text,
+    timeout: opt_timeout
+  });
+};
 
-coda.factory('message', ['$rootScope', function($rootScope) {
-  return {
-    success: function(text, opt_timeout) {
-      $rootScope.$broadcast('message.success', {
-        text: text,
-        timeout: opt_timeout
-      });
-    },
-    warning: function(text, opt_timeout) {
-      $rootScope.$broadcast('message.warning', {
-        text: text,
-        timeout: opt_timeout
-      });
-    },
-    error: function(text, opt_timeout) {
-      $rootScope.$broadcast('message.error', {
-        text: text,
-        timeout: opt_timeout
-      });
-    }
-  };
-}]);
+/**
+ * @param {string} text
+ * @param {number=} opt_timeout
+ */
+MessageFactory.prototype.warning = function(text, opt_timeout) {
+  this.$rootScope.$broadcast('message.warning', {
+    text: text,
+    timeout: opt_timeout
+  });
+};
+
+/**
+ * @param {string} text
+ * @param {number=} opt_timeout
+ */
+MessageFactory.prototype.error = function(text, opt_timeout) {
+  this.$rootScope.$broadcast('message.error', {
+    text: text,
+    timeout: opt_timeout
+  });
+};

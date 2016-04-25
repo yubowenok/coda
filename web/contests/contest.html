@@ -1,13 +1,14 @@
-<div class="label label-default">{{contestId}}</div>
-<h3>{{contestTitle}}</h3>
+<div class="label label-default">{{contest.contestId}}</div>
+<h3>{{contest.contestTitle}}</h3>
 <p>Contest description</p>
 <div class="progress">
   <div class="progress-bar" role="progressbar" style="width: 60%;">
   </div>
 </div>
 <h4>Problems</h4>
-<a class="problem contest-problem list-group-item" ng-repeat="problem in problems" ng-click="gotoProblem(charFromIndex($index))">
-  <span class="id label label-default">{{charFromIndex($index)}}</span>
+<a class="problem contest-problem list-group-item" ng-repeat="problem in contest.problems"
+   ng-click="contest.gotoProblem(contest.charFromIndex($index))">
+  <span class="id label label-default">{{contest.charFromIndex($index)}}</span>
   {{problem.title}}
   <span class="success-rate">
     {{problem.successRate >= 0 ? problem.successRate + '%' : 'N/A'}}

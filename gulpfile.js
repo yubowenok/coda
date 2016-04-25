@@ -9,7 +9,7 @@ gulp.task('watch', function() {
   gulp.watch([
     paths.web,
     paths.index
-  ], ['dev']);
+  ], ['build-dev']);
 });
 
 // Task for testing.

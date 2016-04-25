@@ -22,6 +22,7 @@
   <script src="bower_components/MathJax/MathJax.js?config=TeX-AMS_CHTML"></script>
   <script src="bower_components/MathJax/MathJax.js?config=TeX-AMS_CHTML"></script>
   <script src="bower_components/jquery.cookie/jquery.cookie.js"></script>
+  <script src="bower_components/moment/min/moment.min.js"></script>
 
   <script src="dist/coda.js"></script>
   <link rel="stylesheet" href="dist/coda.css">
@@ -44,11 +45,11 @@
           <li id="moderator"><a href="moderator">Moderator</a></li>
           <li id="admin"><a href="admin">Admin</a></li>
         </ul>
-        <ul id="user" class="nav navbar-nav navbar-right" ng-controller="UserCtrl">
-          <li ng-show="!loggedIn"><a href="register">Register</a></li>
-          <li ng-show="!loggedIn"><a href="login">Login</a></li>
-          <li ng-show="loggedIn"><a href="profile">{{username}}</a></li>
-          <li ng-show="loggedIn"><a href="." ng-click="logout()">Logout</a></li>
+        <ul id="user" class="nav navbar-nav navbar-right" ng-controller="UserCtrl as user">
+          <li ng-show="!user.isLoggedIn()"><a href="register">Register</a></li>
+          <li ng-show="!user.isLoggedIn()"><a href="login">Login</a></li>
+          <li ng-show="user.isLoggedIn()"><a href="profile">{{user.getUsername()}}</a></li>
+          <li ng-show="user.isLoggedIn()"><a href="." ng-click="user.logout()">Logout</a></li>
         </ul>
       </div>
     </div>

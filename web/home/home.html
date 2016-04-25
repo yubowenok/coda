@@ -1,7 +1,8 @@
 <h3>Active Contests</h3>
 <div class="list-group">
-  <a class="list-group-item" ng-repeat="contest in activeContests" ng-click="gotoContest(contest.id)">
-    <i class="glyphicon glyphicon-chevron-right"></i>{{contest.text}}
+  <a class="list-group-item contest" ng-repeat="contest in home.activeContests" ng-click="home.gotoContest(contest.id)">
+    <i class="glyphicon glyphicon-chevron-right"></i>{{contest.name}}
+    <span class="end-time"><span>End: </span>{{contest.endTime}}</span>
   </a>
 </div>
 <div class="box note">

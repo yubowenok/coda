@@ -8,6 +8,8 @@ module.exports = {
   ],
   webJs: [
     '!web/externs/*.js',
+    'web/coda.js',
+    'web/common/*.js',
     'web/**/*.js'
   ],
   webScss: [

@@ -1,28 +1,34 @@
-coda.controller('LoginCtrl', [
-  '$scope', '$location', 'page', 'request', 'user',
-  function($scope, $location, page, request, user) {
-    page.setNav('login');
+/**
+ * @fileoverview Login controller.
+ */
 
-    /** @type {string} */
-    $scope.username = '';
-    /** @type {string} */
-    $scope.password = '';
+coda.controller('LoginCtrl', ['page', 'user', LoginCtrl]);
 
-    /**
-     * Logins the user.
-     */
-    $scope.login = function() {
-      var params = {
-        username: $scope.username,
-        password: $scope.password
-      };
-      request.post(coda.url.login, params, {
-        success: function() {
-          user.login($scope.username);
-          $location.path('/');
-        },
-        successMessage: 'Login Successful'
-      });
-    };
-  }
-]);
+/**
+ * @param {coda.page} page
+ * @param {coda.user} user
+ * @constructor
+ */
+function LoginCtrl(page, user) {
+  /** @type {coda.user} */
+  this.user = user;
+
+  page.setNav('login');
+
+  /** @type {string} */
+  this.username = '';
+  /** @type {string} */
+  this.password = '';
+}
+
+/**
+ * Logins the user.
+ */
+LoginCtrl.prototype.login = function() {
+  var params = {
+    username: this.username,
+    password: this.password
+  };
+  this.user.login(params);
+};
+
