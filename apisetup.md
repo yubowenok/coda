@@ -1,32 +1,38 @@
-##Extra HTTPd setup
-Alias /static "C:/xampp/htdocs/coda/static"
+##Extra httpd setup
 
-Alias /datafiles "C:/xampp/htdocs/coda/datafiles"
-
+Coda configuration file.
+```
+Alias /static "{coda path}/static"
+Alias /datafiles "{coda path}/datafiles"
 LoadModule wsgi_module modules/mod_wsgi.so
 
-WSGIScriptAlias /coda/api "C:/xampp/htdocs/coda/api/api/wsgi.py"
-
-WSGIPythonPath "C:/xampp/htdocs/coda/api"
-
+WSGIScriptAlias /coda/api "{coda path}/api/api/wsgi.py"
+WSGIPythonPath "{coda path}/api"
 WSGIPassAuthorization On
 
-    <Directory "C:/xampp/htdocs/coda/api/api">
-        <Files wsgi.py>
-            Require all granted
-        </Files>
-    </Directory>
-
-    <Directory "/Applications/XAMPP/htdocs">
-        Options Indexes FollowSymLinks
-        Require all granted
-    </Directory>
+<Directory "{coda path}/api/api">
+  <Files wsgi.py>
+    Require all granted
+  </Files>
+</Directory>
 
 LoadModule xsendfile_module modules/mod_xsendfile.so
-
 XSendFile On
-
 XSendFilePath "C:/xampp/htdocs/coda/datafiles"
+```
+
+If you are using python virtual environment, you need to include the virtual environment site-packages.
+```
+WSGIPythonPath "{coda path}/api:{virtualenv path}/lib/python2.7/site-packages"
+```
+
+httpd configuration for parent directory.
+```
+<Directory "{htdocs path}">
+  Options Indexes FollowSymLinks
+  Require all granted
+</Directory>
+```
 
 We can be more restrictive with the directory access
 ##Windows info

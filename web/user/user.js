@@ -49,7 +49,7 @@ UserCtrl.prototype.isLoggedIn = function() {
 
 /**
  * Returns the currently logged in username.
- * @returns {string}
+ * @return {string}
  */
 UserCtrl.prototype.getUsername = function() {
   return this.user.username;

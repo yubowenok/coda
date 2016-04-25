@@ -60,7 +60,7 @@ ContestFactory.prototype.getPastContests = function(callback) {
  * @private
  */
 ContestFactory.prototype.getContests_ = function(type, callback) {
-  var params = type === '' ? undefined : {type : type};
+  var params = type === '' ? undefined : {type: type};
   this.request.get(coda.url.getContests, {
     params: params,
     success: function(contests) {
@@ -70,5 +70,5 @@ ContestFactory.prototype.getContests_ = function(type, callback) {
       });
       callback(contests);
     }
-  })
+  });
 };

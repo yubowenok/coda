@@ -42,6 +42,8 @@ sudo apt-get install python-mysqldb
 pip install django
 pip install django-sendfile
 pip install djangorestframework
+pip install MySQL-python
+pip install mysql-connector-c
 ```
 
 ## Build the Front-end
@@ -55,25 +57,25 @@ redirect request to index.html. For details see the angular route [FAQ](https://
 A sample configuration is show below.
 ```
 <VirtualHost *:443>
-  <Directory C:/xampp/htdocs/coda>
-      RewriteEngine on
+  <Directory {coda path}>
+    RewriteEngine on
 
-      # Don't rewrite files or directories
-      RewriteCond %{REQUEST_FILENAME} -f [OR]
-      RewriteCond %{REQUEST_FILENAME} -d
-      RewriteRule ^ - [L]
+    # Don't rewrite files or directories
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
 
-      # Rewrite everything else to index.html to allow html5 state links
-      RewriteRule ^ index.html [L]
+    # Rewrite everything else to index.html to allow html5 state links
+    RewriteRule ^ index.html [L]
   </Directory>
 </VirtualHost>
 
 <VirtualHost *:80>
-  <Directory C:/xampp/htdocs/coda>
-      # Redirect all http requests to https
-      RewriteEngine on
-      RewriteCond %{HTTPS} off
-      RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI}
+  <Directory {coda path}>
+    # Redirect all http requests to https
+    RewriteEngine on
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI}
   </Directory>
 </VirtualHost>
 ```
