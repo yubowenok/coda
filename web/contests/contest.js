@@ -4,17 +4,17 @@
 
 
 coda.controller('ContestCtrl', [
-  '$location', '$routeParams', 'request', 'page', ContestCtrl
+  '$location', '$routeParams', 'contest', 'page', ContestCtrl
 ]);
 
 /**
  * @param {angular.$location} $location
  * @param {angular.$routeParams} $routeParams
- * @param {coda.request} request
+ * @param {coda.contest} contest
  * @param {coda.page} page
  * @constructor
  */
-function ContestCtrl($location, $routeParams, request, page) {
+function ContestCtrl($location, $routeParams, contest, page) {
   /** @type {angular.$location} */
   this.$location = $location;
 
@@ -23,17 +23,12 @@ function ContestCtrl($location, $routeParams, request, page) {
   /** @type {string} */
   this.contestId = $routeParams.contestId;
 
-  /** @type {string} */
-  this.contestTitle = 'Contest Title';
+  /** @type {coda.Contest|undefined} */
+  this.current = undefined;
 
-  request.get(coda.url.getContests, {
-    params: {
-      id: this.contestId
-    },
-    success: function(data) {
-      console.log(data);
-    }
-  });
+  contest.getContest(this.contestId, function(contest) {
+    this.current = contest;
+  }.bind(this));
 }
 
 /**

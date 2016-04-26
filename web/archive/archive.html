@@ -1,6 +1,6 @@
 <h3>Problem Archive</h3>
 <div class="list-group">
-  <a class="problem list-group-item" ng-repeat="problem in problems" ng-click="gotoProblem(problem.id)">
+  <a class="problem list-group-item" ng-repeat="problem in archive.problems" ng-click="archive.gotoProblem(problem.id)">
     <span class="id label label-primary">{{problem.id}}</span>
     {{problem.title}}
     <span class="success-rate">

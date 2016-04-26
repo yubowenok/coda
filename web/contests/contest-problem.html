@@ -1,4 +1,4 @@
-<div class="label label-default">Archive {{problemId}}</div>
+<div class="label label-default">Problem {{contestProblem.problemIndex}}</div>
 <h3>A + B</h3>
 <format text-bind="statement"></format>
 <div class="section">
@@ -10,7 +10,7 @@
   <format text-bind="output"></format>
 </div>
 <div class="section">
-  <div class="sample" ng-repeat="sample in samples">
+  <div class="sample" ng-repeat="sample in contestProblem.current.samples">
     <h4>Sample Input {{$index + 1}}</h4>
     <pre>{{sample.input}}</pre>
     <h4>Sample Output {{$index + 1}}</h4>

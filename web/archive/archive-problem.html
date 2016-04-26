@@ -1,5 +1,5 @@
-<div class="label label-default">Problem {{problemIndex}}</div>
-<h3>A + B</h3>
+<div class="label label-default">Archive {{archiveProblem.current.id}}</div>
+<h3>{{archiveProblem.current.title}}</h3>
 <format text-bind="statement"></format>
 <div class="section">
   <h4>Input</h4>
@@ -10,7 +10,7 @@
   <format text-bind="output"></format>
 </div>
 <div class="section">
-  <div class="sample" ng-repeat="sample in samples">
+  <div class="sample" ng-repeat="sample in archiveProblem.current.samples">
     <h4>Sample Input {{$index + 1}}</h4>
     <pre>{{sample.input}}</pre>
     <h4>Sample Output {{$index + 1}}</h4>

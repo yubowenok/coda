@@ -2,26 +2,23 @@
  * @fileoverview Home controller.
  */
 
-coda.controller('HomeCtrl', [
-  '$scope', '$location', 'page', 'request', HomeCtrl
-]);
+coda.controller('HomeCtrl', ['$location', 'page', 'contest', HomeCtrl]);
 
 /**
- * @param {!angular.Scope} $scope
  * @param {angular.$location} $location
  * @param {coda.page} page
  * @param {coda.contest} contest
  * @constructor
  */
-function HomeCtrl($scope, $location, page, contest) {
+function HomeCtrl($location, page, contest) {
+  /** @type {angular.$location} */
+  this.$location = $location;
+
   page.setNav('home');
 
   contest.getActiveContests(function(contests) {
     this.activeContests = contests;
   }.bind(this));
-
-  /** @type {angular.$location} */
-  this.$location = $location;
 }
 
 /**

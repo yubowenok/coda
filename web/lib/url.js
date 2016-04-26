@@ -14,6 +14,8 @@ coda.url.auth = coda.url.server + 'auth/';
 coda.url.contest = coda.url.server + 'contest/';
 /** @const {string} */
 coda.url.problem = coda.url.server + 'problem/';
+/** @const {string} */
+coda.url.util = coda.url.server + 'util/';
 
 
 // auth
@@ -90,6 +92,8 @@ coda.url.getProblemIDs = coda.url.problem + 'getProblemIDs/';
 /** @const {string} */
 coda.url.getProblemInfo = coda.url.problem + 'getProblemInfo/';
 /** @const {string} */
+coda.url.getContestProblemInfo = coda.url.problem + 'getContestProblemInfo/';
+/** @const {string} */
 coda.url.getPDFStatement = coda.url.problem + 'getPDFStatement/';
 /** @const {string} */
 coda.url.getChecker = coda.url.problem + 'getChecker/';
@@ -128,3 +132,7 @@ coda.url.getTestFileOutput = coda.url.problem + 'getTestFileOutput/';
 /** @const {string} */
 coda.url.getTestFileResources = coda.url.problem + 'getTestFileResources/';
 
+
+// util
+/** @const {string} */
+coda.url.serverTime = coda.url.util + 'serverTime/';

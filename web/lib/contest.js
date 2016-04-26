@@ -6,13 +6,46 @@ coda.factory('contest', ['request', function(request) {
   return new ContestFactory(request);
 }]);
 
+/** @enum {string} */
+coda.Scoring = {
+  BINARY: 'binary',
+  PROBLEM_SCORING: 'problem-scoring',
+  BATCH_SCORING: 'batch-scoring'
+};
+
 /** @typedef {ContestFactory} */
 coda.contest;
 
-/** @typedef {!Object} */
+/**
+ * @typedef {{
+ *   id: string,
+ *   title: string,
+ *   score: number,
+ *   stats: {
+ *     userTotal: number,
+ *     userSuccess: number
+ *   }
+ * }}
+ */
+coda.ContestProblem;
+
+/**
+ * @typedef {{
+ *   id: string,
+ *   title: string,
+ *   description: string,
+ *   startTime: (number|string),
+ *   endTime: (number|string),
+ *   problems: !Array<coda.ContestProblem>,
+ *   scoring: coda.Scoring,
+ *   name: (string|undefined)
+ * }}
+ * TODO(bowen): remove name?
+ */
 coda.Contest;
 
 /**
+ * Provides the queries to fetch contest information.
  * @param {coda.request} request
  * @constructor
  */
@@ -23,52 +56,94 @@ function ContestFactory(request) {
 
 /**
  * Fetches all contests.
- * @param {function(!Array<coda.Contest>)} callback
+ * @param {function(!Array<coda.Contest>)} success
  */
-ContestFactory.prototype.getAllContests = function(callback) {
-  this.getContests_('', callback);
+ContestFactory.prototype.getAllContests = function(success) {
+  this.getContests_({
+    success: success
+  });
+};
+
+/**
+ * Fetches a specific contest with given ID.
+ * @param {string} id
+ * @param {function(!Array<coda.Contest>)} success
+ */
+ContestFactory.prototype.getContest = function(id, success) {
+  this.getContests_({
+    id: id,
+    success: function(contests) {
+      success(_.first(contests));
+    }
+  });
 };
 
 /**
  * Fetches the active contests.
- * @param {function(!Array<coda.Contest>)} callback
+ * @param {function(!Array<coda.Contest>)} success
  */
-ContestFactory.prototype.getActiveContests = function(callback) {
-  this.getContests_('active', callback);
+ContestFactory.prototype.getActiveContests = function(success) {
+  this.getContests_({
+    type: 'active',
+    success: success
+  });
 };
 
 /**
  * Fetches the scheduled contests.
- * @param {function(!Array<coda.Contest>)} callback
+ * @param {function(!Array<coda.Contest>)} success
  */
-ContestFactory.prototype.getScheduledContests = function(callback) {
-  this.getContests_('scheduled', callback);
+ContestFactory.prototype.getScheduledContests = function(success) {
+  this.getContests_({
+    type: 'scheduled',
+    success: success
+  });
 };
 
 /**
  * Fetches the past contests.
- * @param {function(!Array<coda.Contest>)} callback
+ * @param {function(!Array<coda.Contest>)} success
  */
-ContestFactory.prototype.getPastContests = function(callback) {
-  this.getContests_('past', callback);
+ContestFactory.prototype.getPastContests = function(success) {
+  this.getContests_({
+    type: 'past',
+    success: success
+  });
+};
+
+/**
+ * Processes the retrieved contest.
+ * @param {coda.Contest} contest
+ * @private
+ */
+ContestFactory.prototype.processContest_ = function(contest) {
+// Replace the endTime by reader-friendly strings.
+  contest.endTime = moment(contest.endTime)
+    .format('MMMM Do YYYY, h:mm a');
+
+  if (contest.name !== undefined) {
+    contest.id = contest.name;
+  }
 };
 
 /**
  * Executes contest fetching.
- * @param {string} type
- * @param {function(!Array<coda.Contest>)} callback
+ * @param {{
+ *   id: (string|undefined),
+ *   type: (string|undefined),
+ *   success: function(!Array<coda.Contest>)
+ * }} params
  * @private
  */
-ContestFactory.prototype.getContests_ = function(type, callback) {
-  var params = type === '' ? undefined : {type: type};
+ContestFactory.prototype.getContests_ = function(params) {
+  var requestParams = _.pick(params, 'id', 'type');
   this.request.get(coda.url.getContests, {
-    params: params,
+    params: requestParams,
     success: function(contests) {
       contests.forEach(function(contest) {
-        contest.endTime = moment(contest.endTime)
-          .format('MMMM Do YYYY, h:mm a');
-      });
-      callback(contests);
-    }
+        this.processContest_(contest);
+      }.bind(this));
+      params.success(contests);
+    }.bind(this)
   });
 };

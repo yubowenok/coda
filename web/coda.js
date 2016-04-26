@@ -29,13 +29,13 @@ coda.config(['$httpProvider', '$routeProvider', '$locationProvider',
         controller: 'ContestCtrl as contest'
       })
       .when('/contests/:contestId/:problemIndex', {
-        templateUrl: 'dist/html/contests/problem.html',
+        templateUrl: 'dist/html/contests/contest-problem.html',
         controller: 'ContestProblemCtrl as contestProblem'
       })
 
       // Archive pages
       .when('/archive/:problemId', {
-        templateUrl: 'dist/html/archive/problem.html',
+        templateUrl: 'dist/html/archive/archive-problem.html',
         controller: 'ArchiveProblemCtrl as archiveProblem'
       })
       .when('/archive', {

@@ -3,7 +3,7 @@
  */
 
 /**
- * @param {string=} tm
+ * @param {(number|string)=} tm
  * @return {moment}
  * @constructor
  */

@@ -80,6 +80,7 @@ function UserFactory($http, $location, request) {
  */
 UserFactory.prototype.authenticate = function() {
   this.request.get(coda.url.getUserInfo, {
+    noErrorDisplay: true,
     success: function(info) {
       this.setLogin(info.username);
     }.bind(this)
