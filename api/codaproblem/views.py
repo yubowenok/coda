@@ -1,0 +1,394 @@
+import sys
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import generics
+
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+
+from codaproblem.models import *
+from codaproblem.serializers import *
+from api.response import ErrorResponse, FileResponse
+from api.permissions import *
+
+from sendfile import sendfile
+
+class CheckerTypes(generics.GenericAPIView) :
+    serializer_class = CheckerTypeSerializer
+    queryset = {}
+    def get(self, request, format = None) :
+        if request.user.is_authenticated() :
+            ser = CheckerTypeSerializer(CheckerType.objects.all(), many=True)
+            return Response(ser.data, status=status.HTTP_200_OK)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class Languages(generics.GenericAPIView) :
+    serializer_class = LanguageSerializer
+    queryset = {}
+    def get(self, request, format = None) :
+        if request.user.is_authenticated() :
+            ser = LanguageSerializer(Language.objects.all(), many=True)
+            return Response(ser.data, status=status.HTTP_200_OK)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class CreateProblem(generics.GenericAPIView) :
+    serializer_class = CreateProblemSerializer
+    queryset = {}
+    def post(self, request, format = None) :
+        if request.user.is_authenticated() and is_moderator(request.user):
+            user = request.user
+            ser = CreateProblemSerializer(data = request.data)
+            if ser.is_valid() :
+                ser.save(owner=user)
+                return Response("Create Problem Successful", status=status.HTTP_200_OK)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)
+
+class GetProblemIDs(APIView) :
+    def get(self, request, format = None) :
+        if request.user.is_authenticated() and is_super(request.user):
+            IDs = [problem.problemID for problem in Problem.objects.all()]
+            return Response(IDs, status=status.HTTP_200_OK)
+        else :
+            return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)
+
+class GetProblem(APIView) :
+    def get(self, request, problemID, format = None) :
+        if request.user.is_authenticated() :
+            obj = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, obj) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            ser = ProblemSerializer(obj)
+            return Response(ser.data, status=status.HTTP_200_OK)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class GetPDFStatement(APIView) :
+    def get(self, request, problemID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            pdfStatement = problem.pdfStatement
+            if pdfStatement :
+                return sendfile(request, pdfStatement.path, attachment = True)
+            else :
+                return ErrorResponse("File Not Found", status=status.HTTP_404_NOT_FOUND)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class GetChecker(APIView) :
+    def get(self, request, problemID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            checker = problem.checker
+            if checker :
+                return sendfile(request, checker.path, attachment = True)
+            else :
+                return ErrorResponse("File Not Found", status=status.HTTP_404_NOT_FOUND)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)    
+
+    
+class SetProblem(generics.GenericAPIView) :
+    serializer_class = ProblemSerializer
+    queryset = {}
+    def post(self, request, problemID, format = None) :
+        if request.user.is_authenticated() :
+            obj = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            ser = ProblemSerializer(obj, data = request.data, partial = True)
+            if ser.is_valid() :
+                ser.save()
+                return Response("Set Problem Accepted", status=status.HTTP_200_OK)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class AddSample(generics.GenericAPIView) :
+    serializer_class = SampleSerializer
+    queryset = {}
+    def post(self, request, problemID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            ser = SampleSerializer(data = request.data)
+            if ser.is_valid() :
+                sam = ser.save(problem = problem)                
+                return Response("Added Sample "+str(sam.sampleID), status=status.HTTP_200_OK)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class SetSample(generics.GenericAPIView) :
+    serializer_class = SampleSerializer
+    queryset = {}
+    def post(self, request, problemID, sampleID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            sample = get_object_or_404(Sample,problem = problem,sampleID = sampleID)
+            ser = SampleSerializer(sample, data = request.data, partial = True)
+            if ser.is_valid() :
+                ser.save()                
+                return Response("Updated Sample "+str(sample.sampleID), status=status.HTTP_200_OK)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+            
+class ReorderSamples(generics.GenericAPIView) :
+    serializer_class = SampleReorderSerializer
+    queryset = {}
+    def post(self, request, problemID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            ser = SampleReorderSerializer(data = request.data)
+            if ser.is_valid() :
+                newIDs = ser.validated_data['newSampleIDs']
+                samples = Sample.objects.filter(problem = problem)
+                if len(samples) != len(newIDs) :
+                    return ErrorResponse({'newSampleIDs':'Incorrect number of IDs'}, status=status.HTTP_400_BAD_REQUEST)
+                if set(newIDs) != set(range(1,len(newIDs)+1)) :
+                    return ErrorResponse({'newSampleIDs':'Not sequentially numbered'}, status=status.HTTP_400_BAD_REQUEST)
+                for i in xrange(len(samples)) :
+                    samples[i].sampleID = newIDs[i]
+                    samples[i].save()
+                return Response("Samples Reordered Successfully", status=status.HTTP_200_OK)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class DeleteSample(APIView) :
+    def post(self, request, problemID, sampleID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            sample = get_object_or_404(Sample,problem=problem,sampleID = sampleID)
+            sample.delete()
+            gtSamples = Sample.objects.filter(problem=problem,sampleID__gt = sampleID)
+            num = 0
+            for s in gtSamples :
+                s.sampleID = s.sampleID - 1
+                s.save()
+                num += 1
+            return Response("Deleted sample %s and renumbered %d samples"%(sampleID,num), status=status.HTTP_200_OK)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class GetBatch(APIView) :
+    def get(self, request, problemID, batchID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            batch = get_object_or_404(Batch,batchID = batchID, problem = problem)
+            ser = BatchSerializer(batch)
+            return Response(ser.data, status=status.HTTP_200_OK)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class AddBatch(generics.GenericAPIView) :
+    serializer_class = BatchSerializer
+    queryset = {}
+    def post(self, request, problemID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            ser = BatchSerializer(data = request.data)
+            if ser.is_valid() :
+                bat = ser.save(problem = problem)                
+                return Response("Added Batch "+str(bat.batchID), status=status.HTTP_200_OK)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+            
+class SetBatch(generics.GenericAPIView) :
+    serializer_class = BatchSerializer
+    queryset = {}
+    def post(self, request, problemID, batchID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            batch = get_object_or_404(Batch,problem = problem,batchID = batchID)
+            ser = BatchSerializer(batch, data = request.data, partial = True)
+            if ser.is_valid() :
+                ser.save()                
+                return Response("Updated Batch "+str(batch.batchID), status=status.HTTP_200_OK)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+            
+class ReorderBatches(generics.GenericAPIView) :
+    serializer_class = BatchReorderSerializer
+    queryset = {}
+    def post(self, request, problemID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            ser = BatchReorderSerializer(data = request.data)
+            if ser.is_valid() :
+                newIDs = ser.validated_data['newBatchIDs']
+                batches = Batch.objects.filter(problem = problem)
+                if len(batches) != len(newIDs) :
+                    return ErrorResponse({'newBatchIDs':'Incorrect number of IDs'}, status=status.HTTP_400_BAD_REQUEST)
+                if set(newIDs) != set(range(1,len(newIDs)+1)) :
+                    return ErrorResponse({'newBatchIDs':'Not sequentially numbered'}, status=status.HTTP_400_BAD_REQUEST)
+                for i in xrange(len(batches)) :
+                    batches[i].batchID = newIDs[i]
+                    batches[i].save()
+                return Response("Batches Reordered Successfully", status=status.HTTP_200_OK)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_403_FORBIDDEN)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class DeleteBatch(APIView) :
+    def post(self, request, problemID, batchID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            batch = get_object_or_404(Batch,problem=problem,batchID = batchID)
+            batch.delete()
+            gtBatches = Batch.objects.filter(problem=problem,batchID__gt = batchID)
+            num = 0
+            for s in gtBatches :
+                s.batchID = s.batchID - 1
+                s.save()
+                num += 1
+            return Response("Deleted batch %s and renumbered %d batchs"%(batchID,num), status=status.HTTP_200_OK)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class AddTestFile(generics.GenericAPIView) :
+    serializer_class = TestFileSerializer
+    queryset = {}
+    def post(self, request, problemID, batchID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            batch = get_object_or_404(Batch,batchID = batchID, problem = problem)
+            ser = TestFileSerializer(data = request.data)
+            if ser.is_valid() :
+                tf = ser.save(batch = batch)                
+                return Response("Added TestFile "+str(tf.testFileID), status=status.HTTP_200_OK)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+            
+class SetTestFile(generics.GenericAPIView) :
+    serializer_class = TestFileSerializer
+    queryset = {}
+    def post(self, request, problemID, batchID, testFileID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            batch = get_object_or_404(Batch,problem = problem,batchID = batchID)
+            tf = get_object_or_404(TestFile,batch = batch, testFileID = testFileID)
+            ser = TestFileSerializer(tf, data = request.data, partial = True)
+            if ser.is_valid() :
+                ser.save()                
+                return Response("Updated TestFile "+str(tf.testFileID), status=status.HTTP_200_OK)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+            
+class ReorderTestFiles(generics.GenericAPIView) :
+    serializer_class = TestFileReorderSerializer
+    queryset = {}
+    def post(self, request, problemID, batchID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            batch = get_object_or_404(Batch,problem = problem,batchID = batchID)
+            ser = TestFileReorderSerializer(data = request.data)
+            if ser.is_valid() :
+                newIDs = ser.validated_data['newTestFileIDs']
+                tfs = TestFile.objects.filter(batch=batch)
+                if len(tfs) != len(newIDs) :
+                    return ErrorResponse({'newTestFileIDs':'Incorrect number of IDs'}, status=status.HTTP_400_BAD_REQUST)
+                if set(newIDs) != set(range(1,len(newIDs)+1)) :
+                    return ErrorResponse({'newTestFileIDs':'Not sequentially numbered'}, status=status.HTTP_400_BAD_REQUEST)
+                for i in xrange(len(batches)) :
+                    tfs[i].testFileID = newIDs[i]
+                    tfs[i].save()
+                return Response("Test Files Reordered Successfully", status=status.HTTP_200_OK)
+            else :
+                return ErrorResponse(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+class DeleteTestFile(APIView) :
+    def post(self, request, problemID, batchID, testFileID, format = None) :
+        if request.user.is_authenticated() :
+            problem = get_object_or_404(Problem,problemID = problemID)
+            if not is_owner(request.user, problem) :
+                return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+            batch = get_object_or_404(Batch,problem = problem,batchID = batchID)
+            tf = get_object_or_404(TestFile,batch = batch, testFileID = testFileID)
+            tf.delete()
+            gtTestFiles = TestFile.objects.filter(batch=batch,TestFileID__gt = testFileID)
+            num = 0
+            for s in gtTestFiles :
+                s.testFileID = s.testFileID - 1
+                s.save()
+                num += 1
+            return Response("Deleted TestFile %s and renumbered %d testfiles"%(testFileID,num), status=status.HTTP_200_OK)
+        else :
+            return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+
+def testfileget(self, request, field, problemID, batchID, testFileID, format = None) :
+    if request.user.is_authenticated() :
+        problem = get_object_or_404(Problem,problemID = problemID)
+        if not is_owner(request.user, problem) :
+            return ErrorResponse("Not Authorized", status=status.HTTP_403_FORBIDDEN)                
+        batch = get_object_or_404(Batch,problem = problem, batchID = batchID)
+        testFile = get_object_or_404(TestFile,batch = batch, testFileID = testFileID)
+        f = getattr(testFile,field)
+        if f :
+            return sendfile(request, f.path, attachment = True)
+        else :
+            return ErrorResponse("File Not Found", status=status.HTTP_404_NOT_FOUND)
+    else :
+        return ErrorResponse("Not Logged In", status=status.HTTP_403_FORBIDDEN)
+    
+
+class GetTestFileInput(APIView) :
+    def get(self, request, problemID, batchID, testFileID, format = None) :
+        return testfileget(self,request,'input',problemID,batchID,testFileID,format)
+
+class GetTestFileOutput(APIView) :
+    def get(self, request, problemID, batchID, testFileID, format = None) :
+        return testfileget(self,request,'output',problemID,batchID,testFileID,format)
+
+class GetTestFileResources(APIView) :
+    def get(self, request, problemID, batchID, testFileID, format = None) :
+        return testfileget(self,request,'resources',problemID,batchID,testFileID,format)

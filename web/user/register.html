@@ -1,0 +1,43 @@
+<h3 class="page-header">Register</h3>
+<form>
+  <table>
+    <col width="20%">
+    <col width="80%">
+    </colgroup>
+    <thead></thead>
+    <tbody>
+    <tr>
+      <td><h4>* Username</h4></td>
+      <td>
+        <div class="label label-danger" ng-hide="validUsername">username already exists</div>
+        <input id="username" class="form-control" value="" ng-model="username">
+      </td>
+    </tr>
+    <tr>
+      <td><h4>* Password</h4></td>
+      <td><input id="password" type="password" class="form-control" value="" ng-model="password"></td>
+    </tr>
+    <tr>
+      <td><h4>* Confirm Password</h4></td>
+      <td>
+        <div class="label label-danger" ng-hide="passwordMatch">passwords mismatch</div>
+        <input id="confirm-password" type="password" class="form-control" value="" ng-model="confirmPassword">
+      </td>
+    </tr>
+    <tr>
+      <td><h4>* Email Address</h4></td>
+      <td>
+        <div class="label label-danger" ng-hide="validEmail">invalid email address</div>
+        <input id="email" class="form-control" value="" ng-model="email">
+      </td>
+    </tr>
+    <tr>
+      <td><h4>Affiliation</h4></td>
+      <td><input id="affiliation" class="form-control" value="" ng-model="affiliation"></td>
+    </tr>
+    </tbody>
+  </table>
+</form>
+</div>
+<hr>
+<a class="btn btn-primary" ng-click="register()" ng-disabled="!infoComplete()">Register</a>

@@ -1,0 +1,19 @@
+<h3>Problems Created</h3>
+<div class="list-group">
+  <a class="problem list-group-item" ng-repeat="problem in problems" ng-click="editProblem(problem.id)">
+    <span class="id label label-primary">{{problem.id}}</span>
+    {{problem.title}}
+    <span class="success-rate">
+      {{problem.successRate >= 0 ? problem.successRate + '%' : 'N/A'}}
+    </span>
+  </a>
+</div>
+<a class="btn btn-default" href="moderator/problem">Add Problem</a>
+<hr>
+<h3>Contests Created</h3>
+<div class="list-group">
+  <a class="list-group-item" ng-repeat="contest in contests" ng-click="editContest(contest.id)">
+    <i class="glyphicon glyphicon-chevron-right"></i>{{contest.text}}
+  </a>
+</div>
+<a class="btn btn-default" href="moderator/contest">Add Contest</a>

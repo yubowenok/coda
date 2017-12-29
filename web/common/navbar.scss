@@ -1,0 +1,18 @@
+.navbar-brand {
+  img {
+    float: left;
+    position: relative;
+    top: -6px;
+    width: 30px;
+  }
+
+  span {
+    margin-left: 5px;
+  }
+}
+
+.navbar {
+  a {
+    cursor: pointer;
+  }
+}

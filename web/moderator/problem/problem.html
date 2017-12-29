@@ -1,0 +1,33 @@
+<h3>{{ (isAddProblem ? 'Add' : 'Edit') + ' Problem' }}</h3>
+<div ng-hide="isAddProblem">
+  <a class="btn btn-default" href="moderator/problem/{{problemId}}/tests">Test Cases</a>
+  <a class="btn btn-default" href="moderator/problem/{{problemId}}/submissions">Submissions</a>
+</div>
+<hr>
+  <form class="moderator-form">
+    <table>
+        <col width="20%">
+        <col width="80%">
+      </colgroup>
+      <thead></thead>
+      <tbody>
+        <tr>
+          <td><h4>Problem ID</h4></td>
+          <td><input id="id" class="form-control" value="{{problemId}}" ng-disabled="!isAddProblem"></td>
+        </tr>
+      </tbody>
+      <tbody ng-hide="isAddProblem">
+        <tr>
+          <td><h4>Title</h4></td>
+          <td><input id="title" class="form-control"></td>
+        </tr>
+        <tr>
+          <td><h4>Description</h4></td>
+          <td><textarea id="description" class="form-control"/></td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>
+<hr>
+<a class="btn btn-primary" ng-click="submit()">Submit</a>

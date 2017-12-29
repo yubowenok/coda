@@ -1,0 +1,19 @@
+<div class="label label-default">Problem {{contestProblem.problemIndex}}</div>
+<h3>A + B</h3>
+<format text-bind="statement"></format>
+<div class="section">
+  <h4>Input</h4>
+  <format text-bind="input"></format>
+</div>
+<div class="section">
+  <h4>Output</h4>
+  <format text-bind="output"></format>
+</div>
+<div class="section">
+  <div class="sample" ng-repeat="sample in contestProblem.current.samples">
+    <h4>Sample Input {{$index + 1}}</h4>
+    <pre>{{sample.input}}</pre>
+    <h4>Sample Output {{$index + 1}}</h4>
+    <pre>{{sample.output}}</pre>
+  </div>
+</div>

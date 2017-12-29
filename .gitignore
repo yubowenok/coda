@@ -1,0 +1,8 @@
+**/*.pyc
+static/
+datafiles/
+node_modules*
+bower_components*
+dist*
+index.html
+.DS_Store

@@ -1,0 +1,23 @@
+<h3>Active</h3>
+<div class="list-group">
+  <a class="list-group-item contest" ng-repeat="contest in contests.activeContests" ng-click="contests.gotoContest(contest.id)">
+    <i class="glyphicon glyphicon-chevron-right"></i>{{contest.name}}
+    <span class="end-time"><span>End: </span>{{contest.endTime}}</span>
+  </a>
+</div>
+<hr>
+<h3>Scheduled</h3>
+<div class="list-group">
+  <a class="list-group-item contest" ng-repeat="contest in contests.scheduledContests" ng-click="contests.gotoContest(contest.id)">
+    <i class="glyphicon glyphicon-chevron-right"></i>{{contest.name}}
+    <span class="end-time"><span>End: </span>{{contest.endTime}}</span>
+  </a>
+</div>
+<hr>
+<h3>Finished</h3>
+<div class="list-group">
+  <a class="list-group-item contest" ng-repeat="contest in contests.pastContests" ng-click="contests.gotoContest(contest.id)">
+    <i class="glyphicon glyphicon-chevron-right"></i>{{contest.name}}
+    <span class="end-time"><span>End: </span>{{contest.endTime}}</span>
+  </a>
+</div>

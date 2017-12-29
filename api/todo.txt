@@ -1,0 +1,1 @@
+Validate that each problem has at least 1 batch before adding it to a contest

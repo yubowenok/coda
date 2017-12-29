@@ -1,0 +1,34 @@
+<h3>Active Contests</h3>
+<div class="list-group">
+  <a class="list-group-item contest" ng-repeat="contest in home.activeContests" ng-click="home.gotoContest(contest.id)">
+    <i class="glyphicon glyphicon-chevron-right"></i>{{contest.name}}
+    <span class="end-time"><span>End: </span>{{contest.endTime}}</span>
+  </a>
+</div>
+<div class="box note">
+  <h3>Announcements</h3>
+  <ul>
+    <li><a href="contests/HW122315">Homework 12/23/2015</a> has been assigned.</li>
+    <li>Coda is a light-weight contest & practice platform for Coding Of Data structure and Algorithm.</li>
+  </ul>
+</div>
+<div class="row featured">
+  <div class="col-md-6">
+    <div class="box">
+      <h4>Resources</h4>
+      <ul>
+        <li>New to coda? <a href="archive/APLUSB">Get started</a>.</li>
+        <li>Slides for CS480 can be found <a href="#">here</a>.</li>
+        <li>Algorithm and data structure <a href="#">tutorials</a>.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="box">
+      <h4>Sign Up for the Programming Team</h4>
+      <p>The mission of NYU Programming Team is to enjoy programming by solving algorithm problems.
+        We anually send teams to the ICPC competitions and hold weekly practices both onsite and online...</p>
+      <button class="btn btn-primary">Learn More &raquo;</button>
+    </div>
+  </div>
+</div>

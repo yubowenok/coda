@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - "4.1"
+
+sudo: required
+dist: trusty
+
+before_script:
+  - npm install -g gulp
+  - rvm 2.2.3
+  - gem install scss_lint
+
+script:
+  - gulp

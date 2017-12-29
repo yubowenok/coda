@@ -1,0 +1,30 @@
+<h3>{{ (isAddContest ? 'Add' : 'Edit') + ' Contest' }}</h3>
+<a class="btn btn-default" href="moderator/contest/{{contestId}}/submissions" ng-hide="isAddContest">Submissions</a>
+<hr>
+<form class="moderator-form">
+  <table>
+    <col width="20%">
+    <col width="80%">
+    </colgroup>
+    <thead></thead>
+    <tbody>
+    <tr>
+      <td><h4>Contest ID</h4></td>
+      <td><input id="id" class="form-control" value="{{contestId}}" ng-disabled="!isAddContest"></td>
+    </tr>
+    </tbody>
+    <tbody ng-hide="isAddContest">
+    <tr>
+      <td><h4>Title</h4></td>
+      <td><input id="title" class="form-control"></td>
+    </tr>
+    <tr>
+      <td><h4>Description</h4></td>
+      <td><textarea id="description" class="form-control"/></td>
+    </tr>
+    </tbody>
+  </table>
+</form>
+</div>
+<hr>
+<button class="btn btn-primary" ng-click="submit()">Submit</button>

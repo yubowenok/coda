@@ -1,0 +1,31 @@
+html {
+  min-height: 100%;
+  position: relative;
+}
+
+body {
+  margin-bottom: 60px;
+
+  svg {
+    border-width: 2px;
+  }
+}
+
+.list-group-item {
+  cursor: pointer;
+
+  > .glyphicon {
+    margin-right: 1em;
+  }
+}
+
+.featured {
+  .box {
+    height: 200px;
+  }
+
+  button {
+    bottom: 40px;
+    position: absolute;
+  }
+}

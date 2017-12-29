@@ -1,0 +1,38 @@
+{
+  "name": "coda",
+  "version": "0.0.0",
+  "description": "coding of data structure and algorithm",
+  "main": "index.html",
+  "scripts": {
+    "prestart": "npm install",
+    "postinstall": "bower install",
+    "pretest": "npm install",
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yubowenok/coda.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yubowenok/coda/issues"
+  },
+  "homepage": "https://github.com/yubowenok/coda#readme",
+  "devDependencies": {
+    "bower": "^1.7.1",
+    "del": "^2.2.0",
+    "google-closure-compiler": "^20151216.0.0",
+    "gulp": "^3.9.0",
+    "gulp-closure-compiler": "^0.4.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-flatten": "^0.2.0",
+    "gulp-gjslint": "^0.1.5",
+    "gulp-sass": "^2.1.1",
+    "gulp-scss-lint": "^0.3.8",
+    "gulp-scss-lint-stylish2": "^2.0.2",
+    "gulp-util": "^3.0.7",
+    "require-dir": "^0.3.0",
+    "run-sequence": "^1.1.5"
+  }
+}
