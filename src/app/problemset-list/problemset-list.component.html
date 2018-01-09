@@ -1,0 +1,34 @@
+<mat-list>
+  <mat-list-item *ngFor="let problemset of problemsetList" routerLink="/{{problemset.id}}">
+    <mat-icon mat-list-icon>label</mat-icon>
+    <h4 mat-line>{{problemset.title}}</h4>
+    <p mat-line>
+      <span class="info-item">
+        <label>Start: </label>{{this.displayTime(problemset.startTime)}}
+      </span>
+      <span class="info-item">
+        <label>End: </label>{{this.displayTime(problemset.endTime)}}
+      </span>
+    </p>
+    <p mat-line>
+      <span class="info-item">
+        <label>Mode: </label>{{problemset.runMode}}
+        <i class="fa fa-question-circle" matTooltip="{{this.tooltips.SELFTEST_MODE}}"
+           *ngIf="this.isSelftestMode(problemset)"></i>
+      </span>
+      <span class="info-item">
+        <label>Judge: </label>{{problemset.judgeMode}}
+        <i class="fa fa-question-circle" matTooltip="{{this.tooltips.BLIND_JUDGE}}"
+           *ngIf="this.isBlindJudge(problemset)"></i>
+      </span>
+      <span class="info-item">
+        <label>Penalty: </label>{{problemset.penaltyMode}}
+        <i class="fa fa-question-circle" matTooltip="{{this.tooltips.SCORE_PENALTY}}"
+           *ngIf="this.isScorePenalty(problemset)"></i>
+        <i class="fa fa-question-circle" matTooltip="{{this.tooltips.TIME_PENALTY}}"
+           *ngIf="this.isTimePenalty(problemset)"></i>
+      </span>
+    </p>
+  </mat-list-item>
+</mat-list>
+

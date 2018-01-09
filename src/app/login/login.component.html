@@ -1,0 +1,14 @@
+<form>
+  <mat-form-field class="">
+    <input matInput placeholder="Username (Email)">
+    <mat-error *ngIf="true">
+      Please enter a valid email address
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="">
+    <input matInput placeholder="Password" value="" type="password">
+  </mat-form-field>
+
+  <button mat-raised-button color="primary">Login</button>
+</form>

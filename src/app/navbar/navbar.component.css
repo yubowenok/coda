@@ -1,0 +1,23 @@
+img.logo {
+  position: relative;
+  height: 40px;
+  top: 18px;
+  left: -10px;
+}
+
+.div-logo {
+  display: flex;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+}
+
+button {
+  width: 100%;
+}
+
+app-user {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

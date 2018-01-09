@@ -1,0 +1,34 @@
+button {
+  width: 200px;
+}
+
+.div-username {
+  font-weight: bold;
+  font-size: 15px;
+  width: 100%;
+  text-align: center;
+}
+
+.username {
+  cursor: pointer;
+}
+
+.username:hover {
+  color: #999;
+}
+
+.user-icon {
+  margin-right: 2px;
+}
+
+.logout {
+  position: relative;
+  cursor: pointer;
+  margin-left: 5px;
+  color: #999;
+}
+
+.logout:hover {
+  font-weight: bold;
+  color: black;
+}

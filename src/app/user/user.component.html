@@ -1,0 +1,11 @@
+<ng-container *ngIf="!username">
+  <button mat-button routerLink="/login">Login</button>
+  <button mat-button routerLink="/signup">Signup</button>
+</ng-container>
+<ng-container *ngIf="username">
+  <div class="div-username">
+    <i class="fa fa-user-circle-o user-icon"></i>
+    <span class="username" routerLink="/profile">{{username}}</span>
+    <i class="fa fa-sign-out logout" (click)="logout()"></i>
+  </div>
+</ng-container>
