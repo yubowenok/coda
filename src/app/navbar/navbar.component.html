@@ -5,4 +5,26 @@
 <mat-divider></mat-divider>
 <app-user></app-user>
 <mat-divider></mat-divider>
-<button mat-button routerLink="/list" color="basic">Problemsets</button>
+
+<ng-container *ngIf="this.isProblemset()">
+  <app-navbar-problemset [problemset]="problemset"></app-navbar-problemset>
+  <mat-divider></mat-divider>
+  <button mat-button routerLink="/submissions">
+    <i class="fa fa-list"></i>Scoreboard
+  </button>
+  <button mat-button routerLink="/submissions">
+    <i class="fa fa-file"></i>My Submissions
+  </button>
+  <mat-divider></mat-divider>
+</ng-container>
+
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Links</mat-panel-title>
+    </mat-expansion-panel-header>
+    <button mat-button routerLink="/list">Problemsets</button>
+    <button mat-button routerLink="/faq">FAQ</button>
+  </mat-expansion-panel>
+</mat-accordion>
+

@@ -9,7 +9,7 @@ export class UserComponent implements OnInit {
 
   constructor() { }
 
-  username: string = 'by123@nyu.edu';
+  private username = 'by123@nyu.edu';
 
   ngOnInit() {
   }

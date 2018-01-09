@@ -1,3 +1,5 @@
-<p>
-  problemset works!
-</p>
+<ng-container *ngIf="this.problemset">
+  <button mat-button *ngFor="let problem of problemset.problems">
+    {{problem.number}} - {{problem.title}}
+  </button>
+</ng-container>

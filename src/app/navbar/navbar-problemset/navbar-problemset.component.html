@@ -1,0 +1,9 @@
+<ng-container *ngIf="this.problemset">
+  <h3>{{this.problemset.title}}</h3>
+  <div class="end-time">{{this.timeToFinish()}}</div>
+  <button mat-button *ngFor="let problem of problemset.problems">
+    <b>{{problem.number}}</b>
+    <i class="fa fa-chevron-right"></i>
+    <span>{{problem.title}}</span>
+  </button>
+</ng-container>

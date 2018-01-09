@@ -1,10 +1,20 @@
 import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { NavbarModule } from './navbar/navbar.module';
+
+import { LoginComponent } from './login/login.component';
+import { ProblemsetListComponent } from './problemset-list/problemset-list.component';
+
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [
+        NavbarModule
+      ],
       declarations: [
-        AppComponent
+        AppComponent,
+        LoginComponent,
+        ProblemsetListComponent
       ],
     }).compileComponents();
   }));

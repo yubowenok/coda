@@ -11,11 +11,11 @@ export class InMemoryDataService implements InMemoryDbService {
   private ONE_DAY_MS = 1000 * 60 * 60 * 24;
 
   getStartTime(): number {
-    return (new Date()).getTime() + (Math.random() * this.ONE_DAY_MS * 14 - 7 * this.ONE_DAY_MS);
+    return (new Date()).getTime() + Math.floor((Math.random() * this.ONE_DAY_MS * 14 - 7 * this.ONE_DAY_MS));
   }
 
   getEndTime(startTime: number) {
-    return startTime + Math.random() * 7 * this.ONE_DAY_MS;
+    return startTime + Math.floor(Math.random() * 7 * this.ONE_DAY_MS);
   }
 
   getStartEndTime() {
@@ -25,6 +25,45 @@ export class InMemoryDataService implements InMemoryDbService {
   }
 
   createDb() {
+    const problemList = [
+      {
+        number: 'A',
+        id: 'aplusb',
+        title: 'A Plus B',
+        scoring: [
+          { subtask: 'small', score: 20 },
+          { subtaks: 'large', score: 40 }
+        ]
+      },
+      {
+        number: 'B',
+        id: 'gradecurving',
+        title: 'Grade Curving',
+        scoring: [
+          { subtask: 'small', score: 20 },
+          { subtaks: 'large', score: 40 }
+        ]
+      },
+      {
+        number: 'C',
+        id: 'maxexpression',
+        title: 'Maximum Expression',
+        scoring: [
+          { subtask: 'small', score: 20 },
+          { subtaks: 'large', score: 30 }
+        ]
+      },
+      {
+        number: 'D',
+        id: 'ultimate',
+        title: 'Ultimate Challenge',
+        scoring: [
+          { subtask: 'small', score: 20 },
+          { subtask: 'medium', score: 30 },
+          { subtaks: 'large', score: 50 }
+        ]
+      }
+    ];
     const problemsetList = [
       {
         id: 'set1',
@@ -33,7 +72,8 @@ export class InMemoryDataService implements InMemoryDbService {
         runMode: problemset.RunMode.STANDARD,
         judgeMode: problemset.JudgeMode.OPEN,
         penaltyMode: problemset.PenaltyMode.SCORE,
-        ...this.getStartEndTime()
+        ...this.getStartEndTime(),
+        problems: problemList
       },
       {
         id: 'set2',
@@ -41,7 +81,8 @@ export class InMemoryDataService implements InMemoryDbService {
         runMode: problemset.RunMode.SELFTEST,
         judgeMode: problemset.JudgeMode.BLIND,
         penaltyMode: problemset.PenaltyMode.TIME,
-        ...this.getStartEndTime()
+        ...this.getStartEndTime(),
+        problems: problemList
       },
       {
         id: 'set3',
@@ -49,7 +90,8 @@ export class InMemoryDataService implements InMemoryDbService {
         runMode: problemset.RunMode.STANDARD,
         judgeMode: problemset.JudgeMode.OPEN,
         penaltyMode: problemset.PenaltyMode.SCORE,
-        ...this.getStartEndTime()
+        ...this.getStartEndTime(),
+        problems: problemList
       },
     ];
     return { problemsetList };

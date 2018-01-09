@@ -1,0 +1,25 @@
+button {
+  width: 100%;
+  text-align: left;
+}
+
+button span {
+  font-weight: normal;
+}
+
+button b {
+}
+
+button .fa {
+  margin-right: .5em;
+}
+
+h3 {
+  padding-left: 16px;
+}
+
+.end-time {
+  font-size: .8em;
+  padding-left: 36px;
+  margin-bottom: 24px;
+}

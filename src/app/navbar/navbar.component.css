@@ -12,6 +12,10 @@ img.logo {
   justify-content: center;
 }
 
+.fa {
+  margin-right: 1em;
+}
+
 button {
   width: 100%;
 }
@@ -20,4 +24,20 @@ app-user {
   display: block;
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+navbar-problemset {
+  display: block;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+mat-accordion {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+/deep/ .mat-expansion-panel-content .mat-expansion-panel-body {
+  padding: 0;
 }

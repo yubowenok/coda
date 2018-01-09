@@ -1,7 +1,8 @@
-<mat-list>
+<mat-spinner *ngIf="!this.problemsetList" diameter="50"></mat-spinner>
+<mat-nav-list>
   <mat-list-item *ngFor="let problemset of problemsetList" routerLink="/{{problemset.id}}">
     <mat-icon mat-list-icon>label</mat-icon>
-    <h4 mat-line>{{problemset.title}}</h4>
+    <h3 mat-line>{{problemset.title}}</h3>
     <p mat-line>
       <span class="info-item">
         <label>Start: </label>{{this.displayTime(problemset.startTime)}}
@@ -30,5 +31,4 @@
       </span>
     </p>
   </mat-list-item>
-</mat-list>
-
+</mat-nav-list>

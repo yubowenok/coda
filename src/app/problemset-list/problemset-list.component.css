@@ -10,12 +10,14 @@ mat-list-item {
   cursor: pointer;
 }
 
-mat-list-item:hover {
-  background: #eee;
-}
-
 .info-item {
   display: inline-block;
   min-width: 150px;
   margin-right: 1em;
+}
+
+mat-spinner {
+  position: fixed;
+  left: 50%;
+  top: 50%;
 }
