@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '../api.service';
 
@@ -15,6 +15,7 @@ export class ProblemsetComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private api: ApiService,
     private location: Location
   ) { }
@@ -26,10 +27,18 @@ export class ProblemsetComponent implements OnInit {
   }
 
   getProblemset(): void {
-    const id = this.route.snapshot.paramMap.get('problemsetId');
-    this.api.getProblemset(id)
+    const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
+    this.api.getProblemset(problemsetId)
       .subscribe(problemset => {
         this.problemset = problemset;
+        if (!problemset.started) {
+          return;
+        }
+        const problemNumber = this.route.snapshot.paramMap.get('problemNumber');
+        if (problemNumber === undefined) {
+          const firstProblemNumber = problemset.problems[0].number;
+          this.router.navigate([`/problemset/${problemsetId}/problem/${firstProblemNumber}`]);
+        }
       });
   }
 

@@ -28,7 +28,6 @@ app-user {
 
 navbar-problemset {
   display: block;
-  margin-top: 30px;
   margin-bottom: 30px;
 }
 
@@ -36,6 +35,11 @@ mat-accordion {
   position: absolute;
   bottom: 0;
   width: 100%;
+}
+
+.section {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 /deep/ .mat-expansion-panel-content .mat-expansion-panel-body {

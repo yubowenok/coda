@@ -1,3 +1,35 @@
-<p>
-  problem works!
-</p>
+<mat-spinner *ngIf="!this.problem" diameter="50"></mat-spinner>
+<ng-container *ngIf="this.problem">
+  <h1>{{this.problem.title}}</h1>
+  <div [appMathJax]="this.problem.statement"></div>
+  <div class="section">
+    <h3>Subtasks</h3>
+    <ul class="subtask-list">
+      <li *ngFor="let subtask of problem.subtasks">
+        <b>{{subtask.id | titlecase}}</b>
+        {{'(' + this.subtask.score + ' points): '}}
+        <span [appMathJax]="subtask.text"></span>
+      </li>
+    </ul>
+  </div>
+  <div class="section margin-to-top">
+    <h3>Samples</h3>
+    <table class="samples">
+      <tbody>
+        <tr *ngFor="let sample of problem.samples; let i = index">
+          <th>
+            <h4>Input {{i + 1}}<i class="fa fa-clone"
+                                  (click)="this.copyText(sample.in, 'Input ' + (i + 1) + ' copied')"></i></h4>
+            <pre>{{sample.in}}</pre>
+          </th>
+          <th>
+            <h4>Output {{i + 1}}<i class="fa fa-clone"
+                                   (click)="this.copyText(sample.out, 'Output ' + (i + 1) + ' copied')"></i></h4>
+            <pre>{{sample.out}}</pre>
+          </th>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</ng-container>

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 
 import { ApiService } from '../api.service';
@@ -11,15 +12,22 @@ import { ProblemsetInfo, RunMode, JudgeMode, PenaltyMode } from '../constants';
 })
 export class ProblemsetListComponent implements OnInit {
 
-  constructor(private api: ApiService) { }
+  constructor(
+    private api: ApiService,
+    private route: ActivatedRoute
+  ) { }
 
   problemsetList: ProblemsetInfo[];
 
+  private fragment: string;
+
   tooltips = {
+    STANDARD_MODE: 'You can submit anytime before the problemset ends.',
     SELFTEST_MODE: 'The problemset has a fixed duration. You can start your session at any time. But once your ' +
       'session is started you cannot pause it. Only start your session when you have enough free time to work on ' +
       'the problemset.',
-    BLIND_JUDGE: 'Verdicts of submissions will be available after the problemset ends. You will temporarily receive ' +
+    OPEN_JUDGE: 'Submission results are available right after the submissions.',
+    BLIND_JUDGE: 'Submission results will be available after the problemset ends. You will temporarily receive ' +
       'score for attempted problems.',
     SCORE_PENALTY: 'Each incorrect submission results in 10% loss of a subtask\'s score.',
     TIME_PENALTY: 'Each incorrect submission results in 4 minutes extra time added to the finish time.'
@@ -27,10 +35,11 @@ export class ProblemsetListComponent implements OnInit {
 
   ngOnInit() {
     this.getProblemsetList();
+    this.route.fragment.subscribe(fragment => { this.fragment = fragment; });
   }
 
   getProblemsetList(): void {
-    this.api.getProblemsetList()
+    this.api.getProblemsets()
       .subscribe(problemsetList => this.problemsetList = problemsetList);
   }
 

@@ -4,16 +4,19 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { catchError, tap } from 'rxjs/operators';
 
-import { API_URL, ProblemsetInfo } from './constants';
+import { API_URL, ProblemsetInfo, ProblemContent } from './constants';
+import * as time from './constants/time';
 
-const PROBLEMSET_REFETCH_INTERVAL = 60000;
+const PROBLEMSET_REFETCH_INTERVAL = time.DAY_MS;
+const PROBLEM_REFETCH_INTERVAL = time.DAY_MS;
 
 @Injectable()
 export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  private problemsetListUrl: string = API_URL + 'problemsetList';
+  private problemsetUrl: string = API_URL + 'problemset';
+  private problemUrl: string = API_URL + 'problem';
 
   private problemsetCache: {
     [problemsetId: string]: {
@@ -21,14 +24,20 @@ export class ApiService {
       lastFetched: number
     }
   } = {};
+  private problemCache: {
+    [problemId: string]: {
+      data: ProblemContent,
+      lastFetched: number
+    }
+  } = {};
 
-  getProblemsetList(): Observable<ProblemsetInfo[]> {
-    return this.http.get<ProblemsetInfo[]>(this.problemsetListUrl)
+  getProblemsets(): Observable<ProblemsetInfo[]> {
+    return this.http.get<ProblemsetInfo[]>(this.problemsetUrl)
       .pipe(
-        tap(problemsetList => {
-          console.log('fetched problemsetList', problemsetList);
+        tap(problemsets => {
+          console.log('fetched problemsets', problemsets);
         }),
-        catchError(this.handleError('getProblemsetList', []))
+        catchError(this.handleError('getProblemsets', []))
       );
   }
 
@@ -37,7 +46,7 @@ export class ApiService {
       (new Date().getTime() - this.problemsetCache[id].lastFetched) <= PROBLEMSET_REFETCH_INTERVAL) {
       return of(this.problemsetCache[id].data);
     }
-    const url = `${this.problemsetListUrl}/${id}`;
+    const url = `${this.problemsetUrl}/${id}`;
     return this.http.get<ProblemsetInfo>(url)
       .pipe(
         tap(problemset => {
@@ -48,6 +57,25 @@ export class ApiService {
           };
         }),
         catchError(this.handleError<ProblemsetInfo>(`getProblemset ${id}`))
+      );
+  }
+
+  getProblem(id: string): Observable<ProblemContent> {
+    if (id in this.problemCache &&
+      (new Date().getTime() - this.problemCache[id].lastFetched) <= PROBLEM_REFETCH_INTERVAL) {
+      return of(this.problemCache[id].data);
+    }
+    const url = `${this.problemUrl}/${id}`;
+    return this.http.get<ProblemContent>(url)
+      .pipe(
+        tap(problem => {
+          console.log(`fetched problem ${id}`, problem);
+          this.problemCache[id] = {
+            data: problem,
+            lastFetched: new Date().getTime()
+          };
+        }),
+        catchError(this.handleError<ProblemContent>(`getProblem ${id}`))
       );
   }
 

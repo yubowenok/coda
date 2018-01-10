@@ -19,11 +19,15 @@ import { SubmissionComponent } from './submission/submission.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { ProfileComponent } from './profile/profile.component';
+import { FaqComponent } from './faq/faq.component';
 
 import { NavbarModule } from './navbar/navbar.module';
 
+import { MathJaxDirective } from './mathjax.directive';
+
 import { ApiService } from './api.service';
-import { FaqComponent } from './faq/faq.component';
+import { MessageService } from './message.service';
+import { HljsDirective } from './hljs.directive';
 
 @NgModule({
   imports: [
@@ -48,10 +52,13 @@ import { FaqComponent } from './faq/faq.component';
     LoginComponent,
     SignupComponent,
     ProfileComponent,
-    FaqComponent
+    FaqComponent,
+    MathJaxDirective,
+    HljsDirective
   ],
   providers: [
-    ApiService
+    ApiService,
+    MessageService
   ],
   bootstrap: [AppComponent]
 })

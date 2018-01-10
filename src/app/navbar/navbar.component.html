@@ -6,24 +6,29 @@
 <app-user></app-user>
 <mat-divider></mat-divider>
 
-<ng-container *ngIf="this.isProblemset()">
-  <app-navbar-problemset [problemset]="problemset"></app-navbar-problemset>
+<ng-container *ngIf="this.problemset">
+  <div class="section">
+    <app-navbar-problemset [problemset]="problemset"></app-navbar-problemset>
+  </div>
   <mat-divider></mat-divider>
-  <button mat-button routerLink="/submissions">
-    <i class="fa fa-list"></i>Scoreboard
-  </button>
-  <button mat-button routerLink="/submissions">
-    <i class="fa fa-file"></i>My Submissions
-  </button>
+  <div class="section">
+    <button mat-button routerLink="/problemset/{{this.problemset.id}}/scoreboard">
+      <i class="fa fa-list"></i>Scoreboard
+    </button>
+    <button mat-button routerLink="/problemset/{{this.problemset.id}}/submissions/{{this.getUser()}}">
+      <i class="fa fa-file"></i>My Submissions
+    </button>
+  </div>
   <mat-divider></mat-divider>
 </ng-container>
 
 <mat-accordion>
-  <mat-expansion-panel>
+  <mat-expansion-panel expanded="{{this.linksExpanded}}"
+                       (opened)="linksExpanded = true" (closed)="linksExpanded = false">
     <mat-expansion-panel-header>
       <mat-panel-title>Links</mat-panel-title>
     </mat-expansion-panel-header>
-    <button mat-button routerLink="/list">Problemsets</button>
+    <button mat-button routerLink="/problemsets">Problemsets</button>
     <button mat-button routerLink="/faq">FAQ</button>
   </mat-expansion-panel>
 </mat-accordion>

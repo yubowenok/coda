@@ -1,0 +1,28 @@
+.subtask-list li {
+  margin-top: 10px;
+}
+
+.margin-to-top {
+  margin-top: 30px;
+}
+
+pre {
+  border: 1px solid #aaa;
+  padding: .5em;
+  font-weight: normal;
+}
+
+table.samples {
+  width: 100%;
+  text-align: left;
+}
+
+table h4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.fa-clone {
+  cursor: pointer;
+  margin-left: .5em;
+}

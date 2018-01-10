@@ -9,16 +9,19 @@ import { ProfileComponent } from './profile/profile.component';
 import { ProblemComponent } from './problem/problem.component';
 import { SubmissionListComponent } from './submission-list/submission-list.component';
 import { FaqComponent } from './faq/faq.component';
+import { ScoreboardComponent } from './scoreboard/scoreboard.component';
 
 const routes: Routes = [
-  { path: 'list', component: ProblemsetListComponent },
+  { path: '', redirectTo: '/problemsets', pathMatch: 'full' },
+  { path: 'problemsets', component: ProblemsetListComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'faq', component: FaqComponent },
-  { path: ':problemsetId', component: ProblemsetComponent },
-  { path: ':problemsetId/:problemNumber', component: ProblemComponent },
-  { path: ':problemsetId/submissions/:problemNumber', component: SubmissionListComponent },
+  { path: 'problemset/:problemsetId', component: ProblemsetComponent },
+  { path: 'problemset/:problemsetId/problem/:problemNumber', component: ProblemComponent },
+  { path: 'problemset/:problemsetId/submissions/:username', component: SubmissionListComponent },
+  { path: 'problemset/:problemsetId/scoreboard', component: ScoreboardComponent }
 ];
 
 @NgModule({

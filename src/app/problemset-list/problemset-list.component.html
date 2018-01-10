@@ -1,33 +1,41 @@
 <mat-spinner *ngIf="!this.problemsetList" diameter="50"></mat-spinner>
 <mat-nav-list>
-  <mat-list-item *ngFor="let problemset of problemsetList" routerLink="/{{problemset.id}}">
+  <mat-list-item *ngFor="let problemset of problemsetList" routerLink="/problemset/{{problemset.id}}">
     <mat-icon mat-list-icon>label</mat-icon>
     <h3 mat-line>{{problemset.title}}</h3>
-    <p mat-line>
-      <span class="info-item">
+    <p mat-line class="margin-to-top">
+      <span class="time">
         <label>Start: </label>{{this.displayTime(problemset.startTime)}}
       </span>
-      <span class="info-item">
+      <span class="time">
         <label>End: </label>{{this.displayTime(problemset.endTime)}}
       </span>
-    </p>
-    <p mat-line>
-      <span class="info-item">
-        <label>Mode: </label>{{problemset.runMode}}
-        <i class="fa fa-question-circle" matTooltip="{{this.tooltips.SELFTEST_MODE}}"
-           *ngIf="this.isSelftestMode(problemset)"></i>
-      </span>
-      <span class="info-item">
-        <label>Judge: </label>{{problemset.judgeMode}}
-        <i class="fa fa-question-circle" matTooltip="{{this.tooltips.BLIND_JUDGE}}"
-           *ngIf="this.isBlindJudge(problemset)"></i>
-      </span>
-      <span class="info-item">
-        <label>Penalty: </label>{{problemset.penaltyMode}}
-        <i class="fa fa-question-circle" matTooltip="{{this.tooltips.SCORE_PENALTY}}"
-           *ngIf="this.isScorePenalty(problemset)"></i>
-        <i class="fa fa-question-circle" matTooltip="{{this.tooltips.TIME_PENALTY}}"
-           *ngIf="this.isTimePenalty(problemset)"></i>
+
+      <span class="float-right">
+        <span class="mode run"
+              matTooltip="{{this.isSelftestMode(problemset) ?
+                  this.tooltips.SELFTEST_MODE : this.tooltips.STANDARD_MODE}}"
+              [routerLink]="['/faq']"
+              fragment="{{this.isSelftestMode(problemset) ? 'selftest' : 'standard'}}"
+        >
+          {{problemset.runMode | titlecase}}
+        </span>
+        <span class="mode judge"
+              matTooltip="{{this.isBlindJudge(problemset) ?
+                  this.tooltips.BLIND_JUDGE : this.tooltips.OPEN_JUDGE}}"
+              [routerLink]="['/faq']"
+              fragment="{{this.isBlindJudge(problemset) ? 'blind' : 'open'}}"
+        >
+          {{problemset.judgeMode | titlecase}}
+        </span>
+        <span class="mode penalty"
+              matTooltip="{{this.isScorePenalty(problemset) ?
+                  this.tooltips.TIME_PENALTY : this.tooltips.SCORE_PENALTY}}"
+              [routerLink]="['/faq']"
+              fragment="{{this.isScorePenalty(problemset) ? 'score-penalty' : 'time-penalty'}}"
+        >
+          {{problemset.penaltyMode | titlecase}} Penalty
+        </span>
       </span>
     </p>
   </mat-list-item>

@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, HostListener } from '@angular/core';
 import { Router, ActivationEnd } from '@angular/router';
 import { environment } from '../../environments/environment';
+import * as Cookies from 'cookies-js';
 import { ApiService } from '../api.service';
 
+import * as time from '../constants/time';
 import { ProblemsetInfo } from '../constants/problemset';
 
 @Component({
@@ -15,7 +17,9 @@ export class NavbarComponent implements OnInit {
 
   logoUrl: string = !environment.production ? 'assets/logo.png' : 'logo.png';
 
-  problemset: ProblemsetInfo | null = null;
+  problemset: ProblemsetInfo | undefined = undefined;
+
+  public linksExpanded = true;
 
   constructor(
     private api: ApiService,
@@ -27,22 +31,35 @@ export class NavbarComponent implements OnInit {
         if (problemsetId) {
           this.getProblemset(problemsetId);
         } else {
-          this.problemset = null;
+          this.problemset = undefined;
         }
       }
     });
   }
 
-  ngOnInit() {
+  @HostListener('window:beforeunload', ['$event'])
+  public beforeWindowUnload($event: BeforeUnloadEvent) {
+    this.saveLinksExpanded();
   }
 
-  isProblemset(): boolean {
-    return this.problemset !== null;
+  ngOnInit() {
+    if (Cookies.get('linksExpanded') !== undefined) {
+      this.linksExpanded = Cookies.get('linksExpanded');
+    }
+  }
+
+  saveLinksExpanded() {
+    Cookies.set('linksExpanded', this.linksExpanded, {
+      expires: time.DAY_MS * 7 / time.SECOND_MS
+    });
   }
 
   getProblemset(id: string): void {
     this.api.getProblemset(id)
-      .subscribe(problemset => console.log('got problemset in navbar', this.problemset = problemset));
+      .subscribe(problemset => this.problemset = problemset);
   }
 
+  getUser(): string {
+    return 'by123';
+  }
 }

@@ -1,5 +1,4 @@
 mat-sidenav-container {
-  position: absolute;
   width: 100%;
   height: 100%;
 }
@@ -19,4 +18,8 @@ mat-sidenav-content {
 
 app-navbar {
   width: 100%;
+}
+
+.scrolling-content {
+  overflow: auto;
 }

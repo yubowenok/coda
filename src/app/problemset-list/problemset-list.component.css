@@ -10,14 +10,31 @@ mat-list-item {
   cursor: pointer;
 }
 
-.info-item {
+.time {
   display: inline-block;
   min-width: 150px;
-  margin-right: 1em;
 }
 
-mat-spinner {
-  position: fixed;
-  left: 50%;
-  top: 50%;
+.mode {
+  display: inline-block;
+  text-align: center;
+  border: 1px solid #ccc;
+  padding: 3px;
+  color: #999;
+}
+
+.mode.run {
+  width: 60px;
+}
+
+.mode.judge {
+  width: 40px;
+}
+
+.mode.penalty {
+  width: 90px;
+}
+
+.float-right {
+  float: right;
 }

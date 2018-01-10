@@ -24,6 +24,7 @@ export enum ScoreboardMode {
 export interface ProblemsetInfo {
   id: string;
   title: string;
+  started: boolean;
   runMode: RunMode;
   judgeMode: JudgeMode;
   penaltyMode: PenaltyMode;

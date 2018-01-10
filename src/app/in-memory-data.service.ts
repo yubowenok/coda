@@ -1,21 +1,23 @@
 import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 
-import * as problemset from './constants/problemset';
+import { RunMode, JudgeMode, PenaltyMode } from './constants/problemset';
+
+import * as moment from 'moment';
+import * as time from './constants/time';
 
 @Injectable()
 export class InMemoryDataService implements InMemoryDbService {
 
   constructor() { }
 
-  private ONE_DAY_MS = 1000 * 60 * 60 * 24;
-
   getStartTime(): number {
-    return (new Date()).getTime() + Math.floor((Math.random() * this.ONE_DAY_MS * 14 - 7 * this.ONE_DAY_MS));
+    return (new Date()).getTime() +
+      Math.floor((-Math.random() * time.DAY_MS * 7 + 2 * time.DAY_MS)); // [-5, 2] days
   }
 
   getEndTime(startTime: number) {
-    return startTime + Math.floor(Math.random() * 7 * this.ONE_DAY_MS);
+    return startTime + 7 * time.DAY_MS; // length is 7 days
   }
 
   getStartEndTime() {
@@ -25,76 +27,132 @@ export class InMemoryDataService implements InMemoryDbService {
   }
 
   createDb() {
-    const problemList = [
+    const problemInfoList = [
       {
         number: 'A',
         id: 'aplusb',
         title: 'A Plus B',
-        scoring: [
-          { subtask: 'small', score: 20 },
-          { subtaks: 'large', score: 40 }
+        subtasks: [
+          { id: 'small', score: 20 },
+          { id: 'large', score: 40 }
         ]
       },
       {
         number: 'B',
         id: 'gradecurving',
         title: 'Grade Curving',
-        scoring: [
-          { subtask: 'small', score: 20 },
-          { subtaks: 'large', score: 40 }
+        subtasks: [
+          { id: 'small', score: 20 },
+          { id: 'large', score: 40 }
         ]
       },
       {
         number: 'C',
         id: 'maxexpression',
         title: 'Maximum Expression',
-        scoring: [
-          { subtask: 'small', score: 20 },
-          { subtaks: 'large', score: 30 }
+        subtasks: [
+          { id: 'small', score: 20 },
+          { id: 'large', score: 30 }
         ]
       },
       {
         number: 'D',
         id: 'ultimate',
         title: 'Ultimate Challenge',
-        scoring: [
-          { subtask: 'small', score: 20 },
-          { subtask: 'medium', score: 30 },
-          { subtaks: 'large', score: 50 }
+        subtasks: [
+          { id: 'small', score: 20 },
+          { id: 'medium', score: 30 },
+          { id: 'large', score: 50 }
         ]
       }
     ];
-    const problemsetList = [
+    const problemset = [
       {
         id: 'set1',
         title: 'Test Problemset 1',
         startTime: this.getStartTime(),
-        runMode: problemset.RunMode.STANDARD,
-        judgeMode: problemset.JudgeMode.OPEN,
-        penaltyMode: problemset.PenaltyMode.SCORE,
+        runMode: RunMode.STANDARD,
+        judgeMode: JudgeMode.OPEN,
+        penaltyMode: PenaltyMode.SCORE,
         ...this.getStartEndTime(),
-        problems: problemList
+        problems: problemInfoList
       },
       {
         id: 'set2',
         title: 'Test Problemset 2',
-        runMode: problemset.RunMode.SELFTEST,
-        judgeMode: problemset.JudgeMode.BLIND,
-        penaltyMode: problemset.PenaltyMode.TIME,
+        runMode: RunMode.SELFTEST,
+        judgeMode: JudgeMode.BLIND,
+        penaltyMode: PenaltyMode.TIME,
         ...this.getStartEndTime(),
-        problems: problemList
+        problems: problemInfoList
       },
       {
         id: 'set3',
         title: 'Test Problemset 3',
-        runMode: problemset.RunMode.STANDARD,
-        judgeMode: problemset.JudgeMode.OPEN,
-        penaltyMode: problemset.PenaltyMode.SCORE,
+        runMode: RunMode.STANDARD,
+        judgeMode: JudgeMode.OPEN,
+        penaltyMode: PenaltyMode.SCORE,
         ...this.getStartEndTime(),
-        problems: problemList
-      },
+        problems: problemInfoList
+      }
     ];
-    return { problemsetList };
+
+    const problem = [
+      {
+        id: 'set1_A',
+        title: 'A Plus B',
+        timeLimit: 1,
+        statement: '$a + b = c$',
+        subtasks: [
+          {
+            id: 'small',
+            score: 20,
+            text: '$N\\leq50$'
+          },
+          {
+            id: 'large',
+            score: 40,
+            text: 'Original constraints'
+          }
+        ],
+        samples: [
+          {
+            id: 'sample-1',
+            in: '1 2\n',
+            out: '3\n'
+          },
+          {
+            id: 'sample-2',
+            in: '3 -2\n',
+            out: '1\n'
+          }
+        ],
+        subtaskOnlySamples: [
+          { sample: 'sample-2', subtask: 'large' }
+        ]
+      },
+      {
+        id: 'set1_B',
+        title: 'Grade Curving',
+      },
+      {
+        id: 'set1_C',
+        title: 'Maximum Expression',
+      },
+      {
+        id: 'set1_D',
+        title: 'Ultimate Challenge',
+      }
+    ];
+    for (let i = 0; i < 8; i++) {
+      problem.push(Object.assign({}, problem[i % 4]));
+    }
+    for (let i = 0; i < 4; i++) {
+      problem[i + 4].id = problem[i + 4].id.replace(/1/g, '2');
+      problem[i + 8].id = problem[i + 8].id.replace(/1/g, '3');
+    }
+
+    return { problemset, problem };
   }
 
 }
