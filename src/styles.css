@@ -1,6 +1,15 @@
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 @import '~font-awesome/css/font-awesome.css';
 @import '~highlightjs/styles/github.css';
+/*
+@import '~codeflask/src/codeflask.css';
+@import '~prismjs/themes/prism.css';
+@import '~prismjs/plugins/line-numbers/prism-line-numbers.css';
+*/
+@import '~codemirror/lib/codemirror.css';
+/*
+@import '~codemirror/theme/material.css';
+ */
 
 body {
   margin: 0;

@@ -26,3 +26,19 @@ table h4 {
   cursor: pointer;
   margin-left: .5em;
 }
+
+.subtask-id {
+  display: inline-block;
+}
+
+.problem {
+  line-height: 1.5;
+}
+
+.title > .submit {
+  float: right;
+}
+
+.title > h1 {
+  display: inline-block;
+}

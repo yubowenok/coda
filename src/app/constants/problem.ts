@@ -3,15 +3,17 @@ export interface SubtaskStats {
   attempted: number;
 }
 
+export interface SubtaskInfo {
+  subtask: string;
+  score: number;
+  stats: SubtaskStats;
+}
+
 export interface ProblemInfo {
   number: string;
   id: string;
   title: string;
-  subtasks: {
-    subtask: string,
-    score: number,
-    stats: SubtaskStats
-  }[];
+  subtasks: SubtaskInfo[];
 }
 
 export interface ProblemContent {

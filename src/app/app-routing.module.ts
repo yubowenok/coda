@@ -7,6 +7,7 @@ import { ProblemsetComponent } from './problemset/problemset.component';
 import { SignupComponent } from './signup/signup.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ProblemComponent } from './problem/problem.component';
+import { SubmitComponent } from './submit/submit.component';
 import { SubmissionListComponent } from './submission-list/submission-list.component';
 import { FaqComponent } from './faq/faq.component';
 import { ScoreboardComponent } from './scoreboard/scoreboard.component';
@@ -19,6 +20,8 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'faq', component: FaqComponent },
   { path: 'problemset/:problemsetId', component: ProblemsetComponent },
+  { path: 'problemset/:problemsetId/submit', component: SubmitComponent },
+  { path: 'problemset/:problemsetId/problem/:problemNumber/submit', component: SubmitComponent },
   { path: 'problemset/:problemsetId/problem/:problemNumber', component: ProblemComponent },
   { path: 'problemset/:problemsetId/submissions/:username', component: SubmissionListComponent },
   { path: 'problemset/:problemsetId/scoreboard', component: ScoreboardComponent }

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 
@@ -28,6 +29,9 @@ import { MathJaxDirective } from './mathjax.directive';
 import { ApiService } from './api.service';
 import { MessageService } from './message.service';
 import { HljsDirective } from './hljs.directive';
+import { SubmitComponent } from './submit/submit.component';
+import {CopyService} from './copy.service';
+import { CodeMirrorDirective } from './code-mirror.directive';
 
 @NgModule({
   imports: [
@@ -38,8 +42,9 @@ import { HljsDirective } from './hljs.directive';
     HttpClientInMemoryWebApiModule.forRoot(
       InMemoryDataService, { dataEncapsulation: false }
     ),
+    FormsModule,
     NavbarModule,
-    AppRoutingModule
+    AppRoutingModule,
   ],
   declarations: [
     AppComponent,
@@ -54,10 +59,13 @@ import { HljsDirective } from './hljs.directive';
     ProfileComponent,
     FaqComponent,
     MathJaxDirective,
-    HljsDirective
+    HljsDirective,
+    SubmitComponent,
+    CodeMirrorDirective
   ],
   providers: [
     ApiService,
+    CopyService,
     MessageService
   ],
   bootstrap: [AppComponent]

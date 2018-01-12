@@ -30,11 +30,12 @@ export class InMemoryDataService implements InMemoryDbService {
     const problemInfoList = [
       {
         number: 'A',
-        id: 'aplusb',
-        title: 'A Plus B',
+        id: 'critical',
+        title: 'Critical Elements',
         subtasks: [
-          { id: 'small', score: 20 },
-          { id: 'large', score: 40 }
+          { id: 'small', score: 15 },
+          { id: 'medium', score: 25 },
+          { id: 'large', score: 60 }
         ]
       },
       {
@@ -96,22 +97,70 @@ export class InMemoryDataService implements InMemoryDbService {
         problems: problemInfoList
       }
     ];
+    // \illustration{.5}{filename}{Image by \href{url}{Author}}
+    const testStatement = `
+<div class="section">
+  <p>
+    We have learned <it>Longest Increasing Subsequence</it> (LIS) <tt>in the course</tt>.
+    Recall that LIS$(S)$ of a sequence $S$ is the longest <it>strictly</it> increasing sequence you can obtain from $S$
+    by removing some (possibly none) elements from $S$.
+  </p>
+  <p>
+    We say an element of $S$ is <it>critical</it>, if removing it will 'cause' the length of LIS$(S)$ to decrease.
+    For example, in the sequence $S = [1, 3, 2, 4]$, LIS$(S)$ has length $3$.
+    The element $1$ is critical, because removing it gives the sequence $[3, 2, 4]$ and its LIS has length $2$.
+    The element $2$ is not critical,
+    because removing it gives the sequence $[1, 3, 4]$ and its LIS is still of length $3$.
+  </p>
+  <p>
+    Given a sequence $S$ that is a permutation of integers from $1$ to $N$, find which of its elements are critical.
+  </p>
+</div>
+<div class="section">
+<h3>Input</h3>
+  <p>
+    The first line of the input has an integer $T$ ($1 \\leq T\\leq 30$), the number of test cases.<br>
+    Each case has an integer $N$ on the first line.<br>
+    The next line has $N$ integers, giving the permutation $S$.
+  </p>
+</div>
+<div class="section">
+  <h3>Output</h3>
+  <p>
+    For each sequence output its critical elements in ascending order, separated by single spaces. If none of the
+    elements are critical, output "<tt>-1</tt>".
+  </p>
+</div>
+<div class="section">
+  <h3>Constraints</h3>
+  <ul>
+    <li>$1 \\leq N \\leq 10^5$</li>
+    <li>Each integer from $1$ to $N$ appears exactly once in the sequence
+    ($S$ is a permutation of integers from $1$ to $N$).</li>
+  </ul>
+</div>
+`;
 
     const problem = [
       {
         id: 'set1_A',
-        title: 'A Plus B',
+        title: 'Critical Elements',
         timeLimit: 1,
-        statement: '$a + b = c$',
+        statement: testStatement,
         subtasks: [
           {
             id: 'small',
-            score: 20,
-            text: '$N\\leq50$'
+            score: 15,
+            text: '$N \\leq 50$'
+          },
+          {
+            id: 'medium',
+            score: 25,
+            text: '$N \\leq 2\\,000$'
           },
           {
             id: 'large',
-            score: 40,
+            score: 60,
             text: 'Original constraints'
           }
         ],
@@ -125,10 +174,16 @@ export class InMemoryDataService implements InMemoryDbService {
             id: 'sample-2',
             in: '3 -2\n',
             out: '1\n'
+          },
+          {
+            id: 'sample-3',
+            in: '100 100\n',
+            out: '200\n'
           }
         ],
         subtaskOnlySamples: [
-          { sample: 'sample-2', subtask: 'large' }
+          { sample: 'sample-2', subtasks: ['medium', 'large'] },
+          { sample: 'sample-3', subtasks: ['large'] }
         ]
       },
       {

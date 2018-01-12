@@ -1,6 +1,7 @@
 button {
   width: 100%;
   text-align: left;
+  line-height: 1.5;
 }
 
 button span {
@@ -19,7 +20,7 @@ button .fa {
 .time-display {
   font-size: .8em;
   padding-left: 2px;
-  margin-bottom: 24px;
+  margin-bottom: 10px;
 }
 
 mat-progress-bar {
@@ -33,7 +34,7 @@ mat-progress-bar {
 
 .subtask {
   padding-left: 36px;
-  line-height: 2;
+  line-height: 1.75;
 }
 
 .subtask .id {

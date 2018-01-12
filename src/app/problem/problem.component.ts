@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../api.service';
-import { MessageService } from '../message.service';
+import { CopyService } from '../copy.service';
 
 import { ProblemContent } from '../constants/problem';
 
@@ -14,8 +14,8 @@ export class ProblemComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private message: MessageService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private copy: CopyService
   ) { }
 
   private problem: ProblemContent;
@@ -35,16 +35,7 @@ export class ProblemComponent implements OnInit {
   }
 
   copyText(text: string, successMessage: string): void {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    document.body.appendChild(textArea);
-  textArea.select();
-    try {
-      document.execCommand('copy');
-      this.message.showMessage(successMessage);
-    } catch (err) {
-      this.message.showMessage('copy is not supported by your browser');
-    }
-    document.body.removeChild(textArea);
+    this.copy.copyText(text, successMessage);
   }
+
 }
