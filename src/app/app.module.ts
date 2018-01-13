@@ -23,6 +23,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { FaqComponent } from './faq/faq.component';
 
 import { NavbarModule } from './navbar/navbar.module';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import { MathJaxDirective } from './mathjax.directive';
 
@@ -30,11 +31,15 @@ import { ApiService } from './api.service';
 import { MessageService } from './message.service';
 import { HljsDirective } from './hljs.directive';
 import { SubmitComponent } from './submit/submit.component';
-import {CopyService} from './copy.service';
+import { CopyService } from './copy.service';
 import { CodeMirrorDirective } from './code-mirror.directive';
+import { TimeDisplayPipe } from './pipes/time-display.pipe';
+import { DateDisplayPipe } from './pipes/date-display.pipe';
+import { VerdictDisplayPipe } from './pipes/verdict-display.pipe';
 
 @NgModule({
   imports: [
+    NgxDatatableModule,
     BrowserModule,
     BrowserAnimationsModule,
     AppMaterialModule,
@@ -44,7 +49,7 @@ import { CodeMirrorDirective } from './code-mirror.directive';
     ),
     FormsModule,
     NavbarModule,
-    AppRoutingModule,
+    AppRoutingModule
   ],
   declarations: [
     AppComponent,
@@ -61,7 +66,10 @@ import { CodeMirrorDirective } from './code-mirror.directive';
     MathJaxDirective,
     HljsDirective,
     SubmitComponent,
-    CodeMirrorDirective
+    CodeMirrorDirective,
+    TimeDisplayPipe,
+    DateDisplayPipe,
+    VerdictDisplayPipe
   ],
   providers: [
     ApiService,

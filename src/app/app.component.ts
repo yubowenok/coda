@@ -34,16 +34,12 @@ export class AppComponent implements OnInit {
           // you can use DomAdapter
           const element = document.querySelector('#' + tree.fragment);
           if (element) {
-            element.scrollIntoView();
+            setTimeout(() => element.scrollIntoView(), 0); // queue the scroll
+            return;
           }
         }
-
-        if (event.url === this.lastPoppedUrl) {
-          this.lastPoppedUrl = undefined;
-          window.scrollTo(0, this.yScrollStack.pop());
-        } else {
-          window.scrollTo(0, 0);
-        }
+        const newScrollY = event.url === this.lastPoppedUrl ? this.yScrollStack.pop() : 0;
+        setTimeout(() => window.scrollTo(0, newScrollY), 0);
       }
     });
   }

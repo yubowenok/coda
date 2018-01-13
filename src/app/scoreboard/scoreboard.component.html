@@ -1,3 +1,77 @@
-<p>
-  scoreboard works!
-</p>
+<mat-spinner *ngIf="!this.scoreboard || !this.problemset" diameter="50"></mat-spinner>
+<ng-container *ngIf="this.scoreboard && this.problemset">
+
+  <h2>Scoreboard of {{this.problemset.title}}</h2>
+  <div>
+    <mat-radio-group [(ngModel)]="mode" (ngModelChange)="onModeChange($event)">
+      <mat-radio-button value="attempts" color="primary">Attempts</mat-radio-button>
+      <mat-radio-button value="score" color="primary">Score</mat-radio-button>
+      <mat-radio-button value="time" color="primary">Time</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div class="margin-to-top">
+    <ngx-datatable
+      class="material striped"
+      [headerHeight]="70"
+      [rowHeight]="50"
+      [columnMode]="'force'"
+      [rows]="rows"
+      [columns]="columns"
+    >
+    </ngx-datatable>
+  </div>
+</ng-container>
+
+<ng-template #attemptsTmpl let-row="row" let-value="value">
+  <div *ngIf="value.attempts">
+    <div *ngIf="value.solved" class="correct">
+      <i class="fa fa-lg fa-check-circle"></i>
+      <span *ngIf="value.attempts > 1">+{{value.attempts-1}}</span>
+    </div>
+    <div *ngIf="value.attempts && value.solved === false" class="incorrect">
+      <i class="fa fa-lg fa-times-circle"></i>
+      <span *ngIf="value.attempts > 1">{{value.attempts}}</span>
+    </div>
+    <div *ngIf="value.attempts && value.solved === undefined" class="pending">
+      <i class="fa fa-lg fa-question-circle"></i>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #scoreTmpl let-row="row" let-value="value">
+  <div *ngIf="value.attempts">
+    <div *ngIf="value.solved" class="correct">
+      <i class="fa fa-lg fa-check-circle"></i>
+      {{value.score}}
+    </div>
+    <div *ngIf="value.attempts && value.solved === false" class="incorrect">
+      <i class="fa fa-lg fa-times-circle"></i>
+    </div>
+    <div *ngIf="value.attempts && value.solved === undefined" class="pending">
+      <i class="fa fa-lg fa-question-circle"></i>
+      {{value.score}}
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #timeTmpl let-row="row" let-value="value">
+  <div *ngIf="value.attempts">
+    <div *ngIf="value.solved" class="correct">
+      <i class="fa fa-lg fa-check-circle"></i>
+      {{this.displayTime(value.time)}}
+    </div>
+    <div *ngIf="value.attempts && value.solved === false" class="incorrect">
+      <i class="fa fa-lg fa-times-circle"></i>
+    </div>
+    <div *ngIf="value.attempts && value.solved === undefined" class="pending">
+      <i class="fa fa-lg fa-question-circle"></i>
+      {{this.displayTime(value.time)}}
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #headerTmpl let-column="column" let-value="value" let-sort="sortFn"
+             ngx-datatable-header-template>
+  <div (click)="sort()">{{column.name}}</div>
+  <div (click)="sort()">({{column.score}})</div>
+</ng-template>

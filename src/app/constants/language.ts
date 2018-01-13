@@ -4,3 +4,9 @@ export enum Language {
   CPP = 'CPP',
   JAVA = 'JAVA'
 }
+
+export const LanguageDisplay: { [language: string]: string} = {
+  C: 'C',
+  CPP: 'C++',
+  JAVA: 'Java'
+};

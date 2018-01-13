@@ -1,0 +1,15 @@
+ngx-datatable {
+  width: 100%;
+}
+
+/deep/ .header div {
+  cursor: pointer;
+}
+
+.margin-to-top {
+  margin-top: 30px;
+}
+
+mat-radio-button {
+  margin-right: .5em;
+}

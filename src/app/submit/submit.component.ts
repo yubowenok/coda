@@ -5,7 +5,6 @@ import { ApiService } from '../api.service';
 
 import { Language } from '../constants/language';
 import { SubtaskInfo } from '../constants/problem';
-import * as _ from 'lodash';
 import { Subject } from 'rxjs/Subject';
 import { of } from 'rxjs/observable/of';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
@@ -32,26 +31,23 @@ export class SubmitComponent implements OnInit {
 
   private code$;
   private code = new Subject<string>();
-  private displayCode = `#include <iostream>
-using namespace std;
-int main() {
-  return 0;
-}`;
+  private displayCode = '(Paste your source code here)\n\n';
   private latestCode = this.displayCode;
 
   ngOnInit() {
     this.getProblemset();
     this.getSelectedProblem();
 
+    /*
     this.code$ = this.code.pipe(
       debounceTime(3000),
       distinctUntilChanged(),
       switchMap((code: string) => of(code))
     );
-
     this.code$.subscribe((code: string) => {
-      // this.displayCode = code;
+      this.displayCode = code;
     });
+    */
   }
 
   selectedProblemHasSubtask(): boolean {
@@ -71,9 +67,8 @@ int main() {
   }
 
   onCodeChange(code: string) {
-    const escapedCode = _.escape(code);
-    this.code.next(escapedCode);
-    this.latestCode = escapedCode;
+    // this.code.next(code);
+    this.latestCode = code;
   }
 
   getSelectedProblem(): void {

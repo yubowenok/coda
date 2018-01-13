@@ -4,11 +4,23 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { catchError, tap } from 'rxjs/operators';
 
-import { API_URL, ProblemsetInfo, ProblemContent } from './constants';
+import {
+  API_URL,
+  ProblemsetInfo,
+  ProblemContent,
+  Scoreboard,
+  Submission,
+  SubmissionWithSource
+} from './constants';
 import * as time from './constants/time';
 
-const PROBLEMSET_REFETCH_INTERVAL = time.DAY_MS;
-const PROBLEM_REFETCH_INTERVAL = time.DAY_MS;
+const RefetchInterval = {
+  PROBLEMSET: time.HOUR_MS,
+  PROBLEM: time.HOUR_MS,
+  SCOREBOARD: 30 * time.SECOND_MS,
+  SUBMISSION: time.HOUR_MS,
+  SUBMISSION_LIST: 10 * time.SECOND_MS
+};
 
 @Injectable()
 export class ApiService {
@@ -17,6 +29,8 @@ export class ApiService {
 
   private problemsetUrl: string = API_URL + 'problemset';
   private problemUrl: string = API_URL + 'problem';
+  private scoreboardUrl: string = API_URL + 'scoreboard';
+  private submissionUrl: string = API_URL + 'submission';
 
   private problemsetCache: {
     [problemsetId: string]: {
@@ -30,21 +44,47 @@ export class ApiService {
       lastFetched: number
     }
   } = {};
+  private scoreboardCache: {
+    [problemsetId: string]: {
+      data: Scoreboard,
+      lastFetched: number
+    }
+  } = {};
+  private submissionCache: {
+    [id: string]: {
+      data: SubmissionWithSource,
+      lastFetched: number
+    }
+  } = {};
+  private submissionListCache: {
+    [id: string]: {
+      data: Submission[],
+      lastFetched: number
+    }
+  } = {};
 
-  getProblemsets(): Observable<ProblemsetInfo[]> {
+  getCache(id: string, cache: { [id: string]: { data: any, lastFetched: number }},
+           refetchInterval: number): Observable<any> | null {
+    if (id in cache && (new Date().getTime() - cache[id].lastFetched) <= refetchInterval) {
+      return of(cache[id].data);
+    }
+    return null;
+  }
+
+  getProblemsetList(): Observable<ProblemsetInfo[]> {
     return this.http.get<ProblemsetInfo[]>(this.problemsetUrl)
       .pipe(
         tap(problemsets => {
-          console.log('fetched problemsets', problemsets);
+          console.log('fetched problemset list', problemsets);
         }),
-        catchError(this.handleError('getProblemsets', []))
+        catchError(this.handleError('getProblemsetList', []))
       );
   }
 
   getProblemset(id: string): Observable<ProblemsetInfo> {
-    if (id in this.problemsetCache &&
-      (new Date().getTime() - this.problemsetCache[id].lastFetched) <= PROBLEMSET_REFETCH_INTERVAL) {
-      return of(this.problemsetCache[id].data);
+    const cached = this.getCache(id, this.problemsetCache, RefetchInterval.PROBLEMSET);
+    if (cached !== null) {
+      return cached;
     }
     const url = `${this.problemsetUrl}/${id}`;
     return this.http.get<ProblemsetInfo>(url)
@@ -61,9 +101,9 @@ export class ApiService {
   }
 
   getProblem(id: string): Observable<ProblemContent> {
-    if (id in this.problemCache &&
-      (new Date().getTime() - this.problemCache[id].lastFetched) <= PROBLEM_REFETCH_INTERVAL) {
-      return of(this.problemCache[id].data);
+    const cached = this.getCache(id, this.problemCache, RefetchInterval.PROBLEM);
+    if (cached !== null) {
+      return cached;
     }
     const url = `${this.problemUrl}/${id}`;
     return this.http.get<ProblemContent>(url)
@@ -76,6 +116,57 @@ export class ApiService {
           };
         }),
         catchError(this.handleError<ProblemContent>(`getProblem ${id}`))
+      );
+  }
+
+  getScoreboard(id: string): Observable<Scoreboard> {
+    const cached = this.getCache(id, this.scoreboardCache, RefetchInterval.SCOREBOARD);
+    if (cached !== null) {
+      return cached;
+    }
+    const url = `${this.scoreboardUrl}/${id}`;
+    return this.http.get<Scoreboard>(url)
+      .pipe(
+        tap(scoreboard => {
+          console.log(`fetched scoreboard ${id}`, scoreboard);
+          this.scoreboardCache[id] = {
+            data: scoreboard,
+            lastFetched: new Date().getTime()
+          };
+        }),
+        catchError(this.handleError<Scoreboard>(`getScoreboard ${id}`))
+      );
+  }
+
+  getSubmission(problemsetId: string, username: string, submissionId: string): Observable<SubmissionWithSource> {
+    const cacheId = `${problemsetId}_${username}_${submissionId}`;
+    const cached = this.getCache(cacheId, this.submissionCache, RefetchInterval.SUBMISSION);
+    if (cached !== null) {
+      return cached;
+    }
+    const url = `${this.submissionUrl}/${submissionId}`; // TODO: add problemsetId arg to API url
+    return this.http.get<SubmissionWithSource>(url)
+      .pipe(
+        tap(submission => {
+          console.log(`fetched submission ${problemsetId} ${submissionId}`, submission);
+        }),
+        catchError(this.handleError<SubmissionWithSource>(`getSubmission ${problemsetId} ${submissionId}`))
+      );
+  }
+
+  getSubmissionList(problemsetId: string, username: string): Observable<Submission[]> {
+    const cacheId = `${problemsetId}_${username}`;
+    const cached = this.getCache(cacheId, this.submissionListCache, RefetchInterval.SUBMISSION_LIST);
+    if (cached !== null) {
+      return cached;
+    }
+    const url = `${this.submissionUrl}`; // TODO add problemsetId arg to API url
+    return this.http.get<Submission[]>(url)
+      .pipe(
+        tap(submissions => {
+          console.log(`fetched submissions ${problemsetId}`, submissions);
+        }),
+        catchError(this.handleError<Submission[]>(`getSubmissions ${problemsetId}`, []))
       );
   }
 

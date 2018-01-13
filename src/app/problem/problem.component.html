@@ -20,11 +20,18 @@
   <div class="section margin-to-top">
     <h3>Samples</h3>
     <table class="samples">
+      <colgroup>
+        <col style="width: 50%">
+        <col style="width: 50%">
+      </colgroup>
       <tbody>
         <tr *ngFor="let sample of problem.samples; let i = index">
           <th>
-            <h4>Input {{i + 1}}<i class="fa fa-clone"
-                                  (click)="this.copyText(sample.in, 'Input ' + (i + 1) + ' copied')"></i></h4>
+            <div>
+              <h4>Input {{i + 1}}<i class="fa fa-clone"
+                                    (click)="this.copyText(sample.in, 'Input ' + (i + 1) + ' copied')"></i></h4>
+              <span class="special-sample">{{this.displaySubtaskOnlySample(sample)}}</span>
+            </div>
             <pre>{{sample.in}}</pre>
           </th>
           <th>

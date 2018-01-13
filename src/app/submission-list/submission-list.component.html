@@ -1,3 +1,19 @@
-<p>
-  submission list
-</p>
+<mat-spinner *ngIf="!this.submissionList" diameter="50"></mat-spinner>
+<ng-container *ngIf="this.submissionList">
+  <h2>My Submissions for {{this.problemset.title}}</h2>
+  <div class="margin-to-top">
+    <ngx-datatable
+      class="material striped"
+      [headerHeight]="50"
+      [rowHeight]="50"
+      [columnMode]="'force'"
+      [rows]="rows"
+      [columns]="columns"
+    >
+    </ngx-datatable>
+  </div>
+</ng-container>
+
+<ng-template #sourceLinkTmpl let-row="row" let-value="value">
+  <i routerLink="'./' + value" class="fa fa-file-text-o"></i>
+</ng-template>

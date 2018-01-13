@@ -1,15 +1,10 @@
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 @import '~font-awesome/css/font-awesome.css';
 @import '~highlightjs/styles/github.css';
-/*
-@import '~codeflask/src/codeflask.css';
-@import '~prismjs/themes/prism.css';
-@import '~prismjs/plugins/line-numbers/prism-line-numbers.css';
-*/
 @import '~codemirror/lib/codemirror.css';
-/*
-@import '~codemirror/theme/material.css';
- */
+@import '~@swimlane/ngx-datatable/release/index.css';
+@import '~@swimlane/ngx-datatable/release/themes/material.css';
+@import '~@swimlane/ngx-datatable/release/assets/icons.css';
 
 body {
   margin: 0;
@@ -35,4 +30,28 @@ mat-spinner.mat-progress-spinner {
 .hljs {
   border: 1px solid #aaa;
   padding: 1em;
+}
+
+datatable-header-cell.center div,
+datatable-body-cell.center div {
+  text-align: center;
+}
+
+.ngx-datatable.material.striped .datatable-row-odd {
+  background-color: #fafafa;
+}
+
+.bold,
+.bold div {
+  font-weight: bold;
+}
+
+.correct,
+.correct div {
+  color: #1c912a;
+}
+
+.incorrect,
+.incorrect div {
+  color: #a90000;
 }

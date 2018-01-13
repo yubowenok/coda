@@ -42,3 +42,12 @@ table h4 {
 .title > h1 {
   display: inline-block;
 }
+
+.special-sample {
+  display: inline-block;
+  font-weight: normal;
+}
+
+.samples h4 {
+  display: inline-block;
+}

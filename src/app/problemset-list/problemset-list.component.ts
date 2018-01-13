@@ -39,7 +39,7 @@ export class ProblemsetListComponent implements OnInit {
   }
 
   getProblemsetList(): void {
-    this.api.getProblemsets()
+    this.api.getProblemsetList()
       .subscribe(problemsetList => this.problemsetList = problemsetList);
   }
 

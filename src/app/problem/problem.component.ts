@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TitleCasePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../api.service';
 import { CopyService } from '../copy.service';
@@ -32,6 +33,18 @@ export class ProblemComponent implements OnInit {
       .subscribe(problem => {
         this.problem = problem;
       });
+  }
+
+  displaySubtaskOnlySample(sample: { id: string }): string {
+    const specialSamples = this.problem.subtaskOnlySamples;
+    let res = '';
+    for (let i = 0; i < specialSamples.length; i++) {
+      if (sample.id === specialSamples[i].sample) {
+        res = `(${specialSamples[i].subtasks
+          .map((s) => new TitleCasePipe().transform(s)).join(', ')} subtasks)`;
+      }
+    }
+    return res;
   }
 
   copyText(text: string, successMessage: string): void {
