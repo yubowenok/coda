@@ -7,6 +7,10 @@ export class CopyService {
   constructor(private message: MessageService) { }
 
   copyText(text: string, successMessage: string): void {
+    if (text.length === 0) {
+      this.message.showMessage('Cannot copy empty content!');
+      return;
+    }
     const textArea = document.createElement('textarea');
     textArea.value = text;
     document.body.appendChild(textArea);

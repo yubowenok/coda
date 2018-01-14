@@ -23,7 +23,3 @@ app-navbar {
 .scrolling-content {
   overflow: auto;
 }
-
-/deep/ tt {
-  font-style: monospace;
-}

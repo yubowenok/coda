@@ -8,12 +8,12 @@ import { LanguageDisplay } from '../constants/language';
 import { ProblemsetInfo } from '../constants/problemset';
 
 import * as moment from 'moment';
-import { DateDisplayPipe } from '../pipes/date-display.pipe';
-import { TimeDisplayPipe } from '../pipes/time-display.pipe';
-import { VerdictDisplayPipe } from '../pipes/verdict-display.pipe';
-import { VerdictClassPipe } from '../pipes/verdict-class.pipe';
-import { ExecutionTimePipe } from '../pipes/execution-time.pipe';
-import { MemoryPipe } from '../pipes/memory.pipe';
+import {
+  DateDisplayPipe,
+  TimeDisplayPipe,
+  VerdictDisplayPipe,
+  VerdictClassPipe
+} from '../pipe';
 
 @Component({
   selector: 'app-submission-list',
@@ -42,17 +42,23 @@ export class SubmissionListComponent implements OnInit {
     const verdictDisplayPipe = new VerdictDisplayPipe();
     const titleCasePipe = new TitleCasePipe();
     this.columns = [
-      { name: '#', prop: 'id', maxWidth: 80 },
+      { name: '#', prop: 'id',
+        minWidth: 30, maxWidth: 50 },
       { name: 'Problem', prop: 'problem' },
-      { name: 'Subtask', prop: 'subtask', pipe: titleCasePipe, minWidth: 80, maxWidth: 80 },
-      { name: 'Language', prop: 'language', minWidth: 80, maxWidth: 80},
-      { name: 'Verdict', prop: 'verdict', cellClass: this.getCorrectClass, pipe: verdictDisplayPipe },
+      { name: 'Subtask', prop: 'subtask', pipe: titleCasePipe,
+        minWidth: 80, maxWidth: 80 },
+      { name: '', prop: 'id', cellTemplate: this.sourceLinkTmpl, cellClass: 'center', sortable: false,
+        minWidth: 20, maxWidth: 20 },
+      { name: 'Verdict', prop: 'verdict', pipe: verdictDisplayPipe, cellClass: this.getCorrectClass,
+        minWidth: 185 },
+      { name: 'Lang', prop: 'language',
+        minWidth: 60, maxWidth: 60},
       { name: 'Execution', prop: 'executionTimeDisplay', comparator: this.executionTimeSorter },
       { name: 'Memory', prop: 'memoryDisplay', comparator: this.memorySorter },
-      { name: 'Time', prop: 'problemsetTime', pipe: timeDisplayPipe, minWidth: 100, maxWidth: 100 },
-      { name: 'Date', prop: 'submitTime', pipe: dateDisplayPipe, minWidth: 210, maxWidth: 210 },
-      { name: 'Details', prop: 'id', cellTemplate: this.sourceLinkTmpl,
-        minWidth: 80, maxWidth: 80, cellClass: 'center' }
+      { name: 'Time', prop: 'problemsetTime', pipe: timeDisplayPipe,
+        minWidth: 100, maxWidth: 100 },
+      { name: 'Date', prop: 'submitTime', pipe: dateDisplayPipe,
+        minWidth: 210, maxWidth: 210 }
     ];
   }
 
@@ -107,6 +113,7 @@ export class SubmissionListComponent implements OnInit {
         executionTimeDisplay: `${submission.verdict === Verdict.TLE ? '> ' : ''}${submission.executionTime}s`,
         memoryDisplay: `${submission.verdict === Verdict.MLE ? '> ' : ''}${submission.memory}MB`,
         problem: problemNames[submission.problemNumber],
+        problemsetTime: submission.outsideProblemsetTime ? -1 : submission.problemsetTime,
         submitTime: moment(submission.submitTime),
         language: LanguageDisplay[submission.language]
       });

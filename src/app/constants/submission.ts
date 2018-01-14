@@ -29,12 +29,12 @@ export interface Submission {
   verdict: Verdict;
   language: string;
   executionTime: number; // seconds
-  submitTime: number;
-  problemsetTime: number; // seconds into the problemset
-  outsideProblemsetTime: boolean;
-  failedCase: number; // 0 if AC
-  totalCase: number;
   memory: number; // MB
+  problemsetTime: number; // seconds into the problemset
+  submitTime: number; // date
+  outsideProblemsetTime: boolean;
+  failedCase?: number; // 0 if AC
+  totalCase?: number;
 }
 
 export interface SubmissionWithSource extends Submission {

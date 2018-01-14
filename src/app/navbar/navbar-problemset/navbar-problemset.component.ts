@@ -71,7 +71,7 @@ export class NavbarProblemsetComponent implements OnInit, OnDestroy {
     const end: moment.Moment = moment(this.problemset.endTime);
     const total = this.problemset.endTime - this.problemset.startTime;
     this.timeRemaining = this.displayTime(end.diff(now));
-    this.timePassedPercent = (1 - end.diff(now) / total) * 100;
+    this.timePassedPercent = Math.floor((1 - end.diff(now) / total) * 100);
   }
 
   getSelftestTimeRemaining(): void {

@@ -8,7 +8,7 @@ import { ParticipantScore, Scoreboard } from '../constants/scoreboard';
 import { ProblemInfo, SubtaskInfo } from '../constants/problem';
 
 import * as time from '../constants/time';
-import { TimeDisplayPipe } from '../pipes/time-display.pipe';
+import { TimeDisplayPipe } from '../pipe/time-display.pipe';
 
 enum Mode {
   SCORE = 'score',

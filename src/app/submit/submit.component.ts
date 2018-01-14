@@ -5,7 +5,6 @@ import { ApiService } from '../api.service';
 
 import { Language } from '../constants/language';
 import { SubtaskInfo } from '../constants/problem';
-import { Subject } from 'rxjs/Subject';
 import { CopyService } from '../copy.service';
 
 @Component({
@@ -29,14 +28,11 @@ export class SubmitComponent implements OnInit {
 
   private language: Language = Language.UNKNOWN;
 
-  private code$;
-  private code = new Subject<string>();
   private displayCode = '';
   private latestCode = this.displayCode;
 
   ngOnInit() {
     this.getProblemset();
-    this.getSelectedProblem();
   }
 
   selectedProblemHasSubtask(): boolean {
@@ -56,7 +52,6 @@ export class SubmitComponent implements OnInit {
   }
 
   onCodeChange(code: string) {
-    // this.code.next(code);
     this.latestCode = code;
   }
 
@@ -73,6 +68,7 @@ export class SubmitComponent implements OnInit {
     this.api.getProblemset(problemsetId)
       .subscribe(problemset => {
         this.problemset = problemset;
+        this.getSelectedProblem();
         this.getSubtasks();
       });
   }
@@ -100,8 +96,8 @@ export class SubmitComponent implements OnInit {
 
   }
 
-  copyText(text: string, successMessage: string): void {
-    this.copy.copyText(text, successMessage);
+  copyText(text: string): void {
+    this.copy.copyText(text, 'Source code copied');
   }
 
 }

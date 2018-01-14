@@ -33,13 +33,16 @@ import { SubmitComponent } from './submit/submit.component';
 import { CopyService } from './copy.service';
 import { CodeMirrorDirective } from './code-mirror.directive';
 
-import { TimeDisplayPipe } from './pipes/time-display.pipe';
-import { DateDisplayPipe } from './pipes/date-display.pipe';
-import { VerdictDisplayPipe } from './pipes/verdict-display.pipe';
-import { LanguageDisplayPipe } from './pipes/language-display.pipe';
-import { VerdictClassPipe } from './pipes/verdict-class.pipe';
-import { ExecutionTimePipe } from './pipes/execution-time.pipe';
-import { MemoryPipe } from './pipes/memory.pipe';
+import {
+  TimeDisplayPipe,
+  DateDisplayPipe,
+  VerdictDisplayPipe,
+  LanguageDisplayPipe,
+  VerdictClassPipe,
+  ExecutionTimePipe,
+  MemoryPipe,
+  RepeatPipe
+} from './pipe';
 
 @NgModule({
   imports: [
@@ -76,7 +79,8 @@ import { MemoryPipe } from './pipes/memory.pipe';
     LanguageDisplayPipe,
     VerdictClassPipe,
     ExecutionTimePipe,
-    MemoryPipe
+    MemoryPipe,
+    RepeatPipe
   ],
   providers: [
     ApiService,

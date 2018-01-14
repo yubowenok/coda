@@ -11,6 +11,10 @@ body {
   font-family: Roboto,Helvetica Neue Light,Helvetica Neue,Helvetica,Arial,Lucida Grande,sans-serif;
 }
 
+html, body {
+  height: 100%;
+}
+
 it,
 .it {
   font-style: italic;
@@ -19,7 +23,7 @@ it,
 tt,
 .tt {
   color: #666;
-  font-family: Courier;
+  font-family: monospace;
 }
 
 form {

@@ -7,6 +7,9 @@ import * as time from '../constants/time';
 export class TimeDisplayPipe implements PipeTransform {
 
   transform(t: number, args?: any): string {
+    if (t < 0) {
+      return 'practice'; // After the problemset ends
+    }
     t *= time.SECOND_MS;
     const hours = Math.floor(t / time.HOUR_MS);
     let minutes: number | string = Math.floor(t % time.HOUR_MS / time.MINUTE_MS);

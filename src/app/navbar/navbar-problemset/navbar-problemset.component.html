@@ -6,7 +6,7 @@
     </div>
     <div class="time-display time-remaining" *ngIf="this.hasStarted()">
       <b>Time Remaining: </b>{{timeRemaining}}
-      <mat-progress-bar mode="determinate" [value]="this.timePassedPercent"></mat-progress-bar>
+      <mat-progress-bar mode="determinate" [value]="this.timePassedPercent" color="primary"></mat-progress-bar>
     </div>
   </div>
   <div *ngIf="this.hasStarted()">

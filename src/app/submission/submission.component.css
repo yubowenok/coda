@@ -11,3 +11,32 @@ table {
   width: 100%;
   table-layout: fixed;
 }
+
+.margin-to-top {
+  margin-top: 30px;
+}
+
+ngx-datatable.material {
+  box-shadow: none;
+}
+
+.case {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  margin: 1px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Offset mysterious margin */
+.case.incorrect {
+  margin-left: -3px;
+  margin-right: -3px;
+}
+
+.unknown {
+  color: #ccc;
+}
