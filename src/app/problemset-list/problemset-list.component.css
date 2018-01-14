@@ -1,0 +1,48 @@
+.problemset {
+  height: 100px;
+}
+
+label {
+  font-weight: bold;
+}
+
+mat-list-item {
+  cursor: pointer;
+}
+
+.time {
+  display: inline-block;
+  min-width: 150px;
+}
+
+.mode {
+  display: inline-block;
+  text-align: center;
+  border: 1px solid #ccc;
+  padding: 3px;
+  color: #999;
+}
+
+.mode.run {
+  width: 60px;
+}
+
+.mode.judge {
+  width: 40px;
+}
+
+.mode.penalty {
+  width: 90px;
+}
+
+.float-right {
+  float: right;
+}
+
+mat-card {
+  margin-top: 30px;
+}
+
+mat-card-title {
+  font-size: 1.5em;
+}

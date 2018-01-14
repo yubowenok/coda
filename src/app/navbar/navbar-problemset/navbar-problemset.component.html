@@ -1,0 +1,25 @@
+<ng-container *ngIf="this.problemset">
+  <div class="padding-horizontal">
+    <h3>{{this.problemset.title}}</h3>
+    <div class="time-display time-till-start" *ngIf="!this.hasStarted()">
+      <b>Time till start: </b>{{timeTillStart}}
+    </div>
+    <div class="time-display time-remaining" *ngIf="this.hasStarted()">
+      <b>Time Remaining: </b>{{timeRemaining}}
+      <mat-progress-bar mode="determinate" [value]="this.timePassedPercent" color="primary"></mat-progress-bar>
+    </div>
+  </div>
+  <div *ngIf="this.hasStarted()">
+    <button mat-button *ngFor="let problem of problemset.problems"
+            routerLink="/problemset/{{this.problemset.id}}/problem/{{problem.number}}">
+      <b>{{problem.number}}</b>
+      <i class="fa fa-chevron-right"></i>
+      <span>{{problem.title}}</span>
+      <div class="subtasks">
+        <div class="subtask" *ngFor="let subtask of problem.subtasks">
+          <b class="id">{{subtask.id | titlecase}}</b><span class="score">{{subtask.score + 'pts'}}</span>
+        </div>
+      </div>
+    </button>
+  </div>
+</ng-container>

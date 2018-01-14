@@ -1,0 +1,8 @@
+<ng-container *ngIf="problemset">
+  <p *ngIf="!problemset.started">
+    Problemset has not started.
+  </p>
+  <p *ngIf="problemset.started">
+    You are seeing this page because of an error. Please contact site admin.
+  </p>
+</ng-container>

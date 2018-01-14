@@ -1,0 +1,47 @@
+button {
+  width: 100%;
+  text-align: left;
+  line-height: 1.5;
+}
+
+button span {
+  font-weight: normal;
+}
+
+button .fa {
+  margin-right: .5em;
+}
+
+.padding-horizontal {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.time-display {
+  font-size: .8em;
+  padding-left: 2px;
+  margin-bottom: 10px;
+}
+
+mat-progress-bar {
+  margin-top: 2px;
+}
+
+.subtasks {
+  font-size: .8em;
+  margin-bottom: 10px;
+}
+
+.subtask {
+  padding-left: 36px;
+  line-height: 1.75;
+}
+
+.subtask .id {
+  display: inline-block;
+  margin-right: 1em;
+  width: 50px;
+}
+
+.subtask .score {
+}

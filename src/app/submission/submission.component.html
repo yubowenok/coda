@@ -1,0 +1,54 @@
+<mat-spinner *ngIf="!this.submission || !this.problemset" diameter="50"></mat-spinner>
+<ng-container *ngIf="this.submission && this.problemset">
+  <h3>{{this.getUsername()}}'s Submission #{{this.submission.id}}</h3>
+  <div class="margin-to-top">
+    <ngx-datatable
+      class="material striped"
+      [headerHeight]="50"
+      [rowHeight]="50"
+      [columnMode]="'force'"
+      [rows]="rows"
+      [columns]="columns"
+    >
+    </ngx-datatable>
+  </div>
+  <div class="cases" *ngIf="this.submission.totalCase">
+    <h3>
+      Test Cases
+      ({{(this.submission.failedCase === 0 ? this.submission.totalCase : this.submission.failedCase - 1) + '/' +
+      this.submission.totalCase}})
+    </h3>
+    <div>
+      <span class="case correct" *ngFor="let number of ((this.submission.failedCase === 0 ?
+            this.submission.totalCase : this.submission.failedCase - 1) | repeat)"
+            matTooltip="{{'#' + number + ' Accepted'}}"
+      >
+        <i class="fa fa-check"></i>
+      </span>
+      <ng-container *ngIf="this.submission.failedCase">
+        <span class="case incorrect"
+              matTooltip="{{'#' + this.submission.failedCase + ' ' + (this.submission.verdict | verdictDisplay)}}"
+        >
+          <i class="fa fa-times"></i>
+        </span>
+        <span class="case unknown"
+              *ngFor="let number of (this.submission.totalCase - this.submission.failedCase | repeat)"
+              matTooltip="{{'#' + (number + this.submission.failedCase) + ' Not Judged'}}"
+        >
+          <i class="fa fa-question"></i>
+        </span>
+      </ng-container>
+    </div>
+  </div>
+  <div class="source">
+    <h3>Source Code<i class="fa fa-clone btn-copy"
+                      (click)="this.copyText(this.submission.source)"></i></h3>
+    <mat-card>
+      <div class="code-block"
+           [appCodeMirror]="this.submission.source"
+           [language]="this.submission.language"
+           readOnly="true">
+      </div>
+    </mat-card>
+  </div>
+</ng-container>

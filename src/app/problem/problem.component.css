@@ -1,0 +1,49 @@
+.subtask-list li {
+  margin-top: 10px;
+}
+
+.margin-to-top {
+  margin-top: 30px;
+}
+
+pre {
+  border: 1px solid #aaa;
+  padding: .5em;
+  font-weight: normal;
+}
+
+table.samples {
+  width: 100%;
+  text-align: left;
+  table-layout: fixed;
+}
+
+table h4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.subtask-id {
+  display: inline-block;
+}
+
+.problem {
+  line-height: 1.5;
+}
+
+.title > .submit {
+  float: right;
+}
+
+.title > h1 {
+  display: inline-block;
+}
+
+.special-sample {
+  display: inline-block;
+  font-weight: normal;
+}
+
+.samples h4 {
+  display: inline-block;
+}

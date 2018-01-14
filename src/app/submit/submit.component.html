@@ -1,0 +1,59 @@
+<ng-container *ngIf="this.problemset">
+  <table>
+    <tbody>
+    <tr>
+      <td>
+        <div class="problem">
+          <h3>Problem</h3>
+          <mat-form-field>
+            <mat-select placeholder="choose a problem"
+                        [(ngModel)]="this.selectedProblem"
+                        [disabled]="this.lockProblemSelect"
+                        (ngModelChange)="onProblemChange($event)"
+            >
+              <mat-option *ngFor="let problem of problemset.problems" [value]="problem.number">
+                {{problem.number}} - {{problem.title}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </td>
+      <td>
+        <div class="subtask" *ngIf="this.selectedProblemHasSubtask()">
+          <h3>Subtask</h3>
+          <mat-form-field>
+            <mat-select placeholder="choose a subtask" [(value)]="this.selectedSubtask">
+              <mat-option *ngFor="let subtask of subtasks" [value]="subtask.id">
+                {{subtask.id | titlecase}} ({{subtask.score}} pts)
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="language">
+    <h3>Language</h3>
+    <mat-radio-group [(ngModel)]="language" (ngModelChange)="onLanguageChange($event)">
+      <mat-radio-button value="CPP" color="primary">C++</mat-radio-button>
+      <mat-radio-button value="C" color="primary">C</mat-radio-button>
+      <mat-radio-button value="JAVA" color="primary">Java</mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  <div class="source">
+    <h3>Source Code<i class="fa fa-clone btn-copy"
+                      (click)="this.copyText(this.latestCode, 'source copied')"></i></h3>
+    <mat-card>
+      <div class="code-block" [appCodeMirror]="this.displayCode" [language]="this.language"
+           (codeUpdated)="onCodeChange($event)"></div>
+    </mat-card>
+  </div>
+  <div class="margin-to-top float-right">
+    <button mat-raised-button (click)="this.submit()" [disabled]="!this.submittable()" color="primary">
+      Submit Solution
+    </button>
+  </div>
+</ng-container>

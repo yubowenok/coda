@@ -1,0 +1,25 @@
+mat-sidenav-container {
+  width: 100%;
+  height: 100%;
+}
+
+mat-sidenav {
+  display: flex;
+  width: 250px;
+  background: #fafafa;
+  box-shadow: 3px 0 6px rgba(0,0,0,.25);
+}
+
+mat-sidenav-content {
+  height: 100%;
+  background: white;
+  padding: 30px;
+}
+
+app-navbar {
+  width: 100%;
+}
+
+.scrolling-content {
+  overflow: auto;
+}

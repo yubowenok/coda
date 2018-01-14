@@ -1,0 +1,47 @@
+img.logo {
+  position: relative;
+  height: 40px;
+  top: 18px;
+  left: -10px;
+}
+
+.div-logo {
+  display: flex;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+}
+
+.fa {
+  margin-right: 1em;
+}
+
+button {
+  width: 100%;
+}
+
+app-user {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+navbar-problemset {
+  display: block;
+  margin-bottom: 30px;
+}
+
+mat-accordion {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.section {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/deep/ .mat-expansion-panel-content .mat-expansion-panel-body {
+  padding: 0;
+}
