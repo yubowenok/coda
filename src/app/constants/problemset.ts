@@ -24,7 +24,7 @@ export enum ScoreboardMode {
 export interface ProblemsetInfo {
   id: string;
   title: string;
-  started: boolean;
+  started?: boolean; // determined by the server
   runMode: RunMode;
   judgeMode: JudgeMode;
   penaltyMode: PenaltyMode;
@@ -33,6 +33,6 @@ export interface ProblemsetInfo {
   endTime: number;
   duration?: number; // selftest
   freebies: number;
-  showCaseNumber: boolean;
+  showCaseNumber?: boolean;
   problems: ProblemInfo[];
 }

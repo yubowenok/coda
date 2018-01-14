@@ -1,0 +1,13 @@
+.source mat-card {
+  padding: 5px;
+}
+
+h4.inline {
+  display: inline-block;
+  margin-right: 1em;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}

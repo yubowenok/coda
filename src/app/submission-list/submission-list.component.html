@@ -1,6 +1,6 @@
 <mat-spinner *ngIf="!this.submissionList" diameter="50"></mat-spinner>
 <ng-container *ngIf="this.submissionList">
-  <h2>My Submissions for {{this.problemset.title}}</h2>
+  <h2>{{this.getUsername()}}'s Submissions for {{this.problemset.title}}</h2>
   <div class="margin-to-top">
     <ngx-datatable
       class="material striped"
@@ -15,5 +15,5 @@
 </ng-container>
 
 <ng-template #sourceLinkTmpl let-row="row" let-value="value">
-  <i routerLink="'./' + value" class="fa fa-file-text-o"></i>
+  <i [routerLink]="this.getSourceLink(value)" class="fa fa-file-text-o"></i>
 </ng-template>

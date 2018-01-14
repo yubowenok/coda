@@ -16,7 +16,8 @@ import {
   MatProgressSpinnerModule,
   MatSnackBarModule,
   MatRadioModule,
-  MatSelectModule
+  MatSelectModule,
+  MatChipsModule
 } from '@angular/material';
 
 @NgModule({
@@ -41,7 +42,8 @@ import {
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatRadioModule,
-    MatSelectModule
+    MatSelectModule,
+    MatChipsModule
   ]
 })
 export class AppMaterialModule {}

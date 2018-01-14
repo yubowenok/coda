@@ -25,6 +25,7 @@ const routes: Routes = [
   { path: 'problemset/:problemsetId/problem/:problemNumber/submit', component: SubmitComponent },
   { path: 'problemset/:problemsetId/problem/:problemNumber', component: ProblemComponent },
   { path: 'problemset/:problemsetId/submissions/:username', component: SubmissionListComponent },
+  { path: 'problemset/:problemsetId/submissions', component: SubmissionListComponent },
   { path: 'problemset/:problemsetId/submission/:username/:submissionId', component: SubmissionComponent },
   { path: 'problemset/:problemsetId/scoreboard', component: ScoreboardComponent }
 ];

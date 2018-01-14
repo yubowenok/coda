@@ -44,7 +44,8 @@
   </div>
 
   <div class="source">
-    <h3>Source Code</h3>
+    <h3>Source Code<i class="fa fa-clone btn-copy"
+                      (click)="this.copyText(this.latestCode, 'source copied')"></i></h3>
     <mat-card>
       <div class="code-block" [appCodeMirror]="this.displayCode" [language]="this.language"
            (codeUpdated)="onCodeChange($event)"></div>

@@ -11,8 +11,8 @@ import * as time from '../constants/time';
 import { TimeDisplayPipe } from '../pipes/time-display.pipe';
 
 enum Mode {
-  ATTEMPTS = 'attempts',
   SCORE = 'score',
+  ATTEMPTS = 'attempts',
   TIME = 'time'
 }
 
@@ -39,7 +39,7 @@ export class ScoreboardComponent implements OnInit {
   private rows = [];
   private columns = [];
 
-  private mode = Mode.ATTEMPTS;
+  private mode = Mode.SCORE;
 
   ngOnInit() {
     this.getScoreboard();

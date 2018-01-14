@@ -6,7 +6,7 @@ export interface SubtaskStats {
 export interface SubtaskInfo {
   id: string;
   score: number;
-  stats: SubtaskStats;
+  // stats: SubtaskStats;
 }
 
 export interface ProblemInfo {

@@ -9,7 +9,7 @@ export class VerdictDisplayPipe implements PipeTransform {
   transform(verdict: string, args?: any): string {
     if (!(verdict in VerdictDisplay)) {
       console.warn(`${verdict} not in VerdictDisplay`);
-      return '';
+      return 'Unknown';
     }
     return VerdictDisplay[verdict];
   }

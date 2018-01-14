@@ -1,17 +1,20 @@
 <mat-spinner *ngIf="!this.problemsetList" diameter="50"></mat-spinner>
-<mat-nav-list>
-  <mat-list-item *ngFor="let problemset of problemsetList" routerLink="/problemset/{{problemset.id}}">
-    <mat-icon mat-list-icon>label</mat-icon>
-    <h3 mat-line>{{problemset.title}}</h3>
-    <p mat-line class="margin-to-top">
+<mat-card *ngFor="let group of problemsetGroups">
+  <mat-card-title>{{group.title}}</mat-card-title>
+  <mat-card-content>
+    <mat-nav-list>
+      <mat-list-item *ngFor="let problemset of group.problemsetList" routerLink="/problemset/{{problemset.id}}">
+        <mat-icon mat-list-icon>assignment</mat-icon>
+        <h3 mat-line>{{problemset.title}}</h3>
+        <p mat-line class="margin-to-top">
       <span class="time">
         <label>Start: </label>{{this.displayTime(problemset.startTime)}}
       </span>
-      <span class="time">
+          <span class="time">
         <label>End: </label>{{this.displayTime(problemset.endTime)}}
       </span>
 
-      <span class="float-right">
+          <span class="float-right">
         <span class="mode run"
               matTooltip="{{this.isSelftestMode(problemset) ?
                   this.tooltips.SELFTEST_MODE : this.tooltips.STANDARD_MODE}}"
@@ -37,6 +40,8 @@
           {{problemset.penaltyMode | titlecase}} Penalty
         </span>
       </span>
-    </p>
-  </mat-list-item>
-</mat-nav-list>
+        </p>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-card-content>
+</mat-card>

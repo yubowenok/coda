@@ -24,10 +24,6 @@ app-navbar {
   overflow: auto;
 }
 
-/deep/ it {
-  font-style: italic;
-}
-
 /deep/ tt {
   font-style: monospace;
 }

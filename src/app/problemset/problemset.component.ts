@@ -35,7 +35,7 @@ export class ProblemsetComponent implements OnInit {
           return;
         }
         const problemNumber = this.route.snapshot.paramMap.get('problemNumber');
-        if (problemNumber === undefined) {
+        if (problemNumber == null) {
           const firstProblemNumber = problemset.problems[0].number;
           this.router.navigate([`/problemset/${problemsetId}/problem/${firstProblemNumber}`]);
         }

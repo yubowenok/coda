@@ -15,16 +15,12 @@ pre {
 table.samples {
   width: 100%;
   text-align: left;
+  table-layout: fixed;
 }
 
 table h4 {
   margin-top: 0;
   margin-bottom: 0;
-}
-
-.fa-clone {
-  cursor: pointer;
-  margin-left: .5em;
 }
 
 .subtask-id {

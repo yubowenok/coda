@@ -12,6 +12,12 @@ body {
   font-family: Roboto,Helvetica Neue Light,Helvetica Neue,Helvetica,Arial,Lucida Grande,sans-serif;
 }
 
+it,
+.it {
+  font-style: italic;
+}
+
+tt,
 .tt {
   color: #666;
   font-family: Courier;
@@ -27,14 +33,13 @@ mat-spinner.mat-progress-spinner {
   top: 40%;
 }
 
-.hljs {
-  border: 1px solid #aaa;
-  padding: 1em;
-}
-
 datatable-header-cell.center div,
 datatable-body-cell.center div {
   text-align: center;
+}
+
+pre.CodeMirror-placeholder {
+  color: #aaa;
 }
 
 .ngx-datatable.material.striped .datatable-row-odd {
@@ -54,4 +59,10 @@ datatable-body-cell.center div {
 .incorrect,
 .incorrect div {
   color: #a90000;
+}
+
+.btn-copy {
+  cursor: pointer;
+  margin-left: .5em;
+  margin-right: .5em;
 }

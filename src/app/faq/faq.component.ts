@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
+import { CopyService } from '../copy.service';
 
 @Component({
   selector: 'app-faq',
@@ -8,27 +9,29 @@ import * as _ from 'lodash';
 })
 export class FaqComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private copy: CopyService
+  ) { }
 
-  private cppTemplate = _.escape(`#include <iostream>
+  private cppTemplate = `#include <iostream>
 using namespace std;
 int main() {
-    int a,b;
-    cin >> a >> b;
-    cout << a+b << endl;
-    return 0;
-}`);
+  int a,b;
+  cin >> a >> b;
+  cout << a+b << endl;
+  return 0;
+}`;
 
-  private cppFasterIOTemplate = _.escape(`#include <iostream>
+  private cppFasterIOTemplate = `#include <iostream>
 using namespace std;
 int main() {
-    int a, b;
-    scanf("%d%d", &a, &b);
-    printf("%d\\n", a + b);
-    return 0;
-}`);
+  int a, b;
+  scanf("%d%d", &a, &b);
+  printf("%d\\n", a + b);
+  return 0;
+}`;
 
-  private javaTemplate = _.escape(`import java.io.*;
+  private javaTemplate = `import java.io.*;
 import java.util.*;
 public class Main
 {
@@ -38,9 +41,9 @@ public class Main
     int a = cin.nextInt(), b = cin.nextInt();
     System.out.println(a + b);
   }
-}`);
+}`;
 
-  private javaFasterIOTemplate = _.escape(`import java.io.*;
+  private javaFasterIOTemplate = `import java.io.*;
 import java.util.*;
 public class Main
 {
@@ -55,9 +58,13 @@ public class Main
     sb.append(String.format("%d\\n", a + b));
     System.out.print(sb.toString());
   }
-}`);
+}`;
 
   ngOnInit() {
+  }
+
+  copyText(text: string): void {
+    this.copy.copyText(text, 'code copied');
   }
 
 }

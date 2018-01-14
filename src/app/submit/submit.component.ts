@@ -6,8 +6,7 @@ import { ApiService } from '../api.service';
 import { Language } from '../constants/language';
 import { SubtaskInfo } from '../constants/problem';
 import { Subject } from 'rxjs/Subject';
-import { of } from 'rxjs/observable/of';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { CopyService } from '../copy.service';
 
 @Component({
   selector: 'app-submit',
@@ -18,7 +17,8 @@ export class SubmitComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private copy: CopyService
   ) { }
 
   private problemset: ProblemsetInfo;
@@ -31,23 +31,12 @@ export class SubmitComponent implements OnInit {
 
   private code$;
   private code = new Subject<string>();
-  private displayCode = '(Paste your source code here)\n\n';
+  private displayCode = '';
   private latestCode = this.displayCode;
 
   ngOnInit() {
     this.getProblemset();
     this.getSelectedProblem();
-
-    /*
-    this.code$ = this.code.pipe(
-      debounceTime(3000),
-      distinctUntilChanged(),
-      switchMap((code: string) => of(code))
-    );
-    this.code$.subscribe((code: string) => {
-      this.displayCode = code;
-    });
-    */
   }
 
   selectedProblemHasSubtask(): boolean {
@@ -109,6 +98,10 @@ export class SubmitComponent implements OnInit {
 
   submit() {
 
+  }
+
+  copyText(text: string, successMessage: string): void {
+    this.copy.copyText(text, successMessage);
   }
 
 }

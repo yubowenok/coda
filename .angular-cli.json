@@ -22,7 +22,6 @@
         "styles.css"
       ],
       "scripts": [
-        "../node_modules/highlightjs/highlight.pack.min.js",
         "mathjax.js"
       ],
       "environmentSource": "environments/environment.ts",

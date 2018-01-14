@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
@@ -29,13 +29,17 @@ import { MathJaxDirective } from './mathjax.directive';
 
 import { ApiService } from './api.service';
 import { MessageService } from './message.service';
-import { HljsDirective } from './hljs.directive';
 import { SubmitComponent } from './submit/submit.component';
 import { CopyService } from './copy.service';
 import { CodeMirrorDirective } from './code-mirror.directive';
+
 import { TimeDisplayPipe } from './pipes/time-display.pipe';
 import { DateDisplayPipe } from './pipes/date-display.pipe';
 import { VerdictDisplayPipe } from './pipes/verdict-display.pipe';
+import { LanguageDisplayPipe } from './pipes/language-display.pipe';
+import { VerdictClassPipe } from './pipes/verdict-class.pipe';
+import { ExecutionTimePipe } from './pipes/execution-time.pipe';
+import { MemoryPipe } from './pipes/memory.pipe';
 
 @NgModule({
   imports: [
@@ -64,12 +68,15 @@ import { VerdictDisplayPipe } from './pipes/verdict-display.pipe';
     ProfileComponent,
     FaqComponent,
     MathJaxDirective,
-    HljsDirective,
     SubmitComponent,
     CodeMirrorDirective,
     TimeDisplayPipe,
     DateDisplayPipe,
-    VerdictDisplayPipe
+    VerdictDisplayPipe,
+    LanguageDisplayPipe,
+    VerdictClassPipe,
+    ExecutionTimePipe,
+    MemoryPipe
   ],
   providers: [
     ApiService,

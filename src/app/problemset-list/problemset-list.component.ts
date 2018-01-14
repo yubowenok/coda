@@ -17,7 +17,11 @@ export class ProblemsetListComponent implements OnInit {
     private route: ActivatedRoute
   ) { }
 
-  problemsetList: ProblemsetInfo[];
+  private problemsetGroups: {
+    title: string,
+    problemsetList: ProblemsetInfo[]
+  }[];
+  private problemsetList: ProblemsetInfo[];
 
   private fragment: string;
 
@@ -40,7 +44,28 @@ export class ProblemsetListComponent implements OnInit {
 
   getProblemsetList(): void {
     this.api.getProblemsetList()
-      .subscribe(problemsetList => this.problemsetList = problemsetList);
+      .subscribe(problemsetList => {
+        this.problemsetList = problemsetList;
+        this.updateProblemsetGroups();
+      });
+  }
+
+  updateProblemsetGroups(): void {
+    const inProgress = { title: 'Running Problemsets', problemsetList: [] };
+    const scheduled = { title: 'Scheduled Problemsets', problemsetList: [] };
+    const finished = { title: 'Finished Problemsets', problemsetList: [] };
+    const now = new Date().getTime();
+    for (let i = 0; i < this.problemsetList.length; i++) {
+      const problemset = this.problemsetList[i];
+      if (problemset.startTime <= now && now < problemset.endTime) {
+        inProgress.problemsetList.push(problemset);
+      } else if (now > problemset.endTime) {
+        finished.problemsetList.push(problemset);
+      } else {
+        scheduled.problemsetList.push(problemset);
+      }
+    }
+    this.problemsetGroups = [inProgress, scheduled, finished];
   }
 
   displayTime(t: number) {

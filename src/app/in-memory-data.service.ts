@@ -9,6 +9,8 @@ import {
   ParticipantScore,
   SubmissionWithSource,
   Submission,
+  ScoreboardMode,
+  ProblemsetInfo,
   Verdict,
   Language
 } from './constants';
@@ -128,7 +130,7 @@ export class InMemoryDataService implements InMemoryDbService {
         ]
       }
     ];
-    const problemset = [
+    const problemset: ProblemsetInfo[] = [
       {
         id: 'set1',
         title: 'Test Problemset 1',
@@ -136,8 +138,10 @@ export class InMemoryDataService implements InMemoryDbService {
         runMode: RunMode.STANDARD,
         judgeMode: JudgeMode.OPEN,
         penaltyMode: PenaltyMode.SCORE,
+        scoreboardMode: ScoreboardMode.ENABLED,
         ...this.getStartEndTime(),
-        problems: problemInfoList
+        problems: problemInfoList,
+        freebies: 3
       },
       {
         id: 'set2',
@@ -145,8 +149,10 @@ export class InMemoryDataService implements InMemoryDbService {
         runMode: RunMode.SELFTEST,
         judgeMode: JudgeMode.BLIND,
         penaltyMode: PenaltyMode.TIME,
+        scoreboardMode: ScoreboardMode.DISABLED,
         ...this.getStartEndTime(),
-        problems: problemInfoList
+        problems: problemInfoList,
+        freebies: 3
       },
       {
         id: 'set3',
@@ -154,10 +160,18 @@ export class InMemoryDataService implements InMemoryDbService {
         runMode: RunMode.STANDARD,
         judgeMode: JudgeMode.OPEN,
         penaltyMode: PenaltyMode.SCORE,
+        scoreboardMode: ScoreboardMode.ANONYMOUS,
         ...this.getStartEndTime(),
-        problems: problemInfoList
+        problems: problemInfoList,
+        freebies: 3
       }
     ];
+    for (let i = 0; i < problemset.length; i++) {
+      const now = new Date().getTime();
+      if (problemset[i].startTime <= now) {
+        problemset[i].started = true;
+      }
+    }
 
     const problem = [
       {
@@ -316,7 +330,11 @@ export class InMemoryDataService implements InMemoryDbService {
         submitTime: new Date().getTime(),
         problemsetTime: 3000,
         outsideProblemsetTime: false,
-        source: testSource
+        source: testSource,
+        executionTime: 0.05,
+        failedCase: 0,
+        totalCase: 100,
+        memory: 16
       },
       {
         id: '2',
@@ -327,7 +345,11 @@ export class InMemoryDataService implements InMemoryDbService {
         submitTime: new Date().getTime(),
         problemsetTime: 4000,
         outsideProblemsetTime: false,
-        source: testSource
+        source: testSource,
+        executionTime: 0.05,
+        failedCase: 0,
+        totalCase: 100,
+        memory: 16
       },
       {
         id: '3',
@@ -338,7 +360,11 @@ export class InMemoryDataService implements InMemoryDbService {
         submitTime: new Date().getTime(),
         problemsetTime: 5000,
         outsideProblemsetTime: false,
-        source: testSource
+        source: testSource,
+        executionTime: 0.32,
+        failedCase: 33,
+        totalCase: 100,
+        memory: 16
       },
       {
         id: '4',
@@ -349,7 +375,11 @@ export class InMemoryDataService implements InMemoryDbService {
         submitTime: new Date().getTime(),
         problemsetTime: 1000,
         outsideProblemsetTime: false,
-        source: testSource
+        source: testSource,
+        executionTime: 0.05,
+        failedCase: 0,
+        totalCase: 100,
+        memory: 64
       },
       {
         id: '5',
@@ -360,7 +390,26 @@ export class InMemoryDataService implements InMemoryDbService {
         submitTime: new Date().getTime(),
         problemsetTime: 10000,
         outsideProblemsetTime: true,
-        source: testSource
+        source: testSource,
+        executionTime: 5,
+        failedCase: 17,
+        totalCase: 100,
+        memory: 157
+      },
+      {
+        id: '5',
+        problemNumber: 'B',
+        subtask: 'large',
+        verdict: Verdict.MLE,
+        language: Language.JAVA,
+        submitTime: new Date().getTime(),
+        problemsetTime: 10000,
+        outsideProblemsetTime: true,
+        source: testSource,
+        executionTime: 2.747,
+        failedCase: 99,
+        totalCase: 100,
+        memory: 1024
       }
     ];
 
