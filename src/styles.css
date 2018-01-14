@@ -49,6 +49,10 @@ pre.CodeMirror-placeholder {
   background-color: #fafafa;
 }
 
+.ngx-datatable.material {
+  box-shadow: none;
+}
+
 .bold,
 .bold div {
   font-weight: bold;

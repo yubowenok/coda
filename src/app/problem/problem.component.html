@@ -28,12 +28,16 @@
                                     (click)="this.copyText(sample.in, 'Input ' + (i + 1) + ' copied')"></i></h4>
               <span class="special-sample it">{{this.displaySubtaskOnlySample(sample)}}</span>
             </div>
-            <pre>{{sample.in}}</pre>
+            <mat-card>
+              <pre>{{sample.in}}</pre>
+            </mat-card>
           </th>
           <th>
             <h4>Output {{i + 1}}<i class="fa fa-clone btn-copy"
                                    (click)="this.copyText(sample.out, 'Output ' + (i + 1) + ' copied')"></i></h4>
-            <pre>{{sample.out}}</pre>
+            <mat-card>
+              <pre>{{sample.out}}</pre>
+            </mat-card>
           </th>
         </tr>
       </tbody>

@@ -45,3 +45,7 @@ mat-accordion {
 /deep/ .mat-expansion-panel-content .mat-expansion-panel-body {
   padding: 0;
 }
+
+.submit-icon {
+  font-size: 1.25em;
+}

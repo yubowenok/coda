@@ -16,10 +16,6 @@ table {
   margin-top: 30px;
 }
 
-ngx-datatable.material {
-  box-shadow: none;
-}
-
 .case {
   display: inline-flex;
   width: 20px;

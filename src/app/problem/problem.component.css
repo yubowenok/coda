@@ -6,12 +6,6 @@
   margin-top: 30px;
 }
 
-pre {
-  border: 1px solid #aaa;
-  padding: .5em;
-  font-weight: normal;
-}
-
 table.samples {
   width: 100%;
   text-align: left;
@@ -46,4 +40,15 @@ table h4 {
 
 .samples h4 {
   display: inline-block;
+}
+
+mat-card {
+  padding: 0;
+  margin-top: .5em;
+  margin-bottom: 1em;
+}
+
+pre {
+  padding: .5em;
+  font-weight: normal;
 }
