@@ -73,3 +73,7 @@ pre.CodeMirror-placeholder {
   margin-left: .5em;
   margin-right: .5em;
 }
+
+.panel-error {
+  color: #ff6161;
+}

@@ -2,11 +2,17 @@
 
 # compiled output
 /dist
+/server/dist
 /tmp
 /out-tsc
 
 # dependencies
 /node_modules
+/server/node_modules
+
+# API keys and secrets
+.env
+/server/.env
 
 # IDEs and editors
 /.idea
@@ -16,6 +22,7 @@
 *.launch
 .settings/
 *.sublime-workspace
+*.iml
 
 # IDE - VSCode
 .vscode/*
@@ -28,6 +35,8 @@
 /.sass-cache
 /connect.lock
 /coverage
+/server/coverage
+/server/test_tmp_root
 /libpeerconnection.log
 npm-debug.log
 testem.log

@@ -18,7 +18,7 @@
     <button mat-button routerLink="/problemset/{{this.problemset.id}}/scoreboard">
       <i class="fa fa-list"></i>Scoreboard
     </button>
-    <button mat-button routerLink="/problemset/{{this.problemset.id}}/submissions/{{this.getUser()}}">
+    <button mat-button routerLink="/problemset/{{this.problemset.id}}/submissions/{{this.getUser().username}}">
       <i class="fa fa-file"></i>My Submissions
     </button>
   </div>

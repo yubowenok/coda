@@ -1,11 +1,11 @@
-<ng-container *ngIf="!username">
+<ng-container *ngIf="!this.getUser()">
   <button mat-button routerLink="/login">Login</button>
   <button mat-button routerLink="/signup">Signup</button>
 </ng-container>
-<ng-container *ngIf="username">
+<ng-container *ngIf="this.getUser()">
   <div class="div-username">
     <i class="fa fa-user-circle-o user-icon"></i>
-    <span class="username" routerLink="/profile">{{username}}</span>
+    <span class="username" routerLink="/profile">{{this.getUser().nickname}}</span>
     <i class="fa fa-sign-out logout" (click)="logout()"></i>
   </div>
 </ng-container>

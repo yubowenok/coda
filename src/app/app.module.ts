@@ -1,14 +1,14 @@
-import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
+import { HttpClientModule } from '@angular/common/http';
+// import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
+// import { InMemoryDataService } from './in-memory-data.service';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppMaterialModule } from './app-material.module';
-import { InMemoryDataService } from './in-memory-data.service';
 
 import { AppComponent } from './app.component';
 import { ProblemsetListComponent } from './problemset-list/problemset-list.component';
@@ -51,10 +51,14 @@ import {
     BrowserAnimationsModule,
     AppMaterialModule,
     HttpClientModule,
-    HttpClientInMemoryWebApiModule.forRoot(
-      InMemoryDataService, { dataEncapsulation: false }
-    ),
+    /*
+
+HttpClientInMemoryWebApiModule.forRoot(
+InMemoryDataService, { dataEncapsulation: false }
+),
+*/
     FormsModule,
+    ReactiveFormsModule,
     NavbarModule,
     AppRoutingModule
   ],
@@ -87,6 +91,8 @@ import {
     CopyService,
     MessageService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [
+    AppComponent
+  ]
 })
 export class AppModule { }

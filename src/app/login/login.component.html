@@ -1,14 +1,21 @@
-<form>
-  <mat-form-field class="">
-    <input matInput placeholder="Username (Email)">
-    <mat-error *ngIf="true">
+<div *ngIf="this.api.getUser()">You have already logged in.</div>
+
+<form [formGroup]="form" *ngIf="!this.api.getUser()">
+  <mat-form-field>
+    <input matInput placeholder="Username / Email"
+           formControlName="username" [formGroup]="form">
+    <mat-error *ngIf="!form.controls.username.hasError('email') || !form.controls.username.hasError('required')">
       Please enter a valid email address
     </mat-error>
   </mat-form-field>
 
-  <mat-form-field class="">
-    <input matInput placeholder="Password" value="" type="password">
+  <mat-form-field>
+    <input matInput placeholder="Password" value="" type="password"
+           formControlName="password" [formGroup]="form">
+    <mat-error *ngIf="!form.controls.password.hasError('required')">
+      Please enter a valid password
+    </mat-error>
   </mat-form-field>
 
-  <button mat-raised-button color="primary">Login</button>
+  <button mat-raised-button color="primary" (click)="login()" [disabled]="this.form.invalid">Login</button>
 </form>

@@ -1,20 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { ApiService } from '../../api.service';
+
+import { UserInfo } from '../../constants/user';
+import { MessageService } from '../../message.service';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css']
 })
-export class UserComponent implements OnInit {
+export class UserComponent {
 
-  constructor() { }
+  constructor(
+    private api: ApiService,
+    private message: MessageService
+  ) { }
 
-  private username = 'by123@nyu.edu';
-
-  ngOnInit() {
+  getUser(): UserInfo | undefined {
+    return this.api.getUser();
   }
 
   logout() {
-    this.username = '';
+    this.api.logout()
+      .subscribe(res => {
+        if (res === true) {
+          this.message.info('logged out');
+        }
+      });
   }
 }

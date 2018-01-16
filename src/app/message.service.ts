@@ -1,19 +1,26 @@
-import { Injectable } from '@angular/core';
+import { Component, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 
 import { SECOND_MS } from './constants/time';
 
-const MESSAGE_DURATION = SECOND_MS * 2;
+const INFO_DURATION = SECOND_MS * 2;
+const ERROR_DURATION = SECOND_MS * 4;
 
 @Injectable()
 export class MessageService {
 
   constructor(private snackBar: MatSnackBar) { }
 
-  showMessage(message: string, duration?: number) {
-    duration = duration !== undefined ? duration : MESSAGE_DURATION;
-    this.snackBar.open(message, null, {
-      duration: duration
+  info(msg: string) {
+    this.snackBar.open(msg, null, {
+      duration: INFO_DURATION
+    });
+  }
+
+  error(msg: string) {
+    this.snackBar.open(`Error: ${msg}`, null, {
+      duration: ERROR_DURATION,
+      panelClass: ['panel-error']
     });
   }
 

@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '../api.service';
@@ -16,8 +15,7 @@ export class ProblemsetComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private api: ApiService,
-    private location: Location
+    private api: ApiService
   ) { }
 
   @Input() problemset: ProblemsetInfo;

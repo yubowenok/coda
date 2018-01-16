@@ -60,6 +60,6 @@ export class NavbarComponent implements OnInit {
   }
 
   getUser(): string {
-    return 'by123';
+    return this.api.getUser().username;
   }
 }

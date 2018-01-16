@@ -1,16 +1,41 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ApiService } from '../api.service';
+
+import { UserInfo } from '../constants/user';
 import { Location } from '@angular/common';
+import { MessageService } from '../message.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
-  constructor(private location: Location) { }
+  private form: FormGroup;
 
-  ngOnInit() {
+  constructor(
+    private fb: FormBuilder,
+    private api: ApiService,
+    private location: Location,
+    private message: MessageService
+  ) {
+    this.form = fb.group({
+      username: new FormControl('by123@nyu.edu', Validators.required),
+      password: new FormControl('123456', Validators.required),
+    });
+  }
+
+  login(): void {
+    this.api.login(this.form.value)
+      .subscribe((data: UserInfo | undefined) => {
+        if (data === undefined) { // failure handler
+          return;
+        }
+        this.message.info(`Welcome to coda, ${data.nickname}!`);
+        this.location.back();
+      });
   }
 
 }
