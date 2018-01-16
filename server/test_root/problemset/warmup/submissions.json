@@ -1,0 +1,26 @@
+[
+  {
+    "username": "by123",
+    "problemNumber": "A",
+    "subtask": "small",
+    "source": "source/by123/by123_1_A_small.cpp",
+    "problemsetTime": 300,
+    "submitTime": "Tue Jan 13 2018 10:05:00 GMT-0500"
+  },
+  {
+    "username": "by123",
+    "problemNumber": "A",
+    "subtask": "large",
+    "source": "source/by123/by123_2_A_large.cpp",
+    "problemsetTime": 600,
+    "submitTime": "Tue Jan 13 2018 10:10:00 GMT-0500"
+  },
+  {
+    "username": "jz123",
+    "problemNumber": "A",
+    "subtask": "small",
+    "source": "source/jz123/jz123_1_A_large.java",
+    "problemsetTime": 1200,
+    "submitTime": "Tue Jan 13 2018 10:20:00 GMT-0500"
+  }
+]

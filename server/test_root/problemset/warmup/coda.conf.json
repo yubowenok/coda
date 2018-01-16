@@ -1,0 +1,38 @@
+{
+  "id": "midterm",
+  "title": "Spring18 Warmup",
+  "runMode": "STANDARD",
+  "judgeMode": "OPEN",
+  "penaltyMode": "SCORE",
+  "scoreboardMode": "ENABLED",
+  "startTime": "Tue Jan 13 2018 10:00:00 GMT-0500",
+  "endTime": "Tue Jan 14 2018 10:00:00 GMT-0500",
+  "freebies": 0,
+  "problems": [
+    {
+      "number": "A",
+      "id": "cryptic",
+      "subtasks": [
+        { "id": "small", "score": 20 },
+        { "id": "large", "score": 40 }
+      ]
+    },
+    {
+      "number": "B",
+      "id": "cards",
+      "subtasks": [
+        { "id": "all", "score": 60 }
+      ]
+    },
+    {
+      "number": "C",
+      "id": "critical",
+      "subtasks": [
+        { "id": "small", "score": 25 },
+        { "id": "large", "score": 50 }
+      ]
+    }
+  ],
+  "allowGroups": ["spring18"],
+  "showCaseNumber": true
+}

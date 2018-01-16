@@ -1,0 +1,42 @@
+\problemname{Study Pair}
+%\illustration{.5}{filename}{Image by \href{url}{Author}}
+
+There are two classes, class $A$ and class $B$.
+Each class has $N$ students.
+The teacher wants to make study pairs between the two classes.
+Each study pair consists of one student from class $A$ and the other from class $B$.
+Every student's knowledge level on the course topic can be described as an integer.
+Namely, the $i$-th student from class $A$ has knowledge level $A_i$, and the $i$-th student from class $B$ has knowledge level $B_i$.
+To achieve best study results, the knowledge levels of the two students in a study pair shall not differ too much.
+Besides, the sum of the knowledge levels of the two students in a pair shall not be too large (Let strong students help the others!).
+More formally, given two constants $X, Y$, for every study pair $(A_i, B_j)$, it must satisfy $|A_i - B_j| \leq X$ and $A_i + B_j \leq Y$.
+
+
+The teacher wonders what is the maximum number of study pairs she can make?
+
+
+\section*{Input}
+
+The first line of the input has an integer $T$, the number of test cases.\\
+Each case has three lines.
+The first line has three integers $N, X, Y$.
+The second line has $N$ integers, $A_1, A_2, ... A_N$.
+The third line has $N$ integers, $B_1, B_2, ... B_N$.
+
+\section*{Output}
+
+For each case, output the maximum number of study pairs that can be made.
+
+\section*{Constraints}
+\begin{itemize}
+\item $1 \leq T\leq 15$
+\item $1 \leq N \leq 10^5$
+\item $0 \leq X, Y \leq 10^9$
+\item $0 \leq A_i, B_i \leq 10^9$ for $1\leq i \leq N$
+\end{itemize}
+
+\section*{Subtasks}
+\begin{itemize}
+\item (Small - 25 points): $N \leq 50$
+\item (Large - 40 points): Original constraints
+\end{itemize}

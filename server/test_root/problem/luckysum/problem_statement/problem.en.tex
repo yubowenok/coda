@@ -1,0 +1,34 @@
+\problemname{Lucky Sum}
+%\illustration{.5}{filename}{Image by \href{url}{Author}}
+
+The lottery company has just launched a new game!
+Each lottery ticket now consists of $N$ integers.
+Every week the lottery draws a single lucky sum $S$.
+The payout of a ticket is the number of integer pairs on the ticket that have a sum of $S$.
+To have a better understanding of your chance of winning, you would like to determine the payouts for $Q$ lucky sums.
+
+\section*{Input}
+
+The first line of the input has an integer $T$, the number of test cases.\\
+Each case has two integer $N, Q$ on the first line.\\
+The next line has $N$ integers, the integers on the lottery ticket.
+Note that the lottery ticket integers may have duplicates.
+Then follow $Q$ lines, each has a single integer representing one lucky sum for which you are going to determine the payout.
+
+\section*{Output}
+For each lucky sum, output the payout on a single line.
+
+\section*{Constraints}
+\begin{itemize}
+\item $1 \leq T\leq 15$
+\item $2 \leq N \leq 1\,000$
+\item $1 \leq Q \leq 5\,000$
+\item Integers on the lottery ticket and the lucky sums are non-negative and no larger than $10^6$.
+\item The lucky sums in each test case are distinct.
+\end{itemize}
+
+\section*{Subtasks}
+\begin{itemize}
+\item (Small - 10 points): $N, Q \leq 50$
+\item (Large - 25 points): Original constraints
+\end{itemize}

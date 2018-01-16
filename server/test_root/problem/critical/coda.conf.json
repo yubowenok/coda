@@ -1,0 +1,8 @@
+{
+  "id": "critical",
+  "title": "Critical Elements",
+  "timeLimit": 3,
+  "subtasks": ["small", "large"],
+  "subtaskOnlySamples": [],
+  "vjudge": false
+}

@@ -1,0 +1,38 @@
+{
+  "id": "hw2",
+  "title": "Homework 2",
+  "runMode": "SELFTEST",
+  "judgeMode": "BLIND",
+  "penaltyMode": "SCORE",
+  "scoreboardMode": "ENABLED",
+  "startTime": "Tue Jan 15 2018 10:00:00 GMT-0500",
+  "endTime": "Tue Jan 28 2018 10:00:00 GMT-0500",
+  "duration": 180,
+  "problems": [
+    {
+      "number": "A",
+      "id": "cryptic",
+      "subtasks": [
+        { "id": "small", "score": 20 },
+        { "id": "large", "score": 40 }
+      ]
+    },
+    {
+      "number": "B",
+      "id": "cards",
+      "subtasks": [
+        { "id": "all", "score": 60 }
+      ]
+    },
+    {
+      "number": "C",
+      "id": "critical",
+      "subtasks": [
+        { "id": "small", "score": 25 },
+        { "id": "large", "score": 50 }
+      ]
+    }
+  ],
+  "allowGroups": ["spring18"],
+  "showCaseNumber": true
+}
