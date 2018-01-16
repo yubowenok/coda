@@ -4,6 +4,7 @@ import * as moment from 'moment';
 
 import { ApiService } from '../api.service';
 import { ProblemsetInfo, RunMode, JudgeMode, PenaltyMode } from '../constants';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-problemset-list',
@@ -25,6 +26,8 @@ export class ProblemsetListComponent implements OnInit {
 
   private fragment: string;
 
+  private errored = false;
+
   tooltips = {
     STANDARD_MODE: 'You can submit anytime before the problemset ends.',
     SELFTEST_MODE: 'The problemset has a fixed duration. You can start your session at any time. But once your ' +
@@ -44,10 +47,16 @@ export class ProblemsetListComponent implements OnInit {
 
   getProblemsetList(): void {
     this.api.getProblemsetList()
-      .subscribe(problemsetList => {
-        this.problemsetList = problemsetList;
-        this.updateProblemsetGroups();
-      });
+      .subscribe(
+        (problemsetList: ProblemsetInfo[]) => {
+          this.problemsetList = problemsetList;
+          this.updateProblemsetGroups();
+          this.errored = false;
+        },
+        (err: HttpErrorResponse) => {
+          this.errored = true;
+        }
+      );
   }
 
   updateProblemsetGroups(): void {
@@ -78,10 +87,6 @@ export class ProblemsetListComponent implements OnInit {
 
   isSelftestMode(problemset: ProblemsetInfo): boolean {
     return problemset.runMode === RunMode.SELFTEST;
-  }
-
-  isScorePenalty(problemset: ProblemsetInfo): boolean {
-    return problemset.penaltyMode === PenaltyMode.SCORE;
   }
 
   isTimePenalty(problemset: ProblemsetInfo): boolean {

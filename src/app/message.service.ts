@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material';
 import { SECOND_MS } from './constants/time';
 
 const INFO_DURATION = SECOND_MS * 2;
-const ERROR_DURATION = SECOND_MS * 4;
+const ERROR_DURATION = SECOND_MS * 10;
 
 @Injectable()
 export class MessageService {
@@ -18,7 +18,7 @@ export class MessageService {
   }
 
   error(msg: string) {
-    this.snackBar.open(`Error: ${msg}`, null, {
+    this.snackBar.open(`Error: ${msg}`, '×', {
       duration: ERROR_DURATION,
       panelClass: ['panel-error']
     });

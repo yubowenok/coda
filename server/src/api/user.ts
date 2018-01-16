@@ -2,12 +2,20 @@ import { Response, Request, NextFunction, Express } from 'express';
 import * as passport from 'passport';
 import { IVerifyOptions } from 'passport-local';
 import { User, UserSettings, MIN_PASSWORD_LENGTH, MIN_USERNAME_LENGTH } from '../constants/user';
-import { users, updateUsers } from '../util/users';
+import { getUsers, writeUsers } from '../util/users';
 import { MappedError } from 'express-validator/shared-typings';
 import { isAuthenticated } from '../config/passport';
 import * as bcrypt from 'bcrypt';
+import * as _ from 'lodash';
 
 const SALT_ROUNDS = 12;
+
+/**
+ * Creates a web format user info object
+ */
+const toWebUser = (user: User): Object => {
+  return _.omit(user, ['password', 'invitationCode']);
+};
 
 module.exports = function(app: Express) {
 
@@ -34,13 +42,16 @@ module.exports = function(app: Express) {
         if (loginErr) {
           return next(loginErr);
         }
-        res.json(user);
+        res.json(toWebUser(user));
       });
     })(req, res, next);
   });
 
-  app.post('/api/check-login', isAuthenticated, (req: Request, res: Response, next: NextFunction) => {
-    res.json(req.user);
+  app.post('/api/check-login', (req: Request, res: Response, next: NextFunction) => {
+    if (req.user) {
+      return res.json(toWebUser(req.user));
+    }
+    res.json(false);
   });
 
   app.post('/api/logout', (req: Request, res: Response, next: NextFunction) => {
@@ -60,6 +71,13 @@ module.exports = function(app: Express) {
       return res.status(500).json({ msg: errors[0].msg });
     }
 
+    const users = getUsers();
+    if (users.map((user: User) => {
+        return user.username;
+      }).indexOf(req.body.username) !== -1) {
+      return res.status(500).json({ msg: 'username exists' });
+    }
+
     let foundUser: User;
     for (let i = 0; i < users.length; i++) {
       if (users[i].email === req.body.email) {
@@ -68,7 +86,7 @@ module.exports = function(app: Express) {
         }
 
         if (users[i].password !== '') {
-          return res.status(500).json({ msg: 'duplicate signup' });
+          return res.status(500).json({ msg: 'email has already signed up' });
         }
 
         const hash = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(SALT_ROUNDS));
@@ -89,12 +107,12 @@ module.exports = function(app: Express) {
     if (!foundUser) {
       return res.status(500).json({ msg: 'invitation code must match email' });
     }
-    updateUsers(users);
+    writeUsers(users);
     req.login(foundUser, (err) => {
       if (err) {
         return next(err);
       }
-      res.json(foundUser);
+      res.json(toWebUser(foundUser));
     });
   });
 
@@ -114,6 +132,7 @@ module.exports = function(app: Express) {
       return res.status(500).json({ msg: errors[0].msg });
     }
 
+    const users = getUsers();
     let foundUser: User;
     for (let i = 0; i < users.length && !foundUser; i++) {
       if (users[i].email === req.user.email) {
@@ -125,7 +144,7 @@ module.exports = function(app: Express) {
     if (!foundUser) {
       return res.status(500).json({ msg: 'critical server error' });
     }
-    updateUsers(users);
+    writeUsers(users);
     const settings: UserSettings = {
       nickname: foundUser.nickname,
       anonymous: foundUser.anonymous
@@ -141,6 +160,7 @@ module.exports = function(app: Express) {
       return res.status(500).json({ msg: errors[0].msg });
     }
 
+    const users = getUsers();
     let found = false;
     for (let i = 0; i < users.length && !found; i++) {
       if (users[i].email === req.user.email) {
@@ -151,7 +171,7 @@ module.exports = function(app: Express) {
     if (!found) {
       return res.status(500).json({ msg: 'critical server error' });
     }
-    updateUsers(users);
+    writeUsers(users);
     res.json(true);
   });
 

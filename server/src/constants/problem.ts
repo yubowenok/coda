@@ -1,19 +1,16 @@
-export interface SubtaskStats {
-  accepted: number;
-  attempted: number;
-}
-
-export interface SubtaskInfo {
-  id: string;
-  score: number;
-  // stats: SubtaskStats;
-}
-
-export interface ProblemInfo {
-  number: string;
+export interface ProblemConfig {
   id: string;
   title: string;
-  subtasks: SubtaskInfo[];
+  timeLimit: number; // # seconds
+  subtasks: string[]; // subtask id's
+  subtaskOnlySamples: {
+    sample: string,
+    subtasks: string[] // the sample only applies to these subtasks
+  }[];
+  vjudge?: {
+    oj: string,
+    probNum: string
+  } | false;
 }
 
 export interface ProblemContent {

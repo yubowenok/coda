@@ -2,10 +2,6 @@
   margin-top: 10px;
 }
 
-.margin-to-top {
-  margin-top: 30px;
-}
-
 table.samples {
   width: 100%;
   text-align: left;
@@ -42,13 +38,16 @@ table h4 {
   display: inline-block;
 }
 
+table tr {
+  vertical-align: top;
+}
+
 mat-card {
-  padding: 0;
+  padding: .5em;
   margin-top: .5em;
   margin-bottom: 1em;
 }
 
 pre {
-  padding: .5em;
   font-weight: normal;
 }

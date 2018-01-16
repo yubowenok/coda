@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
+import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 import { of } from 'rxjs/observable/of';
 import { catchError, tap } from 'rxjs/operators';
 import { MessageService } from './message.service';
@@ -116,7 +117,7 @@ export class ApiService {
       return cached;
     }
     const url = `${this.url(ApiType.PROBLEMSET)}/${id}`;
-    return this.http.get<ProblemsetInfo>(url)
+    return this.http.get<ProblemsetInfo>(url, httpOptions)
       .pipe(
         tap(problemset => {
           console.log(`fetched problemset ${id}`, problemset);
@@ -129,22 +130,23 @@ export class ApiService {
       );
   }
 
-  getProblem(id: string): Observable<ProblemContent> {
-    const cached = this.getCache(id, this.problemCache, RefetchInterval.PROBLEM);
+  getProblem(problemsetId: string, problemNumber: string): Observable<ProblemContent> {
+    const cacheId = `${problemsetId}/${problemNumber}`
+    const cached = this.getCache(cacheId, this.problemCache, RefetchInterval.PROBLEM);
     if (cached !== null) {
       return cached;
     }
-    const url = `${this.url(ApiType.PROBLEM)}/${id}`;
-    return this.http.get<ProblemContent>(url)
+    const url = `${this.url(ApiType.PROBLEMSET)}/${problemsetId}/${ApiType.PROBLEM}/${problemNumber}`;
+    return this.http.get<ProblemContent>(url, httpOptions)
       .pipe(
         tap(problem => {
-          console.log(`fetched problem ${id}`, problem);
-          this.problemCache[id] = {
+          console.log(`fetched problem ${cacheId}`, problem);
+          this.problemCache[cacheId] = {
             data: problem,
             lastFetched: new Date().getTime()
           };
         }),
-        catchError(this.handleError<ProblemContent>(`getProblem ${id}`))
+        catchError(this.handleError<ProblemContent>(`getProblem ${cacheId}`))
       );
   }
 
@@ -154,7 +156,7 @@ export class ApiService {
       return cached;
     }
     const url = `${this.url(ApiType.SCOREBOARD)}/${id}`;
-    return this.http.get<Scoreboard>(url)
+    return this.http.get<Scoreboard>(url, httpOptions)
       .pipe(
         tap(scoreboard => {
           console.log(`fetched scoreboard ${id}`, scoreboard);
@@ -174,7 +176,7 @@ export class ApiService {
       return cached;
     }
     const url = `${this.url(ApiType.SUBMISSION)}/${submissionId}`; // TODO: add problemsetId arg to API url
-    return this.http.get<SubmissionWithSource>(url)
+    return this.http.get<SubmissionWithSource>(url, httpOptions)
       .pipe(
         tap(submission => {
           console.log(`fetched submission ${problemsetId} ${submissionId}`, submission);
@@ -190,7 +192,7 @@ export class ApiService {
       return cached;
     }
     const url = `${this.url(ApiType.SUBMISSION_LIST)}`; // TODO add problemsetId arg to API url
-    return this.http.get<Submission[]>(url)
+    return this.http.get<Submission[]>(url, httpOptions)
       .pipe(
         tap(submissions => {
           console.log(`fetched submissions ${problemsetId}`, submissions);
@@ -288,12 +290,16 @@ export class ApiService {
    */
   private handleError<T> (operation = 'operation', result?: T) {
     return (res: any): Observable<T> => {
+      // display error if there is a msg field
       if (res.error && res.error.msg) {
         this.message.error(`${res.error.msg}`);
         console.error(res.error.msg);
       }
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
+      // We have provided a default value. Use the default value and log error.
+      if (result !== undefined) {
+        return of(result as T);
+      }
+      return ErrorObservable.create(res);
     };
   }
 }

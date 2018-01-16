@@ -5,6 +5,9 @@ import { ApiService } from '../api.service';
 import { CopyService } from '../copy.service';
 
 import { ProblemContent } from '../constants/problem';
+import { HttpErrorResponse } from '@angular/common/http';
+
+const LINE_HEIGHT = 14 * 1.5; // font-size * line-height
 
 @Component({
   selector: 'app-problem',
@@ -20,19 +23,25 @@ export class ProblemComponent implements OnInit {
   ) { }
 
   private problem: ProblemContent;
+  private errored = false;
 
   ngOnInit() {
     this.route.params.subscribe((params: { problemsetId: string, problemNumber: string }) => {
-      this.problem = undefined;
-      this.getProblem(`${params.problemsetId}_${params.problemNumber}`);
+      this.getProblem(params.problemsetId, params.problemNumber);
     });
   }
 
-  getProblem(id: string): void {
-    this.api.getProblem(id)
-      .subscribe(problem => {
-        this.problem = problem;
-      });
+  getProblem(problemsetId: string, problemNumber: string): void {
+    this.api.getProblem(problemsetId, problemNumber)
+      .subscribe(
+        (problem: ProblemContent) => {
+          this.problem = problem;
+          this.errored = false;
+        },
+        (err: HttpErrorResponse) => {
+          this.errored = true;
+        }
+      );
   }
 
   displaySubtaskOnlySample(sample: { id: string }): string {
@@ -51,4 +60,11 @@ export class ProblemComponent implements OnInit {
     this.copy.copyText(text, successMessage);
   }
 
+  getSampleHeight(sample: { in: string, out: string }): Object {
+    const inLines = sample.in.split(/\n/).length;
+    const outLines = sample.out.split(/\n/).length;
+    // minus one to remove empty string after last newline
+    const height = (Math.max(inLines, outLines) - 1) * LINE_HEIGHT;
+    return { height: `${height}px` };
+  }
 }

@@ -11,26 +11,6 @@ describe('user signup', () => {
   let app: Express;
   beforeAll(() => app = require('../app'));
 
-  it('should be able to signup', (done) => {
-    request(app).post('/api/signup')
-      .send({
-        email: 'by123@nyu.edu',
-        username: 'by123',
-        password: '123456',
-        confirmPassword: '123456',
-        invitationCode: 'ABC',
-        fullName: 'by'
-      })
-      .expect(200)
-      .expect(res => expect(res.body).toMatchObject({
-        email: 'by123@nyu.edu',
-        username: 'by123',
-        fullName: 'by',
-        nickname: 'by'
-      }))
-      .end(done);
-  });
-
   it('should not signup without invitationCode', (done) => {
     request(app).post('/api/signup')
       .send({
@@ -105,7 +85,7 @@ describe('user signup', () => {
       .end(done);
   });
 
-  it('should not duplicate signup', (done) => {
+  it('should be able to signup', (done) => {
     request(app).post('/api/signup')
       .send({
         email: 'by123@nyu.edu',
@@ -115,8 +95,43 @@ describe('user signup', () => {
         invitationCode: 'ABC',
         fullName: 'by'
       })
+      .expect(200)
+      .expect(res => expect(res.body).toMatchObject({
+        email: 'by123@nyu.edu',
+        username: 'by123',
+        fullName: 'by',
+        nickname: 'by'
+      }))
+      .end(done);
+  });
+
+  it('should not duplicate signup', (done) => {
+    request(app).post('/api/signup')
+      .send({
+        email: 'by123@nyu.edu',
+        username: 'by1234',
+        password: '123456',
+        confirmPassword: '123456',
+        invitationCode: 'ABC',
+        fullName: 'by'
+      })
       .expect(500)
-      .expect(res => expect(res.body.msg).toMatch(/duplicate/))
+      .expect(res => expect(res.body.msg).toMatch(/email has already signed up/))
+      .end(done);
+  });
+
+  it('should not allow duplicate username', (done) => {
+    request(app).post('/api/signup')
+      .send({
+        email: 'jz000@nyu.edu',
+        username: 'by123',
+        password: '123456',
+        confirmPassword: '123456',
+        invitationCode: 'CCC',
+        fullName: 'jz'
+      })
+      .expect(500)
+      .expect(res => expect(res.body.msg).toMatch(/username exists/))
       .end(done);
   });
 
@@ -133,7 +148,7 @@ describe('user signup', () => {
 describe('update password/settings', () => {
 
   let app: Express;
-  let agent: supertest.SuperTest;
+  let agent: supertest.SuperTest<supertest.Test>;
   let cookie: string;
 
   beforeAll((done) => {

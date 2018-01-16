@@ -1,6 +1,7 @@
 [
   {
     "username": "by123",
+    "userSubmission": 1,
     "problemNumber": "A",
     "subtask": "small",
     "source": "source/by123/by123_1_A_small.cpp",
@@ -9,6 +10,7 @@
   },
   {
     "username": "by123",
+    "userSubmission": 2,
     "problemNumber": "A",
     "subtask": "large",
     "source": "source/by123/by123_2_A_large.cpp",
@@ -17,6 +19,7 @@
   },
   {
     "username": "jz123",
+    "userSubmission": 1,
     "problemNumber": "A",
     "subtask": "small",
     "source": "source/jz123/jz123_1_A_large.java",
