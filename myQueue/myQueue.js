@@ -1,4 +1,4 @@
-import { setInterval } from 'timers';
+//import setInterval from 'timers';
 
 const { exec } = require('child_process');
 const containerName = 'coda-test';
@@ -23,12 +23,30 @@ function systemSync(cmd) {
   }
 };
 
-function judgeSubmission(user, problem, fileName, subtask, time) {
+function readJsonFile(file) {
+    rawdata = fs.readFileSync(file);
+    return JSON.parse(rawdata);
+}
+
+function judgeSubmission(user, problem, fileName, subtask) {
     var userPath = dockerRoot + '/users/' + user;
     var problemPath = dockerRoot + '/problems/' + problem;
     var submissionPath = userPath + '/' + fileName;
-
+    var timeLimit = 1;
+    
+    var problemConfPath = localRoot + '/problems/' + problem + '/coda.conf';
+    
+    
     var outputPath = localRoot + '/users/' + user + '/' + fileName + '.verdict.json';
+
+    if (fs.existsSync(outputPath)) return;
+
+    if (fs.existsSync(problemConfPath)) {
+        var problemConf = readJsonFile(problemConfPath);
+        if (problemConf['timeLimit']) {
+            timeLimit = problemConf['timeLimit'];
+        }
+    }
 
     var cmd_line = 
     'docker exec ' + containerName + ' judge' +
@@ -36,7 +54,7 @@ function judgeSubmission(user, problem, fileName, subtask, time) {
     ' --problem=' + problemPath;
 
     if (subtask != '') cmd_line += ' --subtask=' + subtask;
-    cmd_line += ' --time=' + time;
+    cmd_line += ' --time=' + timeLimit;
     console.log(cmd_line);
 
     fs.writeFileSync(outputPath, systemSync(cmd_line));
@@ -66,20 +84,18 @@ function judgeAll() {
 
     list.forEach(function(file){
         //console.log(file);
-        rawdata = fs.readFileSync(file);
-        submissions = JSON.parse(rawdata);
+        
+        submissions = readJsonFile(file);
         //console.log(submissions); 
         submissions.forEach(function(submission) {
-            console.log(submission);
-            if (submission['verdict'] == 0) {
-                judgeSubmission(
-                    submission['username'], 
-                    submission['problemNumber'],
-                    submission['sourceFilename'],
-                    submission['subtask'],
-                    1
-                );
-            }
+            //console.log(submission);
+            
+            judgeSubmission(
+                submission['username'], 
+                submission['problemNumber'],
+                submission['sourceFilename'],
+                submission['subtask']
+            );
             
         }); 
     });
@@ -90,11 +106,14 @@ function judgeAll() {
 //pull docker image and create a container
 var imageName = 'szfck/nyu-problemtools:1.0.4'
 systemSync('docker pull ' + imageName);
+
+systemSync('docker stop ' + containerName);
+systemSync('docker rm ' + containerName);
 systemSync('docker run -dit --name ' + containerName + 
 ' -v ' + localRoot + ':' + dockerRoot + ' ' + 
 imageName);
 
-setInterval(judgeAll(), 10 * 1000);
+setInterval(judgeAll, 5 * 1000);
 
 
 
