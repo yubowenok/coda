@@ -8,5 +8,14 @@
     "email": "jz123@nyu.edu",
     "password": "$2a$12$.JX5.j8wnbs.WTYwezIao.bo23b86l6DuGF.fW61Ply34.N7Nz/ZG",
     "invitationCode": "ZZZ"
+  },
+  {
+    "username": "by789",
+    "email": "by789@nyu.edu",
+    "invitationCode": "XXX",
+    "password": "$2a$12$oIrnRkFO5vD/0GvkkvIY4uX./tMoU72FUqL1eCaZYWABchEcA1Qqi",
+    "fullName": "by",
+    "nickname": "by",
+    "anonymous": false
   }
 ]

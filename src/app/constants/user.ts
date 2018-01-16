@@ -15,5 +15,9 @@ export interface UserInfo {
   username: string;
   fullName: string;
   nickname: string;
-  anonymizedName?: string;
+}
+
+export interface UserSettings {
+  nickname: string;
+  anonymous: boolean;
 }

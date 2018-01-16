@@ -1,3 +1,4 @@
+import { Express } from 'express';
 import * as request from 'supertest';
 import * as childProcess from 'child_process';
 import '../config/env';
@@ -6,8 +7,8 @@ beforeAll(() => {
   childProcess.execSync(`cp -R ${process.env.TEST_ROOT} ${process.env.CODA_ROOT}`);
 });
 
-describe('POST /api/signup', () => {
-  let app;
+describe('user signup', () => {
+  let app: Express;
   beforeAll(() => app = require('../app'));
 
   it('should be able to signup', (done) => {
@@ -25,8 +26,7 @@ describe('POST /api/signup', () => {
         email: 'by123@nyu.edu',
         username: 'by123',
         fullName: 'by',
-        nickname: 'by',
-        anonymizedName: ''
+        nickname: 'by'
       }))
       .end(done);
   });
@@ -119,5 +119,82 @@ describe('POST /api/signup', () => {
       .expect(res => expect(res.body.msg).toMatch(/duplicate/))
       .end(done);
   });
+
+  it('should be able to login', (done) => {
+    request(app).post('/api/login')
+      .send({
+        username: 'by123',
+        password: '123456'
+      })
+      .expect(200, done);
+  });
 });
 
+describe('update password/settings', () => {
+
+  let app: Express;
+  let agent: supertest.SuperTest;
+  let cookie: string;
+
+  beforeAll((done) => {
+    app = require('../app');
+    agent = request(app);
+    agent.post('/api/login')
+      .send({
+        username: 'by789',
+        password: '123456'
+      })
+      .then((res) => {
+        // Hack regarding: https://github.com/facebook/jest/issues/3547
+        const cookies = res.headers['set-cookie'][0].split(',').map(item => item.split(';')[0]);
+        cookie = cookies.join(';');
+        done();
+      });
+  });
+
+  it('should update password', (done) => {
+    agent.post('/api/update-password')
+      .set('cookie', cookie)
+      .send({
+        currentPassword: '123456',
+        password: '1234567',
+        confirmPassword: '1234567'
+      })
+      .expect(200, done);
+  });
+
+  it('should update settings', (done) => {
+    agent.post('/api/update-settings')
+      .set('cookie', cookie)
+      .send({
+        nickname: 'BY789',
+        anonymous: true
+      })
+      .expect(200)
+      .expect(res => expect(res.body).toEqual({
+        nickname: 'BY789',
+        anonymous: true
+      }))
+      .end(done);
+  });
+
+  it('should logout', (done) => {
+    agent.post('/api/logout')
+      .set('cookie', cookie)
+      .expect(200)
+      .expect(res => expect(res.body).toBe(true))
+      .end(done);
+  });
+
+  it('should not login with old password', (done) => {
+    agent.post('/api/login')
+      .send({
+        username: 'by789',
+        password: '123456'
+      })
+      .expect(500)
+      .expect(res => expect(res.body.msg).toMatch(/invalid username or password/))
+      .end(done);
+  });
+
+});
