@@ -1,5 +1,4 @@
 import {Component, OnInit, HostListener } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
 import { environment } from '../../environments/environment';
 import * as Cookies from 'cookies-js';
 import { ApiService } from '../api.service';
@@ -22,14 +21,10 @@ export class NavbarComponent implements OnInit {
   public linksExpanded = true;
 
   constructor(
-    private api: ApiService,
-    private router: Router
+    private api: ApiService
   ) {
-    this.router.events.subscribe(data => {
-      if (data instanceof NavigationEnd) {
-        this.problemset = this.api.getCurrentProblemset();
-      }
-    });
+    this.api.getCurrentProblemset()
+      .subscribe(problemset => this.problemset = problemset);
   }
 
   @HostListener('window:beforeunload', ['$event'])

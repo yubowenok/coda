@@ -39,6 +39,14 @@ export class SubmissionComponent implements OnInit {
   private error: { msg: string } | undefined;
 
   ngOnInit() {
+    this.api.onProblemsetIdChange(this.route.snapshot.paramMap.get('problemsetId'));
+
+    this.problemset = this.api.latestProblemset;
+    this.api.getCurrentProblemset()
+      .subscribe(problemset => {
+        this.problemset = problemset;
+      });
+
     this.getSubmission();
 
     const timeDisplayPipe = new TimeDisplayPipe();
@@ -76,19 +84,6 @@ export class SubmissionComponent implements OnInit {
     const submissionNumber = this.route.snapshot.paramMap.get('submissionNumber');
     const username = this.route.snapshot.paramMap.get('username');
     const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
-    this.api.getProblemset(problemsetId)
-      .subscribe(
-        problemset => {
-          this.problemset = problemset;
-          this.update();
-          this.updateTitle();
-          this.updateTable();
-        },
-        err => {
-          this.api.loginErrorHandler(err);
-          this.error = err.error;
-        }
-      );
     this.api.getSubmission(problemsetId, username, submissionNumber) // TODO: add username
       .subscribe(
         submission => {

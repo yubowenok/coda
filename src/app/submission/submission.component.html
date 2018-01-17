@@ -43,10 +43,10 @@
   </div>
   <div class="source">
     <h3>Source Code<i class="fa fa-clone btn-copy"
-                      (click)="copyText(submission.source)"></i></h3>
+                      (click)="copyText(submission.sourceCode)"></i></h3>
     <mat-card>
       <div class="code-block"
-           [appCodeMirror]="submission.source"
+           [appCodeMirror]="submission.sourceCode"
            [language]="submission.language"
            readOnly="true">
       </div>

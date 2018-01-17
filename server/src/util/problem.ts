@@ -1,6 +1,6 @@
 import * as paths from '../constants/path';
 import * as fs from 'fs';
-import { ProblemConfig } from '../constants/problem';
+import { ProblemConfig, ProblemEasierSubtasksDict } from '../constants/problem';
 import { getProblemset } from './problemset';
 import { Request, Response, NextFunction } from 'express';
 
@@ -16,6 +16,21 @@ export const getProblem = (problemId: string): ProblemConfig => {
   const confFile = paths.problemConfigPath(problemId);
   const problemConf: ProblemConfig = JSON.parse(fs.readFileSync(confFile, 'utf8'));
   return problemConf;
+};
+
+/**
+ * Creates a dictionary that maps each subtask id to its easier subtask id's (including itself).
+ */
+export const getProblemEasierSubtasksDict = (problemId: string): ProblemEasierSubtasksDict => {
+  const problem = getProblem(problemId);
+  const dict: ProblemEasierSubtasksDict = {};
+  for (let i = 0; i < problem.subtasks.length; i++) {
+    dict[problem.subtasks[i]] = [];
+    for (let j = 0; j <= i; j++) {
+      dict[problem.subtasks[i]].push(problem.subtasks[j]);
+    }
+  }
+  return dict;
 };
 
 /*** Router middleware utils ***/

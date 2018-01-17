@@ -9,3 +9,11 @@ ngx-datatable {
 mat-radio-button {
   margin-right: .5em;
 }
+
+.attempted {
+  cursor: pointer;
+}
+
+.attempted:hover {
+  font-size: 1.02em;
+}

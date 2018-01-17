@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Router, RouterEvent, NavigationStart } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 import { of } from 'rxjs/observable/of';
-import { catchError, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs/Subject';
+import {catchError, distinctUntilChanged, tap} from 'rxjs/operators';
 import { MessageService } from './message.service';
 import {
   API_URL,
@@ -55,13 +57,25 @@ export class ApiService {
 
   constructor(
     private http: HttpClient,
-    private message: MessageService
+    private message: MessageService,
+    private router: Router
   ) {
     this.checkLogin().subscribe();
+    this.problemset = new Subject<ProblemsetInfo | undefined>();
+    this.problemset$ = this.problemset;
+
+    // Reset problemset to undefined whenever user navigates to problemsets.
+    this.router.events.subscribe((evt: RouterEvent) => {
+      if (evt instanceof NavigationStart && evt.url === '/problemsets') {
+        this.resetCurrentProblemset();
+      }
+    });
   }
 
   private user: UserInfo;
-  private problemset: ProblemsetInfo;
+  private problemset: Subject<ProblemsetInfo | undefined>;
+  private problemset$: Observable<ProblemsetInfo | undefined>;
+  public latestProblemset: ProblemsetInfo | undefined;
 
   private problemsetCache: {
     [problemsetId: string]: {
@@ -156,7 +170,7 @@ export class ApiService {
     if (cached !== null) {
       return cached;
     }
-    const url = `${this.url(ApiType.SCOREBOARD)}/${id}`;
+    const url = `${this.url(ApiType.PROBLEMSET)}/${id}/${ApiType.SCOREBOARD}`;
     return this.http.get<Scoreboard>(url, httpOptions)
       .pipe(
         tap(scoreboard => {
@@ -238,16 +252,25 @@ export class ApiService {
     return this.user ? this.user : undefined;
   }
 
-  getCurrentProblemset(): ProblemsetInfo | undefined {
-    return this.problemset ? this.problemset : undefined;
+  onProblemsetIdChange(id?: string) {
+    if (id) {
+      this.getProblemset(id)
+        .subscribe(problemset => this.setCurrentProblemset(problemset));
+    }
+  }
+
+  getCurrentProblemset(): Observable<ProblemsetInfo | undefined> {
+    return this.problemset$;
   }
 
   setCurrentProblemset(problemset: ProblemsetInfo): void {
-    this.problemset = problemset;
+    this.latestProblemset = problemset;
+    this.problemset.next(problemset);
   }
 
   resetCurrentProblemset(): void {
-    this.problemset = undefined;
+    this.latestProblemset = undefined;
+    this.problemset.next(undefined);
   }
 
   updatePassword(passwords: {

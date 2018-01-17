@@ -20,7 +20,6 @@ const routes: Routes = [
   { path: 'signup', component: SignupComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'faq', component: FaqComponent },
-  { path: 'problemset/:problemsetId', component: ProblemsetComponent },
   { path: 'problemset/:problemsetId/submit', component: SubmitComponent },
   { path: 'problemset/:problemsetId/problem/:problemNumber/submit', component: SubmitComponent },
   { path: 'problemset/:problemsetId/problem/:problemNumber', component: ProblemComponent },
@@ -28,6 +27,7 @@ const routes: Routes = [
   { path: 'problemset/:problemsetId/submissions', component: SubmissionListComponent },
   { path: 'problemset/:problemsetId/submission/:username/:submissionNumber', component: SubmissionComponent },
   { path: 'problemset/:problemsetId/scoreboard', component: ScoreboardComponent },
+  { path: 'problemset/:problemsetId', component: ProblemsetComponent },
   { path: '', redirectTo: '/problemsets', pathMatch: 'full' },
   { path: '**', component: NotFoundComponent }
 ];

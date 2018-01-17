@@ -29,8 +29,6 @@ export class SignupComponent implements OnInit {
       confirmPassword: new FormControl('123456', [Validators.required, passwordMatchValidator]),
       fullName: new FormControl('Bowen', Validators.required)
     });
-
-    message.infoDialog('hihi');
   }
 
   ngOnInit() {

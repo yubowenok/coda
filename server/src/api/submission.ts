@@ -8,44 +8,10 @@ import {
   checkSubmission,
   getSubmissionList,
   getVerdict,
-  getVerdictDict
+  getVerdictDict,
+  getJudgedSubmission,
+  getJudgedSubmissionWithSource
 } from '../util';
-import * as _ from 'lodash';
-import * as fs from 'fs';
-import * as paths from '../constants/path';
-import { Submission, Verdict, VerdictType } from '../constants';
-
-/**
- * Creates a web format submission record, filling in verdict info.
- */
-const toWebSubmission = (submission: Submission, verdict: Verdict | undefined): Object => {
-  if (!verdict) {
-    verdict = {
-      ..._.pick(submission, ['username', 'submissionNumber', 'source']),
-      failedCase: 0,
-      totalCase: 0,
-      verdict: VerdictType.PENDING,
-      executionTime: 0,
-      memory: 0
-    };
-  }
-  return {
-    ...submission,
-    submitTime: new Date(submission.submitTime).getTime(),
-    ...verdict
-  };
-};
-
-/**
- * Creates a web format submission record with source code.
- */
-const toWebSubmissionWithSource = (problemsetId: string, submission: Submission,
-                                   verdict: Verdict | undefined): Object => {
-  return {
-    ...toWebSubmission(submission, verdict),
-    source: fs.readFileSync(paths.submissionSourcePath(problemsetId, submission), 'utf8')
-  };
-};
 
 module.exports = function(app: Express) {
   /**
@@ -64,7 +30,7 @@ module.exports = function(app: Express) {
       res.status(404).json({ msg: 'submission does not exist' });
     }
     const submission = getSubmission(problemsetId, username, submissionNumber);
-    res.json(toWebSubmissionWithSource(problemsetId, submission, getVerdict(problemsetId, submission)));
+    res.json(getJudgedSubmissionWithSource(problemsetId, submission, getVerdict(problemsetId, submission)));
   });
 
   /**
@@ -80,7 +46,7 @@ module.exports = function(app: Express) {
       const username = req.params.username;
       const verdicts = getVerdictDict(problemsetId);
       const submissions = getSubmissionList(problemsetId, username)
-        .map(submission => toWebSubmission(submission, verdicts && submission.username in verdicts ?
+        .map(submission => getJudgedSubmission(submission, verdicts && submission.username in verdicts ?
           verdicts[submission.username][submission.submissionNumber] : undefined));
       res.json(submissions);
   });

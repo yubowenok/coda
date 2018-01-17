@@ -2,11 +2,21 @@
   {
     "username": "by123",
     "submissionNumber": 1,
-    "source": "by123_1_A_small.cpp",
+    "sourceFile": "by123_1_A_small.cpp",
     "verdict": "AC",
     "executionTime": 0.05,
     "memory": 128,
     "failedCase": 0,
+    "totalCase": 2
+  },
+  {
+    "username": "by123",
+    "submissionNumber": 3,
+    "sourceFile": "by123_3_C_large.cpp",
+    "verdict": "WA",
+    "executionTime": 0.00,
+    "memory": 64,
+    "failedCase": 1,
     "totalCase": 2
   }
 ]

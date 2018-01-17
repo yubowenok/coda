@@ -4,7 +4,7 @@ import { MatSnackBar, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/
 import { SECOND_MS } from './constants/time';
 import { Router } from '@angular/router';
 
-const INFO_DURATION = SECOND_MS * 2;
+const INFO_DURATION = SECOND_MS * 3;
 const ERROR_DURATION = SECOND_MS * 10;
 
 @Component({

@@ -1,7 +1,14 @@
+import { Request, Response, NextFunction } from 'express';
 import * as fs from 'fs';
 import * as paths from '../constants/path';
-import { ProblemsetConfig, ProblemsetDict, JudgeMode } from '../constants';
-import { Request, Response, NextFunction } from 'express';
+import {
+  ProblemsetConfig,
+  ProblemsetDict,
+  ProblemsetScoreDict,
+  ProblemsetEasierSubtasksDict,
+  RunMode
+} from '../constants';
+import { getProblemEasierSubtasksDict } from './problem';
 
 const checkProblemsetId = (id: string): boolean => {
   return fs.existsSync(paths.problemsetDir(id));
@@ -15,12 +22,6 @@ export const isValidProblemsetId = (req: Request, res: Response, next: NextFunct
   next();
 };
 
-const checkProblemsetIntegrity = (problemset: ProblemsetConfig): void => {
-  if (problemset.judgeMode === JudgeMode.BLIND && problemset.freebies) {
-    console.error(`problemset ${problemset.id} has blind judge but non-zero freebies`);
-  }
-};
-
 const getAllProblemsets = (): ProblemsetConfig[] => {
   const problemsets = fs.readdirSync(paths.problemsetDir());
   return problemsets
@@ -31,14 +32,12 @@ const getAllProblemsets = (): ProblemsetConfig[] => {
       if (problemset.id !== problemsetId) {
         console.error(`problemset id in config does not match folder name ${problemsetId}`);
       }
-      checkProblemsetIntegrity(problemset);
       return problemset;
     });
 };
 
 /**
- *
- * @return One problemset config.
+ * @returns One problemset config.
  */
 export const getProblemset = (problemsetId: string): ProblemsetConfig => {
   if (!checkProblemsetId(problemsetId)) {
@@ -67,4 +66,40 @@ export const getProblemsetList = (): ProblemsetConfig[] => {
     return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
   });
   return list;
+};
+
+export const getProblemsetScoreDict = (problemsetId: string): ProblemsetScoreDict => {
+  const problemset = getProblemset(problemsetId);
+  const dict: ProblemsetScoreDict = {};
+  problemset.problems.forEach(problem => {
+    if (!(problem.number in dict)) {
+      dict[problem.number] = {};
+    }
+    problem.subtasks.forEach(subtask => {
+      dict[problem.number][subtask.id] = subtask.score;
+    });
+  });
+  return dict;
+};
+
+export const checkProblemsetEnded = (problemset: ProblemsetConfig): boolean => {
+  if (problemset.runMode === RunMode.STANDARD) {
+    return new Date(problemset.endTime).getTime() <= new Date().getTime();
+  } else if (problemset.runMode === RunMode.SELFTEST) {
+    console.error('isProblemsetEnded not implemented for SELFTEST');
+    return false;
+  }
+};
+
+/**
+ * Creates a dictionary that maps problemNumber to ProblemEasierSubtasksDict.
+ */
+export const getProblemsetEasierSubtasksDict = (problemId: string): ProblemsetEasierSubtasksDict => {
+  const problemset = getProblemset(problemId);
+  const dict: ProblemsetEasierSubtasksDict = {};
+  for (let i = 0; i < problemset.problems.length; i++) {
+    const problem = problemset.problems[i];
+    dict[problem.number] = getProblemEasierSubtasksDict(problem.id);
+  }
+  return dict;
 };

@@ -1,6 +1,14 @@
-import * as paths from '../constants/path';
 import * as fs from 'fs';
-import { Submission, SubmissionDict, Verdict, VerdictDict } from '../constants/submission';
+import * as paths from '../constants/path';
+import {
+  Submission,
+  SubmissionDict,
+  Verdict,
+  VerdictType,
+  VerdictDict,
+  JudgedSubmission,
+  JudgedSubmissionWithSource
+} from '../constants/submission';
 
 /**
  * Reads submission.json and gets all submissions for a problemset;
@@ -18,6 +26,16 @@ const getVerdicts = (problemsetId: string): Verdict[] => {
   return fs.existsSync(verdictsPath) ? JSON.parse(fs.readFileSync(verdictsPath, 'utf8')) : [];
 };
 
+const submissionSorter = (a: Submission, b: Submission): number => {
+  if (a.problemsetTime === b.problemsetTime) {
+    if (a.username === b.username) {
+      return a.submissionNumber - b.submissionNumber;
+    }
+    return a.username < b.username ? -1 : (a.username > b.username ? 1 : 0);
+  }
+  return a.problemsetTime - b.problemsetTime;
+};
+
 /**
  * @returns List of submissions (for the username) inside a problemset, sorted by submission order.
  */
@@ -26,6 +44,7 @@ export const getSubmissionList = (problemsetId: string, username?: string): Subm
   if (username) {
     submissions = submissions.filter(submission => submission.username === username);
   }
+  submissions.sort(submissionSorter);
   return submissions;
 };
 
@@ -44,6 +63,9 @@ export const getSubmissionDict = (problemsetId: string): SubmissionDict => {
     }
     dict[submission.username].push(submission);
   });
+  for (const username in dict) {
+    dict[username].sort(submissionSorter);
+  }
   return dict;
 };
 
@@ -125,4 +147,62 @@ export const getVerdict = (problemsetId: string, submission: Submission): Verdic
     return undefined;
   }
   return getVerdictDict(problemsetId)[submission.username][submission.submissionNumber];
+};
+
+/**
+ * Creates a judged submission record, filling in verdict info.
+ */
+export const getJudgedSubmission = (submission: Submission, verdict: Verdict | undefined): JudgedSubmission => {
+  if (!verdict) {
+    verdict = {
+      username: submission.username,
+      submissionNumber: submission.submissionNumber,
+      failedCase: 0,
+      totalCase: 0,
+      verdict: VerdictType.PENDING,
+      executionTime: 0,
+      sourceFile: submission.sourceFile,
+      memory: 0
+    };
+  }
+  return {
+    // from submission record
+    submissionNumber: submission.submissionNumber,
+    problemNumber: submission.problemNumber,
+    subtask: submission.subtask,
+    language: submission.language,
+    submitTime: new Date(submission.submitTime).getTime(),
+    problemsetTime: submission.problemsetTime,
+    outsideProblemsetTime: submission.outsideProblemsetTime,
+    // from verdict
+    verdict: verdict.verdict,
+    executionTime: verdict.executionTime,
+    memory: verdict.memory
+  };
+};
+
+/**
+ * Adds source code to a judged submission record.
+ */
+export const getJudgedSubmissionWithSource = (problemsetId: string, submission: Submission,
+                                       verdict: Verdict | undefined): JudgedSubmissionWithSource => {
+  return {
+    ...getJudgedSubmission(submission, verdict),
+    sourceCode: fs.readFileSync(paths.submissionSourcePath(problemsetId, submission), 'utf8')
+  };
+};
+
+export const checkIncorrectSubmission = (submission: JudgedSubmission): boolean => {
+  return submission.verdict !== VerdictType.AC &&
+    submission.verdict !== VerdictType.PENDING &&
+    submission.verdict !== VerdictType.SKIPPED &&
+    submission.verdict !== VerdictType.CE;
+};
+
+export const checkIgnoredSubmission = (submission: JudgedSubmission): boolean => {
+  return submission.verdict === VerdictType.SKIPPED;
+};
+
+export const checkPendingSubmission = (submission: JudgedSubmission): boolean => {
+  return submission.verdict === VerdictType.PENDING;
 };

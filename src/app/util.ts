@@ -1,7 +1,7 @@
 import { FormControl, ValidationErrors } from '@angular/forms';
-import { HttpErrorResponse } from '@angular/common/http';
+import { ProblemsetInfo } from './constants/problemset';
 
-export let passwordLengthValidator = (passwordControl: FormControl): ValidationErrors | null => {
+export const passwordLengthValidator = (passwordControl: FormControl): ValidationErrors | null => {
   if (passwordControl.value.length < 6) {
     return {
       error: { tooShort: true }
@@ -10,7 +10,7 @@ export let passwordLengthValidator = (passwordControl: FormControl): ValidationE
   return null;
 };
 
-export let passwordMatchValidator = (confirmPasswordControl: FormControl): ValidationErrors | null => {
+export const passwordMatchValidator = (confirmPasswordControl: FormControl): ValidationErrors | null => {
   if (confirmPasswordControl.parent == null) {
     return null;
   }
@@ -20,11 +20,15 @@ export let passwordMatchValidator = (confirmPasswordControl: FormControl): Valid
   } : null;
 };
 
-export let usernameValidator = (usernameControl: FormControl): ValidationErrors | null => {
+export const usernameValidator = (usernameControl: FormControl): ValidationErrors | null => {
   if (!usernameControl.value.match(/^[a-z][a-z0-9_]*/) || usernameControl.value.length < 3) {
     return {
       error: { username: true }
     };
   }
   return null;
+};
+
+export const problemsetEnded = (problemset: ProblemsetInfo): boolean => {
+  return problemset.endTime <= new Date().getTime();
 };

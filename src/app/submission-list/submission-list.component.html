@@ -1,6 +1,6 @@
 <app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
 <mat-spinner *ngIf="!submissionList && !error" diameter="50"></mat-spinner>
-<ng-container *ngIf="submissionList && !error">
+<ng-container *ngIf="submissionList && problemset && !error">
   <h2>{{api.getCurrentUser().username}}'s Submissions for {{problemset.title}}</h2>
   <div class="margin-to-top">
     <ngx-datatable

@@ -24,7 +24,7 @@
 </ng-container>
 
 <ng-template #attemptsTmpl let-row="row" let-value="value">
-  <div *ngIf="value.attempts">
+  <div *ngIf="value.attempts" class="attempted" (click)="gotoSubmissionLink(value)">
     <div *ngIf="value.solved" class="correct">
       <i class="fa fa-lg fa-check-circle"></i>
       <span *ngIf="value.attempts > 1">+{{value.attempts-1}}</span>
@@ -40,7 +40,7 @@
 </ng-template>
 
 <ng-template #scoreTmpl let-row="row" let-value="value">
-  <div *ngIf="value.attempts">
+  <div *ngIf="value.attempts" class="attempted" (click)="gotoSubmissionLink(value)">
     <div *ngIf="value.solved" class="correct">
       <i class="fa fa-lg fa-check-circle"></i>
       {{value.score}}
@@ -56,7 +56,7 @@
 </ng-template>
 
 <ng-template #timeTmpl let-row="row" let-value="value">
-  <div *ngIf="value.attempts">
+  <div *ngIf="value.attempts" class="attempted" (click)="gotoSubmissionLink(value)">
     <div *ngIf="value.solved" class="correct">
       <i class="fa fa-lg fa-check-circle"></i>
       {{value.time | timeDisplay}}

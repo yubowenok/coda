@@ -38,5 +38,5 @@ export interface Submission {
 }
 
 export interface SubmissionWithSource extends Submission {
-  source: string;
+  sourceCode: string;
 }

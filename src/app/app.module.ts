@@ -4,8 +4,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { HttpClientModule } from '@angular/common/http';
-// import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-// import { InMemoryDataService } from './in-memory-data.service';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppMaterialModule } from './app-material.module';
@@ -54,11 +52,6 @@ import { PageErrorComponent } from './page-error/page-error.component';
     BrowserAnimationsModule,
     AppMaterialModule,
     HttpClientModule,
-/*
-HttpClientInMemoryWebApiModule.forRoot(
-InMemoryDataService, { dataEncapsulation: false }
-),
-*/
     FormsModule,
     ReactiveFormsModule,
     NavbarModule,

@@ -20,6 +20,14 @@ export const problemsetSubmissionsPath = (problemsetId: string): string => {
   return path.join(PROBLEMSET_DIR, problemsetId, 'submissions.json');
 };
 
+export const problemsetAnonymousPath = (problemsetId: string): string => {
+  return path.join(PROBLEMSET_DIR, problemsetId, 'anonymous.json');
+};
+
+export const problemsetSessionsPath = (problemsetId: string): string => {
+  return path.join(PROBLEMSET_DIR, problemsetId, 'sessions.json');
+};
+
 export const problemsetVerdictsPath = (problemsetId: string): string => {
   return path.join(PROBLEMSET_DIR, problemsetId, 'verdicts.json');
 };
@@ -42,5 +50,5 @@ export const problemSamplesPath = (problemId: string): string => {
 
 export const submissionSourcePath = (problemsetId: string, submission: Submission): string => {
   return path.join(PROBLEMSET_DIR, problemsetId,
-    'source', submission.username, submission.source);
+    'source', submission.username, submission.sourceFile);
 };

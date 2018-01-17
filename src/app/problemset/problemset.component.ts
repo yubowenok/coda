@@ -23,11 +23,6 @@ export class ProblemsetComponent implements OnInit {
   private error: { msg: string } | undefined;
 
   ngOnInit() {
-    this.router.events.subscribe((data: RouterEvent) => {
-      if (data instanceof NavigationStart && data.url === '/problemsets') {
-        this.api.resetCurrentProblemset();
-      }
-    });
     this.getProblemset();
   }
 
@@ -41,6 +36,7 @@ export class ProblemsetComponent implements OnInit {
           this.error = undefined;
 
           if (!problemset.started) {
+            this.error = { msg: 'Problemset has not started' };
             return;
           }
           const problemNumber = this.route.snapshot.paramMap.get('problemNumber');

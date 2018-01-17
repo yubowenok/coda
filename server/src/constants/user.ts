@@ -15,3 +15,7 @@ export interface UserSettings {
   nickname: string;
   anonymous: boolean;
 }
+
+export interface UserDict {
+  [username: string]: User;
+}

@@ -8,6 +8,8 @@ export interface ParticipantScore {
       [subtaskId: string]: {
         attempts: number,
         score?: number,
+        // score one could earn in blind mode if the last submission is correct
+        possibleScore?: number,
         // boolean for standard mode, undefined for selftest before ending
         solved?: boolean,
         // solved time, seconds from start

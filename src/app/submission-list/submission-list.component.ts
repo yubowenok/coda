@@ -40,6 +40,15 @@ export class SubmissionListComponent implements OnInit {
   };
 
   ngOnInit() {
+    this.api.onProblemsetIdChange(this.route.snapshot.paramMap.get('problemsetId'));
+
+    this.problemset = this.api.latestProblemset;
+    this.api.getCurrentProblemset()
+      .subscribe(problemset => {
+        this.problemset = problemset;
+        this.updateTable();
+      });
+
     this.getSubmissionList();
 
     const timeDisplayPipe = new TimeDisplayPipe();
@@ -91,16 +100,17 @@ export class SubmissionListComponent implements OnInit {
       this.error = { msg: 'invalid username' };
       return;
     }
-    this.api.getProblemset(problemsetId)
-      .subscribe(problemset => {
-        this.problemset = problemset;
-        this.updateTable();
-      });
     this.api.getSubmissionList(problemsetId, username)
-      .subscribe(submissionList => {
-        this.submissionList = submissionList;
-        this.updateTable();
-      });
+      .subscribe(
+        submissionList => {
+          this.submissionList = submissionList;
+          this.updateTable();
+        },
+        err => {
+          this.api.loginErrorHandler(err);
+          this.error = err.error;
+        }
+      );
   }
 
   updateTable(): void {

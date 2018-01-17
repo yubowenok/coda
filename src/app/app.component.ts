@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, NavigationEnd, NavigationStart } from '@angular/router';
+import { Router, NavigationEnd, NavigationStart, RouterEvent, ActivatedRoute } from '@angular/router';
 import { Location, PopStateEvent } from '@angular/common';
+import { ApiService } from './api.service';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,8 @@ export class AppComponent implements OnInit {
   title = 'coda';
 
   constructor(
+    private api: ApiService,
+    private route: ActivatedRoute,
     private router: Router,
     private location: Location
   ) { }
@@ -19,6 +22,7 @@ export class AppComponent implements OnInit {
   private yScrollStack: number[] = [];
 
   ngOnInit() {
+    // Handle scrolling with hashtag fragments.
     this.location.subscribe((event: PopStateEvent) => {
       this.lastPoppedUrl = event.url;
     });

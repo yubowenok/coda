@@ -36,3 +36,7 @@ export interface ProblemContent {
     subtasks: string[]
   }[];
 }
+
+export interface ProblemEasierSubtasksDict {
+  [subtask: string]: string[]; // subtask easier than this one (including itself)
+}

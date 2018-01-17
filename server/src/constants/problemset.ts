@@ -1,3 +1,5 @@
+import { ProblemEasierSubtasksDict } from './problem';
+
 export enum RunMode {
   STANDARD = 'STANDARD',
   SELFTEST = 'SELFTEST'
@@ -45,4 +47,14 @@ export interface ProblemsetConfig {
 
 export interface ProblemsetDict {
   [problemsetId: string]: ProblemsetConfig;
+}
+
+export interface ProblemsetScoreDict {
+  [problemNumber: string]: {
+    [subtask: string]: number // score for each subtask
+  };
+}
+
+export interface ProblemsetEasierSubtasksDict {
+  [problemNumber: string]: ProblemEasierSubtasksDict;
 }
