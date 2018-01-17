@@ -3,8 +3,9 @@
 const { exec } = require('child_process');
 const containerName = 'coda-test';
 const dockerRoot = '/usr/share/src';
-const localRoot = '/Users/kaichen/Dev/docker/codaTest';
+const localRoot = '/Users/kaichen/Dev/docker/test_root';
 const localVerdict = localRoot + '/verdict';
+
 path = require('path')
 
 fs = require('fs');
@@ -29,15 +30,15 @@ function readJsonFile(file) {
 }
 
 function judgeSubmission(user, problem, fileName, subtask) {
-    var userPath = dockerRoot + '/users/' + user;
-    var problemPath = dockerRoot + '/problems/' + problem;
+    var userPath = dockerRoot + '/user/' + user;
+    var problemPath = dockerRoot + '/problem/' + problem;
     var submissionPath = userPath + '/' + fileName;
     var timeLimit = 1;
     
-    var problemConfPath = localRoot + '/problems/' + problem + '/coda.conf';
+    var problemConfPath = localRoot + '/problem/' + problem + '/coda.conf.json';
     
     
-    var outputPath = localRoot + '/users/' + user + '/' + fileName + '.verdict.json';
+    var outputPath = localRoot + '/user/' + user + '/' + fileName + '.verdict.json';
 
     if (fs.existsSync(outputPath)) return;
 
@@ -114,7 +115,4 @@ systemSync('docker run -dit --name ' + containerName +
 imageName);
 
 setInterval(judgeAll, 5 * 1000);
-
-
-
 
