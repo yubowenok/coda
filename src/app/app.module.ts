@@ -43,6 +43,7 @@ import {
   MemoryPipe,
   RepeatPipe
 } from './pipe';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
   imports: [
@@ -84,7 +85,8 @@ InMemoryDataService, { dataEncapsulation: false }
     VerdictClassPipe,
     ExecutionTimePipe,
     MemoryPipe,
-    RepeatPipe
+    RepeatPipe,
+    NotFoundComponent
   ],
   providers: [
     ApiService,

@@ -67,4 +67,5 @@ export class ProblemComponent implements OnInit {
     const height = (Math.max(inLines, outLines) - 1) * LINE_HEIGHT;
     return { height: `${height}px` };
   }
+
 }

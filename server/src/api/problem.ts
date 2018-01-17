@@ -12,8 +12,7 @@ import * as fs from 'fs';
  * Merges problemset config (subtask scores, etc.) into problem config.
  */
 const toWebProblem = (problemsetProblem: ProblemsetProblem, problem: ProblemConfig): Object => {
-  const problemPath = path.join(paths.PROBLEM, problem.id);
-  const statement = fs.readFileSync(path.join(problemPath, paths.STATEMENT), 'utf8');
+  const statement = fs.readFileSync(paths.problemStatementPath(problem.id), 'utf8');
 
   const subtasks = problemsetProblem.subtasks.map((subtask: { id: string, score: number }) => {
     return {
@@ -21,7 +20,7 @@ const toWebProblem = (problemsetProblem: ProblemsetProblem, problem: ProblemConf
       text: '(placeholder)'
     };
   });
-  const samplePath = path.join(problemPath, paths.SAMPLES);
+  const samplePath = paths.problemSamplesPath(problem.id);
   const samples = fs.readdirSync(samplePath)
     .filter(filename => {
       return filename[0] !== '.' && filename.match(/.*\.in$/);
@@ -39,16 +38,19 @@ const toWebProblem = (problemsetProblem: ProblemsetProblem, problem: ProblemConf
     title: problem.title,
     timeLimit: problem.timeLimit,
     illustration: undefined, // {width, filename, text}
+    isSingleTask: subtasks.length === 1,
     subtasks: subtasks,
     statement: statement,
     samples: samples,
-    subtaskOnlySamples: problem.subtaskOnlySamples
+    subtaskOnlySamples: problem.subtaskOnlySamples === undefined ? [] : problem.subtaskOnlySamples
   };
 };
 
 module.exports = function(app: Express) {
-  app.get('/api/problemset/:problemsetId/problem/:problemNumber', isAuthenticated, (req: Request, res: Response,
-                                                                                    next: NextFunction) => {
+  app.get('/api/problemset/:problemsetId/problem/:problemNumber',
+    isAuthenticated,
+    isValidProblemsetId,
+    (req: Request, res: Response, next: NextFunction) => {
     const problemsetId = req.params.problemsetId;
     const problemNumber = req.params.problemNumber;
     const problemset = getProblemset(problemsetId);

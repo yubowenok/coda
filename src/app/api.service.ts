@@ -37,10 +37,10 @@ const httpOptions = {
 enum ApiType {
   PROBLEM = 'problem',
   PROBLEMSET = 'problemset',
-  PROBLEMSET_LIST = 'problemset-list',
+  PROBLEMSET_LIST = 'problemsets',
   SCOREBOARD = 'scoreboard',
   SUBMISSION = 'submission',
-  SUBMISSION_LIST = 'submission-list',
+  SUBMISSION_LIST = 'submissions',
   SIGNUP = 'signup',
   LOGIN = 'login',
   LOGOUT = 'logout',
@@ -131,7 +131,7 @@ export class ApiService {
   }
 
   getProblem(problemsetId: string, problemNumber: string): Observable<ProblemContent> {
-    const cacheId = `${problemsetId}/${problemNumber}`
+    const cacheId = `${problemsetId}/${problemNumber}`;
     const cached = this.getCache(cacheId, this.problemCache, RefetchInterval.PROBLEM);
     if (cached !== null) {
       return cached;
@@ -169,19 +169,19 @@ export class ApiService {
       );
   }
 
-  getSubmission(problemsetId: string, username: string, submissionId: string): Observable<SubmissionWithSource> {
-    const cacheId = `${problemsetId}_${username}_${submissionId}`;
+  getSubmission(problemsetId: string, username: string, submissionNumber: string): Observable<SubmissionWithSource> {
+    const cacheId = `${problemsetId}_${username}_${submissionNumber}`;
     const cached = this.getCache(cacheId, this.submissionCache, RefetchInterval.SUBMISSION);
     if (cached !== null) {
       return cached;
     }
-    const url = `${this.url(ApiType.SUBMISSION)}/${submissionId}`; // TODO: add problemsetId arg to API url
+    const url = `${this.url(ApiType.PROBLEMSET)}/${problemsetId}/${ApiType.SUBMISSION}/${username}/${submissionNumber}`;
     return this.http.get<SubmissionWithSource>(url, httpOptions)
       .pipe(
         tap(submission => {
-          console.log(`fetched submission ${problemsetId} ${submissionId}`, submission);
+          console.log(`fetched submission ${problemsetId} ${submissionNumber}`, submission);
         }),
-        catchError(this.handleError<SubmissionWithSource>(`getSubmission ${problemsetId} ${submissionId}`))
+        catchError(this.handleError<SubmissionWithSource>(`getSubmission ${problemsetId} ${submissionNumber}`))
       );
   }
 
@@ -191,7 +191,7 @@ export class ApiService {
     if (cached !== null) {
       return cached;
     }
-    const url = `${this.url(ApiType.SUBMISSION_LIST)}`; // TODO add problemsetId arg to API url
+    const url = `${this.url(ApiType.PROBLEMSET)}/${problemsetId}/${ApiType.SUBMISSION_LIST}/${username}`;
     return this.http.get<Submission[]>(url, httpOptions)
       .pipe(
         tap(submissions => {

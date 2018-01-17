@@ -39,7 +39,6 @@ passport.use(new LocalStrategy((username: string, password: string, done) => {
 
 export let isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   if (req.isAuthenticated()) {
-    console.log('pass auth');
     return next();
   }
   res.status(401).json({ msg: 'this page requires login' });

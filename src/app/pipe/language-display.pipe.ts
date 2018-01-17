@@ -9,7 +9,7 @@ export class LanguageDisplayPipe implements PipeTransform {
   transform(lang: string, args?: any): string {
     if (!(lang in LanguageDisplay)) {
       console.warn(`${lang} not in LanguageDisplay`);
-      return 'Unknown';
+      return 'Unknown (Server Error)';
     }
     return LanguageDisplay[lang];
   }

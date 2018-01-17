@@ -5,14 +5,18 @@
     <h1>{{problem.title}}</h1>
     <button mat-raised-button color="primary" class="submit" routerLink="submit">Submit</button>
   </div>
-  <div [appMathJax]="this.problem.statement"></div>
+  <div class="time-limit">
+    <h3>Time Limit: <span>{{problem.timeLimit}} {{'second' + (problem.timeLimit > 1 ? 's' : '')}}</span></h3>
+  </div>
+  <div [appMathJax]="problem.statement"></div>
   <div class="section">
     <h3>Subtasks</h3>
-    <ul class="subtask-list">
+    <p *ngIf="problem.isSingleTask">This problem does not have subtasks.</p>
+    <ul class="subtask-list" *ngIf="!problem.isSingleTask">
       <li *ngFor="let subtask of problem.subtasks">
         <span class="subtask-id">
           <b>{{subtask.id | titlecase}}</b>
-          <span>{{'(' + this.subtask.score + ' points): '}}</span>
+          <span>{{'(' + subtask.score + ' points): '}}</span>
         </span>
         <span [appMathJax]="subtask.text"></span>
       </li>
@@ -26,8 +30,8 @@
           <td>
             <div>
               <h4>Input {{i + 1}}<i class="fa fa-clone btn-copy"
-                                    (click)="this.copyText(sample.in, 'Input ' + (i + 1) + ' copied')"></i></h4>
-              <span class="special-sample it">{{this.displaySubtaskOnlySample(sample)}}</span>
+                                    (click)="copyText(sample.in, 'Input ' + (i + 1) + ' copied')"></i></h4>
+              <span class="special-sample it">{{displaySubtaskOnlySample(sample)}}</span>
             </div>
             <mat-card>
               <pre [ngStyle]="getSampleHeight(sample)">{{sample.in}}</pre>
@@ -35,7 +39,7 @@
           </td>
           <td>
             <h4>Output {{i + 1}}<i class="fa fa-clone btn-copy"
-                                   (click)="this.copyText(sample.out, 'Output ' + (i + 1) + ' copied')"></i></h4>
+                                   (click)="copyText(sample.out, 'Output ' + (i + 1) + ' copied')"></i></h4>
             <mat-card>
               <pre [ngStyle]="getSampleHeight(sample)">{{sample.out}}</pre>
             </mat-card>

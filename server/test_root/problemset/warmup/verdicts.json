@@ -1,0 +1,12 @@
+[
+  {
+    "username": "by123",
+    "submissionNumber": 1,
+    "source": "by123_1_A_small.cpp",
+    "verdict": "AC",
+    "executionTime": 0.05,
+    "memory": 128,
+    "failedCase": 0,
+    "totalCase": 2
+  }
+]

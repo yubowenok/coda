@@ -41,6 +41,13 @@
             >
               {{problemset.penaltyMode | titlecase}} Penalty
             </mat-chip>
+            <mat-chip class="mode"
+                      *ngIf="problemset.freebies"
+                      [routerLink]="['/faq']"
+                      fragment="freebies"
+                      matTooltip="tooltips.FREEBIES">
+              Freebies × {{problemset.freebies}}
+            </mat-chip>
           </mat-chip-list>
         </div>
       </mat-list-item>

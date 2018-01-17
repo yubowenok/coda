@@ -1,6 +1,6 @@
-<div *ngIf="this.api.getUser()">You have already logged in.</div>
+<div *ngIf="api.getUser()">You have already logged in.</div>
 
-<form [formGroup]="form" *ngIf="!this.api.getUser()">
+<form [formGroup]="form" *ngIf="!api.getUser()">
   <mat-form-field>
     <input matInput placeholder="Username / Email"
            formControlName="username" [formGroup]="form">
@@ -17,5 +17,5 @@
     </mat-error>
   </mat-form-field>
 
-  <button mat-raised-button color="primary" (click)="login()" [disabled]="this.form.invalid">Login</button>
+  <button mat-raised-button color="primary" (click)="login()" [disabled]="form.invalid">Login</button>
 </form>

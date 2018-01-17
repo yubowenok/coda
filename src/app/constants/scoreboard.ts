@@ -9,7 +9,8 @@ export interface ParticipantScore {
         solved?: boolean, // boolean for standard mode, undefined for selftest before ending
         score?: number,
         time?: number, // solved time, seconds from start
-        submissionId?: string // if solved, this is the first AC submission id
+        // if solved, this is the first AC submission number, used for creating links on scoreboard
+        submissionNumber?: string
       }
     }
   };

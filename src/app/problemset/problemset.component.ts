@@ -39,7 +39,9 @@ export class ProblemsetComponent implements OnInit {
           const problemNumber = this.route.snapshot.paramMap.get('problemNumber');
           if (problemNumber == null) {
             const firstProblemNumber = problemset.problems[0].number;
-            this.router.navigate([`/problemset/${problemsetId}/problem/${firstProblemNumber}`]);
+            this.router.navigate([`/problemset/${problemsetId}/problem/${firstProblemNumber}`], {
+              replaceUrl: true
+            });
           }
         },
         (err: HttpErrorResponse) => {

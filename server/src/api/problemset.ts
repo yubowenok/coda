@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction, Express } from 'express';
 import { isAuthenticated } from '../config/passport';
 import { ProblemsetConfig, ProblemsetProblem } from '../constants/problemset';
-import { getProblemsetDict, getProblemsetList } from '../util/problemset';
+import { getProblemsetDict, getProblemsetList, isValidProblemsetId } from '../util/problemset';
 import { getProblem } from '../util/problem';
 
 /**
@@ -21,6 +21,7 @@ const toWebProblemset = (problemset: ProblemsetConfig): Object => {
     const problem = getProblem(problemsetProblem.id);
     return {
       ...problemsetProblem,
+      isSingleTask: !problem.subtasks || problem.subtasks.length <= 1,
       title: problem.title
     };
   });
@@ -31,19 +32,19 @@ module.exports = function(app: Express) {
   /**
    * Single problemset
    */
-  app.get('/api/problemset/:problemsetId', isAuthenticated, (req: Request, res: Response, next: NextFunction) => {
+  app.get('/api/problemset/:problemsetId',
+    isAuthenticated,
+    isValidProblemsetId,
+    (req: Request, res: Response, next: NextFunction) => {
     const problemsetId = req.params.problemsetId;
     const problemsetDict = getProblemsetDict();
-    if (!(problemsetId in problemsetDict)) {
-      return res.status(500).json({ msg: 'invalid problemset id' });
-    }
     res.json(toWebProblemset(problemsetDict[problemsetId]));
   });
 
   /**
    * Problemset list
    */
-  app.get('/api/problemset-list', (req: Request, res: Response, next: NextFunction) => {
+  app.get('/api/problemsets', (req: Request, res: Response, next: NextFunction) => {
     const problemsetList = getProblemsetList().map((problemset: ProblemsetConfig) => {
       return toWebProblemset(problemset);
     });

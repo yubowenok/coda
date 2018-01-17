@@ -1,7 +1,7 @@
-<mat-spinner *ngIf="!this.scoreboard || !this.problemset" diameter="50"></mat-spinner>
-<ng-container *ngIf="this.scoreboard && this.problemset">
+<mat-spinner *ngIf="!scoreboard || !problemset" diameter="50"></mat-spinner>
+<ng-container *ngIf="scoreboard && problemset">
 
-  <h2>Scoreboard of {{this.problemset.title}}</h2>
+  <h2>Scoreboard of {{problemset.title}}</h2>
   <div>
     <mat-radio-group [(ngModel)]="mode" (ngModelChange)="onModeChange($event)">
       <mat-radio-button value="score" color="primary">Score</mat-radio-button>

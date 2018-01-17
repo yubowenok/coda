@@ -95,6 +95,7 @@ export class InMemoryDataService implements InMemoryDbService {
         number: 'A',
         id: 'critical',
         title: 'Critical Elements',
+        isSingleTask: false,
         subtasks: [
           { id: 'small', score: 15 },
           { id: 'medium', score: 25 },
@@ -105,6 +106,7 @@ export class InMemoryDataService implements InMemoryDbService {
         number: 'B',
         id: 'gradecurving',
         title: 'Grade Curving',
+        isSingleTask: false,
         subtasks: [
           { id: 'small', score: 20 },
           { id: 'large', score: 40 }
@@ -114,6 +116,7 @@ export class InMemoryDataService implements InMemoryDbService {
         number: 'C',
         id: 'maxexpression',
         title: 'Maximum Expression',
+        isSingleTask: false,
         subtasks: [
           { id: 'small', score: 20 },
           { id: 'large', score: 30 }
@@ -123,6 +126,7 @@ export class InMemoryDataService implements InMemoryDbService {
         number: 'D',
         id: 'ultimate',
         title: 'Ultimate Challenge',
+        isSingleTask: false,
         subtasks: [
           { id: 'small', score: 20 },
           { id: 'medium', score: 30 },
@@ -179,6 +183,7 @@ export class InMemoryDataService implements InMemoryDbService {
         title: 'Critical Elements',
         timeLimit: 1,
         statement: testStatement,
+        isSingleTask: false,
         subtasks: [
           {
             id: 'small',
@@ -322,7 +327,7 @@ export class InMemoryDataService implements InMemoryDbService {
 
     const submission: SubmissionWithSource[] = [
       {
-        id: '1',
+        submissionNumber: '1',
         problemNumber: 'A',
         subtask: 'small',
         verdict: Verdict.AC,
@@ -337,7 +342,7 @@ export class InMemoryDataService implements InMemoryDbService {
         memory: 16
       },
       {
-        id: '2',
+        submissionNumber: '2',
         problemNumber: 'A',
         subtask: 'large',
         verdict: Verdict.AC,
@@ -352,7 +357,7 @@ export class InMemoryDataService implements InMemoryDbService {
         memory: 16
       },
       {
-        id: '3',
+        submissionNumber: '3',
         problemNumber: 'A',
         subtask: 'small',
         verdict: Verdict.WA,
@@ -367,7 +372,7 @@ export class InMemoryDataService implements InMemoryDbService {
         memory: 16
       },
       {
-        id: '4',
+        submissionNumber: '4',
         problemNumber: 'B',
         subtask: 'small',
         verdict: Verdict.AC,
@@ -382,7 +387,7 @@ export class InMemoryDataService implements InMemoryDbService {
         memory: 64
       },
       {
-        id: '5',
+        submissionNumber: '5',
         problemNumber: 'B',
         subtask: 'large',
         verdict: Verdict.TLE,
@@ -397,7 +402,7 @@ export class InMemoryDataService implements InMemoryDbService {
         memory: 157
       },
       {
-        id: '6',
+        submissionNumber: '6',
         problemNumber: 'B',
         subtask: 'large',
         verdict: Verdict.MLE,

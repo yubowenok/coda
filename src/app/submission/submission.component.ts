@@ -36,6 +36,7 @@ export class SubmissionComponent implements OnInit {
   private problemTitle: string;
   private rows = [];
   private columns = [];
+  private errored = false;
 
   ngOnInit() {
     this.getSubmission();
@@ -45,7 +46,7 @@ export class SubmissionComponent implements OnInit {
     const verdictDisplayPipe = new VerdictDisplayPipe();
     const titleCasePipe = new TitleCasePipe();
     const columns = [
-      { name: '#', prop: 'id', maxWidth: 80, sortable: false },
+      { name: '#', prop: 'submissionNumber', maxWidth: 80, sortable: false },
       { name: 'Problem', prop: 'problem', sortable: false },
       { name: 'Subtask', prop: 'subtask', pipe: titleCasePipe, sortable: false,
         minWidth: 80, maxWidth: 80 },
@@ -72,26 +73,34 @@ export class SubmissionComponent implements OnInit {
   }
 
   getSubmission(): void {
-    const submissionId = this.route.snapshot.paramMap.get('submissionId');
+    const submissionNumber = this.route.snapshot.paramMap.get('submissionNumber');
+    const username = this.route.snapshot.paramMap.get('username');
     const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
     this.api.getProblemset(problemsetId)
-      .subscribe(problemset => {
-        this.problemset = problemset;
-        this.updateTitle();
-        this.updateTable();
-      });
-    this.api.getSubmission(problemsetId, '', submissionId) // TODO: add username
-      .subscribe(submission => {
-        this.submission = submission;
-        this.updateTitle();
-        this.updateTable();
-      });
+      .subscribe(
+        problemset => {
+          this.problemset = problemset;
+          this.updateTitle();
+          this.updateTable();
+        },
+        err => this.errored = true
+      );
+    this.api.getSubmission(problemsetId, username, submissionNumber) // TODO: add username
+      .subscribe(
+        submission => {
+          this.submission = submission;
+          this.updateTitle();
+          this.updateTable();
+        },
+        err => this.errored = true
+      );
   }
 
   updateTable(): void {
     if (!this.problemset || !this.submission) {
       return;
     }
+
     const problemNames: { [problemNumber: string]: string } = {};
     for (let i = 0; i < this.problemset.problems.length; i++) {
       const problem = this.problemset.problems[i];

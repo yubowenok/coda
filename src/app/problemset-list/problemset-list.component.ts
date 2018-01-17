@@ -37,7 +37,8 @@ export class ProblemsetListComponent implements OnInit {
     BLIND_JUDGE: 'Submission results will be available after the problemset ends. You will temporarily receive ' +
       'score for attempted problems.',
     SCORE_PENALTY: 'Each incorrect submission results in 10% loss of a subtask\'s score.',
-    TIME_PENALTY: 'Each incorrect submission results in 4 minutes extra time added to the finish time.'
+    TIME_PENALTY: 'Each incorrect submission results in 4 minutes extra time added to the finish time.',
+    FREEBIES: 'Number of incorrect submissions that are exempted from penalty'
   };
 
   ngOnInit() {
