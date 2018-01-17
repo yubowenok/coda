@@ -18,7 +18,7 @@ export const writeUsers = (newUsers: User[]) => {
   fs.writeFileSync(path.usersPath(), JSON.stringify(newUsers, undefined, 2), 'utf8');
 };
 
-/*** Router utils ***/
+/*** Router middleware utils ***/
 
 export const isValidUsername = (req: Request, res: Response, next: NextFunction) => {
   const username = req.params.username;

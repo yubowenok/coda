@@ -17,7 +17,7 @@ export class UserComponent {
   ) { }
 
   getUser(): UserInfo | undefined {
-    return this.api.getUser();
+    return this.api.getCurrentUser();
   }
 
   logout() {

@@ -4,7 +4,7 @@ import * as moment from 'moment';
 
 import { ApiService } from '../api.service';
 import { ProblemsetInfo, RunMode, JudgeMode, PenaltyMode } from '../constants';
-import {HttpErrorResponse} from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-problemset-list',
@@ -26,7 +26,7 @@ export class ProblemsetListComponent implements OnInit {
 
   private fragment: string;
 
-  private errored = false;
+  private error: { msg: string } | undefined;
 
   tooltips = {
     STANDARD_MODE: 'You can submit anytime before the problemset ends.',
@@ -52,10 +52,10 @@ export class ProblemsetListComponent implements OnInit {
         (problemsetList: ProblemsetInfo[]) => {
           this.problemsetList = problemsetList;
           this.updateProblemsetGroups();
-          this.errored = false;
+          this.error = undefined;
         },
         (err: HttpErrorResponse) => {
-          this.errored = true;
+          this.error = err.error;
         }
       );
   }

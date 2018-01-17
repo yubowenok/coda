@@ -1,7 +1,11 @@
 import { Response, Request, NextFunction, Express } from 'express';
-import { isAuthenticated } from '../config/passport';
 import { ProblemsetConfig, ProblemsetProblem } from '../constants/problemset';
-import { getProblemsetDict, getProblemsetList, isValidProblemsetId } from '../util/problemset';
+import {
+  getProblemsetDict,
+  getProblemsetList,
+  isValidProblemsetId,
+  isAuthenticated
+} from '../util';
 import { getProblem } from '../util/problem';
 
 /**

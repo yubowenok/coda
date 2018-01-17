@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 import { of } from 'rxjs/observable/of';
@@ -61,6 +61,7 @@ export class ApiService {
   }
 
   private user: UserInfo;
+  private problemset: ProblemsetInfo;
 
   private problemsetCache: {
     [problemsetId: string]: {
@@ -233,8 +234,20 @@ export class ApiService {
       );
   }
 
-  getUser(): UserInfo | undefined {
+  getCurrentUser(): UserInfo | undefined {
     return this.user ? this.user : undefined;
+  }
+
+  getCurrentProblemset(): ProblemsetInfo | undefined {
+    return this.problemset ? this.problemset : undefined;
+  }
+
+  setCurrentProblemset(problemset: ProblemsetInfo): void {
+    this.problemset = problemset;
+  }
+
+  resetCurrentProblemset(): void {
+    this.problemset = undefined;
   }
 
   updatePassword(passwords: {
@@ -268,13 +281,22 @@ export class ApiService {
       );
   }
 
+  loginErrorHandler(err: HttpErrorResponse): void {
+    if (this.isRequireLogin(err)) {
+      this.message.requireLogin();
+    }
+  }
+
+  private isRequireLogin(err: HttpErrorResponse): boolean {
+    return err.error && err.error.msg.match(/login required/);
+  }
+
   private checkLogin(): Observable<UserInfo> {
     return this.http.post<UserInfo>(this.url(ApiType.CHECK_LOGIN), {}, httpOptions)
       .pipe(
         tap((info: UserInfo) => {
           this.user = info;
-        }),
-        catchError(this.handleError<UserInfo>('check-login'))
+        })
       );
   }
 
@@ -292,7 +314,6 @@ export class ApiService {
     return (res: any): Observable<T> => {
       // display error if there is a msg field
       if (res.error && res.error.msg) {
-        this.message.error(`${res.error.msg}`);
         console.error(res.error.msg);
       }
       // We have provided a default value. Use the default value and log error.

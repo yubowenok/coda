@@ -1,6 +1,6 @@
-<div *ngIf="api.getUser()">You have already logged in.</div>
+<div *ngIf="api.getCurrentUser()">You have already logged in.</div>
 
-<form [formGroup]="form" *ngIf="!api.getUser()">
+<form [formGroup]="form" *ngIf="!api.getCurrentUser()">
   <mat-form-field>
     <input matInput placeholder="Username / Email"
            formControlName="username" [formGroup]="form">

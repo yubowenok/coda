@@ -6,7 +6,7 @@
 <app-user></app-user>
 <mat-divider></mat-divider>
 
-<ng-container *ngIf="problemset">
+<ng-container *ngIf="problemset && api.getCurrentUser()">
   <div class="section">
     <app-navbar-problemset [problemset]="problemset"></app-navbar-problemset>
   </div>
@@ -18,7 +18,7 @@
     <button mat-button routerLink="/problemset/{{problemset.id}}/scoreboard">
       <i class="fa fa-list"></i>Scoreboard
     </button>
-    <button mat-button routerLink="/problemset/{{problemset.id}}/submissions/{{api.getUser().username}}">
+    <button mat-button routerLink="/problemset/{{problemset.id}}/submissions/{{api.getCurrentUser().username}}">
       <i class="fa fa-file"></i>My Submissions
     </button>
   </div>

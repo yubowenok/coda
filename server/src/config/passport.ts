@@ -1,10 +1,8 @@
 import * as passport from 'passport';
+import * as bcrypt from 'bcrypt';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { User } from '../constants/user';
 import { getUsers } from '../util/users';
-const bcrypt = require('bcrypt');
-
-import { Request, Response, NextFunction } from 'express';
 
 passport.serializeUser((user: User, done) => {
   done(undefined, user.email);
@@ -36,10 +34,3 @@ passport.use(new LocalStrategy((username: string, password: string, done) => {
   }
   done(undefined, undefined, { message: 'invalid username or password' });
 }));
-
-export let isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.status(401).json({ msg: 'this page requires login' });
-};

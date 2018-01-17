@@ -1,4 +1,5 @@
 import { FormControl, ValidationErrors } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export let passwordLengthValidator = (passwordControl: FormControl): ValidationErrors | null => {
   if (passwordControl.value.length < 6) {

@@ -32,6 +32,7 @@ import { MessageService } from './message.service';
 import { SubmitComponent } from './submit/submit.component';
 import { CopyService } from './copy.service';
 import { CodeMirrorDirective } from './code-mirror.directive';
+import { MessageDialogComponent } from './message.service';
 
 import {
   TimeDisplayPipe,
@@ -44,6 +45,7 @@ import {
   RepeatPipe
 } from './pipe';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { PageErrorComponent } from './page-error/page-error.component';
 
 @NgModule({
   imports: [
@@ -52,8 +54,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
     BrowserAnimationsModule,
     AppMaterialModule,
     HttpClientModule,
-    /*
-
+/*
 HttpClientInMemoryWebApiModule.forRoot(
 InMemoryDataService, { dataEncapsulation: false }
 ),
@@ -86,7 +87,12 @@ InMemoryDataService, { dataEncapsulation: false }
     ExecutionTimePipe,
     MemoryPipe,
     RepeatPipe,
-    NotFoundComponent
+    NotFoundComponent,
+    MessageDialogComponent,
+    PageErrorComponent
+  ],
+  entryComponents: [
+    MessageDialogComponent
   ],
   providers: [
     ApiService,

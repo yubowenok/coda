@@ -1,6 +1,6 @@
-<div *ngIf="api.getUser()">You have already signed up.</div>
+<div *ngIf="api.getCurrentUser()">You have already signed up.</div>
 
-<div *ngIf="!api.getUser()">
+<div *ngIf="!api.getCurrentUser()">
   <div class="notice">
     <b>NOTE!</b> You must signup using an invitation code.
     All enrolled students should have received an invitation code in your university mailbox.
@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<form [formGroup]="form" *ngIf="!api.getUser()">
+<form [formGroup]="form" *ngIf="!api.getCurrentUser()">
   <mat-form-field>
     <input matInput placeholder="Invitation Code"
            formControlName="invitationCode" [formGroup]="form">

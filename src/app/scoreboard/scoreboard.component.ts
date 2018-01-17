@@ -41,6 +41,8 @@ export class ScoreboardComponent implements OnInit {
 
   private mode = Mode.SCORE;
 
+  private error: { msg: string } | undefined;
+
   ngOnInit() {
     this.getScoreboard();
   }
@@ -51,16 +53,28 @@ export class ScoreboardComponent implements OnInit {
       return;
     }
     this.api.getProblemset(problemsetId)
-      .subscribe(problemset => {
-        this.problemset = problemset;
-        this.updateTable();
-      });
+      .subscribe(
+        problemset => {
+          this.problemset = problemset;
+          this.updateTable();
+        },
+        err => {
+          this.api.loginErrorHandler(err);
+          this.error = err.error;
+        }
+      );
     this.api.getScoreboard(problemsetId)
-      .subscribe(scoreboard => {
-        this.scoreboard = scoreboard;
-        this.sortParticipants();
-        this.updateTable();
-      });
+      .subscribe(
+        scoreboard => {
+          this.scoreboard = scoreboard;
+          this.sortParticipants();
+          this.updateTable();
+        },
+        err => {
+          this.api.loginErrorHandler(err);
+          this.error = err.error;
+        }
+      );
   }
 
   getModeTemplate(): TemplateRef<any> {

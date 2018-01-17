@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as paths from '../constants/path';
 import * as fs from 'fs';
 import { Submission, SubmissionDict, Verdict, VerdictDict } from '../constants/submission';
@@ -7,16 +6,16 @@ import { Submission, SubmissionDict, Verdict, VerdictDict } from '../constants/s
  * Reads submission.json and gets all submissions for a problemset;
  */
 const getSubmissions = (problemsetId: string): Submission[] => {
-  return JSON.parse(
-    fs.readFileSync(paths.problemsetSubmissionsPath(problemsetId), 'utf8'));
+  const submissionsPath = paths.problemsetSubmissionsPath(problemsetId);
+  return fs.existsSync(submissionsPath) ? JSON.parse(fs.readFileSync(submissionsPath, 'utf8')) : [];
 };
 
 /**
  * Reads verdicts.json and gets all verdicts for a problemset.
  */
 const getVerdicts = (problemsetId: string): Verdict[] => {
-  return JSON.parse(
-    fs.readFileSync(paths.problemsetVerdictsPath(problemsetId), 'utf8'));
+  const verdictsPath = paths.problemsetVerdictsPath(problemsetId);
+  return fs.existsSync(verdictsPath) ? JSON.parse(fs.readFileSync(verdictsPath, 'utf8')) : [];
 };
 
 /**
@@ -34,8 +33,12 @@ export const getSubmissionList = (problemsetId: string, username?: string): Subm
  * @returns A dictionary mapping username to her submissions.
  */
 export const getSubmissionDict = (problemsetId: string): SubmissionDict => {
+  const submissions = getSubmissions(problemsetId);
+  if (!submissions.length) {
+    return {};
+  }
   const dict: SubmissionDict = {};
-  getSubmissions(problemsetId).forEach((submission: Submission) => {
+  submissions.forEach((submission: Submission) => {
     if (!(submission.username in dict)) {
       dict[submission.username] = [];
     }
@@ -82,8 +85,12 @@ export const getSubmission = (problemsetId: string, username: string, submission
  * Then maps the user's submission number to the verdict.
  */
 export const getVerdictDict = (problemsetId: string): VerdictDict => {
+  const verdicts = getVerdicts(problemsetId);
+  if (!verdicts.length) {
+    return {};
+  }
   const dict: VerdictDict = {};
-  getVerdicts(problemsetId).forEach(verdict => {
+  verdicts.forEach(verdict => {
     if (!(verdict.username in dict)) {
       dict[verdict.username] = {};
     }

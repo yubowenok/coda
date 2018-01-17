@@ -1,9 +1,9 @@
-<div *ngIf="errored">Something went wrong when loading this page.</div>
-<mat-spinner *ngIf="!problem && !errored" diameter="50"></mat-spinner>
+<app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
+<mat-spinner *ngIf="!problem && !error" diameter="50"></mat-spinner>
 <div *ngIf="problem" class="problem">
   <div class="title">
     <h1>{{problem.title}}</h1>
-    <button mat-raised-button color="primary" class="submit" routerLink="submit">Submit</button>
+    <button mat-raised-button color="primary" class="submit float-right" routerLink="submit">Submit</button>
   </div>
   <div class="time-limit">
     <h3>Time Limit: <span>{{problem.timeLimit}} {{'second' + (problem.timeLimit > 1 ? 's' : '')}}</span></h3>

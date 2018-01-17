@@ -5,7 +5,6 @@ import { ApiService } from '../api.service';
 import { CopyService } from '../copy.service';
 
 import { ProblemContent } from '../constants/problem';
-import { HttpErrorResponse } from '@angular/common/http';
 
 const LINE_HEIGHT = 14 * 1.5; // font-size * line-height
 
@@ -23,7 +22,7 @@ export class ProblemComponent implements OnInit {
   ) { }
 
   private problem: ProblemContent;
-  private errored = false;
+  private error: { msg: string } | undefined;
 
   ngOnInit() {
     this.route.params.subscribe((params: { problemsetId: string, problemNumber: string }) => {
@@ -32,14 +31,18 @@ export class ProblemComponent implements OnInit {
   }
 
   getProblem(problemsetId: string, problemNumber: string): void {
+    this.api.getProblemset(problemsetId)
+      .subscribe(problemset => this.api.setCurrentProblemset(problemset));
+
     this.api.getProblem(problemsetId, problemNumber)
       .subscribe(
         (problem: ProblemContent) => {
           this.problem = problem;
-          this.errored = false;
+          this.error = undefined;
         },
-        (err: HttpErrorResponse) => {
-          this.errored = true;
+        err => {
+          this.api.loginErrorHandler(err);
+          this.error = err.error;
         }
       );
   }

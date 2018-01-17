@@ -1,5 +1,5 @@
-<div *ngIf="errored">Something went wrong when loading this page.</div>
-<ng-container *ngIf="problemset && !errored">
+<app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
+<ng-container *ngIf="problemset && !error">
   <p *ngIf="!problemset.started">
     Problemset has not started.
   </p>

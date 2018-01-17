@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction, Express } from 'express';
-import { isAuthenticated } from '../config/passport';
 import {
+  isAuthenticated,
   isValidProblemsetId,
   isValidUsername,
   isAuthorizedUser,
@@ -10,10 +10,10 @@ import {
   getVerdict,
   getVerdictDict
 } from '../util';
-import { Submission, Verdict, VerdictDict, VerdictType } from '../constants';
 import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as paths from '../constants/path';
+import { Submission, Verdict, VerdictType } from '../constants';
 
 /**
  * Creates a web format submission record, filling in verdict info.
@@ -80,8 +80,8 @@ module.exports = function(app: Express) {
       const username = req.params.username;
       const verdicts = getVerdictDict(problemsetId);
       const submissions = getSubmissionList(problemsetId, username)
-        .map(submission => toWebSubmission(submission,
-          submission.username in verdicts ? verdicts[submission.username][submission.submissionNumber] : undefined));
+        .map(submission => toWebSubmission(submission, verdicts && submission.username in verdicts ?
+          verdicts[submission.username][submission.submissionNumber] : undefined));
       res.json(submissions);
   });
 };

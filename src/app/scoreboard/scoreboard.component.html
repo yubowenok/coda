@@ -1,5 +1,6 @@
-<mat-spinner *ngIf="!scoreboard || !problemset" diameter="50"></mat-spinner>
-<ng-container *ngIf="scoreboard && problemset">
+<app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
+<mat-spinner *ngIf="(!scoreboard || !problemset) && !error" diameter="50"></mat-spinner>
+<ng-container *ngIf="scoreboard && problemset && !error">
 
   <h2>Scoreboard of {{problemset.title}}</h2>
   <div>

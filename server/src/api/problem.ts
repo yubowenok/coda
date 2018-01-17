@@ -1,11 +1,15 @@
 import { Response, Request, NextFunction, Express } from 'express';
-import { getProblemset, getProblem, isValidProblemsetId } from '../util';
-import { ProblemsetConfig, ProblemConfig } from '../constants';
-import { ProblemsetProblem } from '../constants/problemset';
-import { isAuthenticated } from '../config/passport';
+import {
+  getProblemset,
+  getProblem,
+  isValidProblemsetId,
+  isValidProblemNumber,
+  isAuthenticated
+} from '../util';
 import * as path from 'path';
 import * as paths from '../constants/path';
 import * as fs from 'fs';
+import { ProblemConfig, ProblemsetProblem } from '../constants';
 
 /**
  * Creates a web format problem.
@@ -50,6 +54,7 @@ module.exports = function(app: Express) {
   app.get('/api/problemset/:problemsetId/problem/:problemNumber',
     isAuthenticated,
     isValidProblemsetId,
+    isValidProblemNumber,
     (req: Request, res: Response, next: NextFunction) => {
     const problemsetId = req.params.problemsetId;
     const problemNumber = req.params.problemNumber;

@@ -1,6 +1,6 @@
-<mat-spinner *ngIf="(!submission || !problemset) && !errored" diameter="50"></mat-spinner>
-<div *ngIf="errored">Something went wrong when loading this page.</div>
-<ng-container *ngIf="submission && problemset">
+<app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
+<mat-spinner *ngIf="(!submission || !problemset) && !error" diameter="50"></mat-spinner>
+<ng-container *ngIf="submission && problemset && !error">
   <h3>{{getUsername()}}'s Submission #{{submission.submissionNumber}}</h3>
   <div class="margin-to-top">
     <ngx-datatable

@@ -1,7 +1,7 @@
-<mat-spinner *ngIf="!submissionList && !errored" diameter="50"></mat-spinner>
-<div *ngIf="errored">Something went wrong when loading this page.</div>
-<ng-container *ngIf="submissionList">
-  <h2>{{api.getUser().username}}'s Submissions for {{problemset.title}}</h2>
+<app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
+<mat-spinner *ngIf="!submissionList && !error" diameter="50"></mat-spinner>
+<ng-container *ngIf="submissionList && !error">
+  <h2>{{api.getCurrentUser().username}}'s Submissions for {{problemset.title}}</h2>
   <div class="margin-to-top">
     <ngx-datatable
       class="material striped"
@@ -10,6 +10,7 @@
       [columnMode]="'force'"
       [rows]="rows"
       [columns]="columns"
+      [messages]="listMessages"
     >
     </ngx-datatable>
   </div>

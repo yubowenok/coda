@@ -2,11 +2,11 @@ import { Response, Request, NextFunction, Express } from 'express';
 import * as passport from 'passport';
 import { IVerifyOptions } from 'passport-local';
 import { User, UserSettings, MIN_PASSWORD_LENGTH, MIN_USERNAME_LENGTH } from '../constants/user';
-import { getUsers, writeUsers } from '../util/users';
 import { MappedError } from 'express-validator/shared-typings';
-import { isAuthenticated } from '../config/passport';
 import * as bcrypt from 'bcrypt';
 import * as _ from 'lodash';
+
+import { getUsers, writeUsers, isAuthenticated } from '../util';
 
 const SALT_ROUNDS = 12;
 

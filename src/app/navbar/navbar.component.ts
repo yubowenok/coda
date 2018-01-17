@@ -1,5 +1,5 @@
 import {Component, OnInit, HostListener } from '@angular/core';
-import { Router, ActivationEnd } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { environment } from '../../environments/environment';
 import * as Cookies from 'cookies-js';
 import { ApiService } from '../api.service';
@@ -17,7 +17,7 @@ export class NavbarComponent implements OnInit {
 
   logoUrl: string = !environment.production ? 'assets/logo.png' : 'logo.png';
 
-  problemset: ProblemsetInfo | undefined = undefined;
+  problemset: ProblemsetInfo;
 
   public linksExpanded = true;
 
@@ -26,13 +26,8 @@ export class NavbarComponent implements OnInit {
     private router: Router
   ) {
     this.router.events.subscribe(data => {
-      if (data instanceof ActivationEnd) {
-        const problemsetId: string | undefined = data.snapshot.params.problemsetId;
-        if (problemsetId) {
-          this.getProblemset(problemsetId);
-        } else {
-          this.problemset = undefined;
-        }
+      if (data instanceof NavigationEnd) {
+        this.problemset = this.api.getCurrentProblemset();
       }
     });
   }
@@ -54,12 +49,4 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  getProblemset(id: string): void {
-    this.api.getProblemset(id)
-      .subscribe(problemset => this.problemset = problemset);
-  }
-
-  getUser(): string {
-    return this.api.getUser().username;
-  }
 }

@@ -18,7 +18,8 @@ import {
   MatRadioModule,
   MatSelectModule,
   MatChipsModule,
-  MatCheckboxModule
+  MatCheckboxModule,
+  MatDialogModule
 } from '@angular/material';
 
 @NgModule({
@@ -45,7 +46,8 @@ import {
     MatRadioModule,
     MatSelectModule,
     MatChipsModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatDialogModule
   ]
 })
 export class AppMaterialModule {}

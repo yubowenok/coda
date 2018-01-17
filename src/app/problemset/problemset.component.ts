@@ -1,10 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import {Router, ActivatedRoute, NavigationStart, RouterEvent } from '@angular/router';
 
 import { ApiService } from '../api.service';
 
 import { ProblemsetInfo } from '../constants/problemset';
-import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-problemset',
@@ -21,9 +20,14 @@ export class ProblemsetComponent implements OnInit {
 
   @Input() problemset: ProblemsetInfo;
 
-  private errored = false;
+  private error: { msg: string } | undefined;
 
   ngOnInit() {
+    this.router.events.subscribe((data: RouterEvent) => {
+      if (data instanceof NavigationStart && data.url === '/problemsets') {
+        this.api.resetCurrentProblemset();
+      }
+    });
     this.getProblemset();
   }
 
@@ -32,7 +36,10 @@ export class ProblemsetComponent implements OnInit {
     this.api.getProblemset(problemsetId)
       .subscribe(
         problemset => {
+          this.api.setCurrentProblemset(problemset);
           this.problemset = problemset;
+          this.error = undefined;
+
           if (!problemset.started) {
             return;
           }
@@ -44,8 +51,9 @@ export class ProblemsetComponent implements OnInit {
             });
           }
         },
-        (err: HttpErrorResponse) => {
-          this.errored = true;
+        err => {
+          this.api.loginErrorHandler(err);
+          this.error = err.error;
         }
       );
   }

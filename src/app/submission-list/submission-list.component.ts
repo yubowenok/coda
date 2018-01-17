@@ -33,7 +33,11 @@ export class SubmissionListComponent implements OnInit {
   private submissionList: Submission[];
   private rows = [];
   private columns = [];
-  private errored = false;
+  private error: { msg: string } | undefined;
+
+  private listMessages = {
+    emptyMessage: 'User has no submissions'
+  };
 
   ngOnInit() {
     this.getSubmissionList();
@@ -84,7 +88,7 @@ export class SubmissionListComponent implements OnInit {
     const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
     const username = this.route.snapshot.paramMap.get('username');
     if (!username) {
-      this.errored = true;
+      this.error = { msg: 'invalid username' };
       return;
     }
     this.api.getProblemset(problemsetId)
@@ -103,7 +107,7 @@ export class SubmissionListComponent implements OnInit {
     if (!this.problemset || !this.submissionList) {
       return;
     }
-    this.errored = false;
+    this.error = undefined;
 
     const problemNames: { [problemNumber: string]: string } = {};
     for (let i = 0; i < this.problemset.problems.length; i++) {

@@ -36,7 +36,7 @@ export class SubmissionComponent implements OnInit {
   private problemTitle: string;
   private rows = [];
   private columns = [];
-  private errored = false;
+  private error: { msg: string } | undefined;
 
   ngOnInit() {
     this.getSubmission();
@@ -80,27 +80,38 @@ export class SubmissionComponent implements OnInit {
       .subscribe(
         problemset => {
           this.problemset = problemset;
+          this.update();
           this.updateTitle();
           this.updateTable();
         },
-        err => this.errored = true
+        err => {
+          this.api.loginErrorHandler(err);
+          this.error = err.error;
+        }
       );
     this.api.getSubmission(problemsetId, username, submissionNumber) // TODO: add username
       .subscribe(
         submission => {
           this.submission = submission;
-          this.updateTitle();
-          this.updateTable();
+          this.update();
         },
-        err => this.errored = true
+        err => {
+          this.api.loginErrorHandler(err);
+          this.error = err.error;
+        }
       );
   }
 
-  updateTable(): void {
+  update(): void {
     if (!this.problemset || !this.submission) {
       return;
     }
+    this.error = undefined;
+    this.updateTitle();
+    this.updateTable();
+  }
 
+  private updateTable(): void {
     const problemNames: { [problemNumber: string]: string } = {};
     for (let i = 0; i < this.problemset.problems.length; i++) {
       const problem = this.problemset.problems[i];
@@ -118,10 +129,7 @@ export class SubmissionComponent implements OnInit {
     }];
   }
 
-  updateTitle(): void {
-    if (!this.problemset || !this.submission) {
-      return;
-    }
+  private updateTitle(): void {
     for (let i = 0; i < this.problemset.problems.length; i++) {
       const problem = this.problemset.problems[i];
       if (problem.number === this.submission.problemNumber) {

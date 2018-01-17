@@ -1,5 +1,5 @@
-<div *ngIf="errored">Something went wrong when loading this page.</div>
-<mat-spinner *ngIf="!problemsetList && !errored" diameter="50"></mat-spinner>
+<app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
+<mat-spinner *ngIf="!problemsetList && !error" diameter="50"></mat-spinner>
 <mat-card *ngFor="let group of problemsetGroups">
   <mat-card-title>{{group.title}}</mat-card-title>
   <mat-card-content>
