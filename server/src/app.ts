@@ -18,7 +18,10 @@ const app = express();
 app.set('port', process.env.PORT || 3000);
 app.set('trust proxy', 1);
 app.use(function(req: Request, res: Response, next: NextFunction) {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
+  const origin = req.get('origin');
+  if (process.env.ALLOW_ORIGIN.split(';').indexOf(origin) !== -1) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   res.header('Access-Control-Allow-Credentials', 'true');
   next();

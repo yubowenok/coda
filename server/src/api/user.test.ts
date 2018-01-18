@@ -143,6 +143,7 @@ describe('user signup', () => {
       })
       .expect(200, done);
   });
+
 });
 
 describe('update password/settings', () => {

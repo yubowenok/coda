@@ -64,7 +64,7 @@ export class SubmissionComponent implements OnInit {
         cellClass: this.getCorrectClass,
         minWidth: 185 },
       { name: 'Execution', prop: 'executionTimeDisplay', sortable: false },
-      { name: 'Memory', prop: 'memoryDisplay', sortable: false },
+      // { name: 'Memory', prop: 'memoryDisplay', sortable: false },
       { name: 'Time', prop: 'problemsetTime', pipe: timeDisplayPipe, sortable: false,
         minWidth: 100, maxWidth: 100 },
       { name: 'Date', prop: 'submitTime', pipe: dateDisplayPipe, sortable: false,
@@ -117,7 +117,7 @@ export class SubmissionComponent implements OnInit {
     this.rows = [{
       ...submission,
       executionTimeDisplay: `${submission.verdict === Verdict.TLE ? '> ' : ''}${submission.executionTime}s`,
-      memoryDisplay: `${submission.verdict === Verdict.MLE ? '> ' : ''}${submission.memory}MB`,
+      // memoryDisplay: `${submission.verdict === Verdict.MLE ? '> ' : ''}${submission.memory}MB`,
       problem: problemNames[submission.problemNumber],
       submitTime: moment(submission.submitTime),
       language: LanguageDisplay[submission.language]

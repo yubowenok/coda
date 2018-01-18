@@ -4,12 +4,13 @@ import {
   getProblem,
   isValidProblemsetId,
   isValidProblemNumber,
-  isAuthenticated
+  isAuthenticated,
+  parseStatement
 } from '../util';
 import * as path from 'path';
 import * as paths from '../constants/path';
 import * as fs from 'fs';
-import { ProblemConfig, ProblemsetProblem } from '../constants';
+import { ProblemConfig, ProblemsetProblem, WebStatement } from '../constants';
 
 /**
  * Creates a web format problem.
@@ -17,11 +18,11 @@ import { ProblemConfig, ProblemsetProblem } from '../constants';
  */
 const toWebProblem = (problemsetProblem: ProblemsetProblem, problem: ProblemConfig): Object => {
   const statement = fs.readFileSync(paths.problemStatementPath(problem.id), 'utf8');
-
-  const subtasks = problemsetProblem.subtasks.map((subtask: { id: string, score: number }) => {
+  const webStatement = parseStatement(statement);
+  const subtasks = problemsetProblem.subtasks.map((subtask: { id: string, score: number }, index: number) => {
     return {
       ...subtask,
-      text: '(placeholder)'
+      text: webStatement.subtasks[index]
     };
   });
   const samplePath = paths.problemSamplesPath(problem.id);
@@ -41,10 +42,10 @@ const toWebProblem = (problemsetProblem: ProblemsetProblem, problem: ProblemConf
   return {
     title: problem.title,
     timeLimit: problem.timeLimit,
-    illustration: undefined, // {width, filename, text}
+    illustration: webStatement.illustration,
     isSingleTask: subtasks.length === 1,
     subtasks: subtasks,
-    statement: statement,
+    statement: webStatement.statement,
     samples: samples,
     subtaskOnlySamples: problem.subtaskOnlySamples === undefined ? [] : problem.subtaskOnlySamples
   };

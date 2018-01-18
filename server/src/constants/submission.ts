@@ -38,7 +38,7 @@ export interface Verdict {
   sourceFile: string; // path to source file
   verdict: VerdictType;
   executionTime: number;
-  memory: number;
+  // memory: number;
   failedCase: number;
   totalCase: number;
 }
@@ -54,7 +54,7 @@ export interface JudgedSubmission {
   verdict: VerdictType;
   language: string;
   executionTime: number; // seconds
-  memory: number; // MB
+  // memory: number; // MB
   problemsetTime: number; // seconds into the problemset
   submitTime: number; // date
   outsideProblemsetTime: boolean;

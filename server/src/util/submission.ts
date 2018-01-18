@@ -161,8 +161,8 @@ export const getJudgedSubmission = (submission: Submission, verdict: Verdict | u
       totalCase: 0,
       verdict: VerdictType.PENDING,
       executionTime: 0,
-      sourceFile: submission.sourceFile,
-      memory: 0
+      sourceFile: submission.sourceFile
+      // memory: 0
     };
   }
   return {
@@ -176,8 +176,8 @@ export const getJudgedSubmission = (submission: Submission, verdict: Verdict | u
     outsideProblemsetTime: submission.outsideProblemsetTime,
     // from verdict
     verdict: verdict.verdict,
-    executionTime: verdict.executionTime,
-    memory: verdict.memory
+    executionTime: verdict.executionTime
+    // memory: verdict.memory
   };
 };
 

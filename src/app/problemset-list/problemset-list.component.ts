@@ -34,8 +34,8 @@ export class ProblemsetListComponent implements OnInit {
       'session is started you cannot pause it. Only start your session when you have enough free time to work on ' +
       'the problemset.',
     OPEN_JUDGE: 'Submission results are available right after the submissions.',
-    BLIND_JUDGE: 'Submission results will be available after the problemset ends. You will temporarily receive ' +
-      'score for attempted problems.',
+    BLIND_JUDGE: 'Submission results will be available after the problemset ends. Scoreboard shows your maximum ' +
+      'possible score if everything you submit is correct.',
     SCORE_PENALTY: 'Each incorrect submission results in 10% loss of a subtask\'s score.',
     TIME_PENALTY: 'Each incorrect submission results in 4 minutes extra time added to the finish time.',
     FREEBIES: 'Number of incorrect submissions that are exempted from penalty'

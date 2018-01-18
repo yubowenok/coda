@@ -43,6 +43,7 @@ export interface ProblemsetConfig {
   allowUsers: string[];
   allowGroups: string[];
   fullFeedback?: boolean;
+  private?: boolean;
 }
 
 export interface ProblemsetDict {

@@ -29,7 +29,7 @@ export interface Submission {
   verdict: Verdict;
   language: string;
   executionTime: number; // seconds
-  memory: number; // MB
+  // memory: number; // MB
   problemsetTime: number; // seconds into the problemset
   submitTime: number; // date
   outsideProblemsetTime: boolean;

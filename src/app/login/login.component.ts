@@ -29,13 +29,18 @@ export class LoginComponent {
 
   login(): void {
     this.api.login(this.form.value)
-      .subscribe((data: UserInfo | undefined) => {
-        if (data === undefined) { // failure handler
-          return;
+      .subscribe(
+        (data: UserInfo | undefined) => {
+          if (data === undefined) { // failure handler
+            return;
+          }
+          this.message.info(`Welcome back, ${data.nickname}!`);
+          this.location.back();
+        },
+        err => {
+           this.message.error(err.error.msg);
         }
-        this.message.info(`Welcome back, ${data.nickname}!`);
-        this.location.back();
-      });
+      );
   }
 
 }

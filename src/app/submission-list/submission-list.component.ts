@@ -61,14 +61,14 @@ export class SubmissionListComponent implements OnInit {
       { name: 'Problem', prop: 'problem' },
       { name: 'Subtask', prop: 'subtask', pipe: titleCasePipe,
         minWidth: 80, maxWidth: 80 },
-      { name: '', prop: 'submissionNumber', cellTemplate: this.sourceLinkTmpl, cellClass: 'center', sortable: false,
+      { name: '', prop: 'link', cellTemplate: this.sourceLinkTmpl, cellClass: 'center', sortable: false,
         minWidth: 20, maxWidth: 20 },
       { name: 'Verdict', prop: 'verdict', pipe: verdictDisplayPipe, cellClass: this.getCorrectClass,
         minWidth: 185 },
       { name: 'Lang', prop: 'language',
         minWidth: 60, maxWidth: 60},
       { name: 'Execution', prop: 'executionTimeDisplay', comparator: this.executionTimeSorter },
-      { name: 'Memory', prop: 'memoryDisplay', comparator: this.memorySorter },
+      // { name: 'Memory', prop: 'memoryDisplay', comparator: this.memorySorter },
       { name: 'Time', prop: 'problemsetTime', pipe: timeDisplayPipe,
         minWidth: 100, maxWidth: 100 },
       { name: 'Date', prop: 'submitTime', pipe: dateDisplayPipe,
@@ -131,11 +131,12 @@ export class SubmissionListComponent implements OnInit {
       newRows.push({
         ...submission,
         executionTimeDisplay: this.getExecutionTimeDisplay(submission),
-        memoryDisplay: this.getMemoryDisplay(submission),
+        // memoryDisplay: this.getMemoryDisplay(submission),
         problem: problemNames[submission.problemNumber],
         problemsetTime: submission.outsideProblemsetTime ? -1 : submission.problemsetTime,
         submitTime: submission.submitTime,
-        language: LanguageDisplay[submission.language]
+        language: LanguageDisplay[submission.language],
+        link: submission.submissionNumber
       });
     }
     this.rows = newRows;
@@ -148,12 +149,14 @@ export class SubmissionListComponent implements OnInit {
     return `${submission.verdict === Verdict.TLE ? '> ' : ''}${submission.executionTime}s`;
   }
 
+  /*
   getMemoryDisplay(submission: Submission): string {
     if (submission.verdict === Verdict.PENDING || submission.verdict === Verdict.SKIPPED) {
       return '-';
     }
     return `${submission.verdict === Verdict.MLE ? '> ' : ''}${submission.memory}MB`;
   }
+  */
 
   getSourceLink(submissionNumber: string): string {
     const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
