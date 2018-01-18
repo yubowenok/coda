@@ -17,7 +17,7 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private api: ApiService,
+    public api: ApiService,
     private location: Location,
     private message: MessageService
   ) {

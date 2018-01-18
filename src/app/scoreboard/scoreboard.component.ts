@@ -37,14 +37,13 @@ export class ScoreboardComponent implements OnInit {
     private message: MessageService
   ) { }
 
-  private problemset: ProblemsetInfo;
-  private scoreboard: Scoreboard;
+  problemset: ProblemsetInfo;
+  scoreboard: Scoreboard;
+  error: { msg: string } | undefined;
+
   private rows = [];
   private columns = [];
-
   private mode = Mode.SCORE;
-
-  private error: { msg: string } | undefined;
 
   ngOnInit() {
     this.api.onProblemsetIdChange(this.route.snapshot.paramMap.get('problemsetId'));

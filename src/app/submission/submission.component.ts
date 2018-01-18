@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from '../api.service';
 import { ActivatedRoute } from '@angular/router';
-
+import { TitleCasePipe } from '@angular/common';
 import * as moment from 'moment';
 
+import { ApiService } from '../api.service';
+import { CopyService } from '../copy.service';
 import { Verdict } from '../constants/submission';
 import { LanguageDisplay } from '../constants/language';
-
-import { TitleCasePipe } from '@angular/common';
 import { SubmissionWithSource } from '../constants/submission';
 import { ProblemsetInfo } from '../constants/problemset';
-import { CopyService } from '../copy.service';
+
 import {
   TimeDisplayPipe,
   DateDisplayPipe,
@@ -31,12 +30,13 @@ export class SubmissionComponent implements OnInit {
     private copy: CopyService
   ) { }
 
-  private problemset: ProblemsetInfo;
-  private submission: SubmissionWithSource;
+  problemset: ProblemsetInfo;
+  submission: SubmissionWithSource;
+  error: { msg: string } | undefined;
+
   private problemTitle: string;
   private rows = [];
   private columns = [];
-  private error: { msg: string } | undefined;
 
   ngOnInit() {
     this.api.onProblemsetIdChange(this.route.snapshot.paramMap.get('problemsetId'));

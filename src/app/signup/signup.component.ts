@@ -17,11 +17,13 @@ export class SignupComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private api: ApiService,
+    public api: ApiService,
     private router: Router,
     private message: MessageService
-  ) {
-    this.form = fb.group({
+  ) { }
+
+  ngOnInit() {
+    this.form = this.fb.group({
       invitationCode: new FormControl('ABC', Validators.required),
       email: new FormControl('by123@nyu.edu', [Validators.required, Validators.email]),
       username: new FormControl('by123', [Validators.required, usernameValidator]),
@@ -29,9 +31,6 @@ export class SignupComponent implements OnInit {
       confirmPassword: new FormControl('123456', [Validators.required, passwordMatchValidator]),
       fullName: new FormControl('Bowen', Validators.required)
     });
-  }
-
-  ngOnInit() {
   }
 
   signup() {

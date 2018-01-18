@@ -20,14 +20,13 @@ export class SubmitComponent implements OnInit {
     private copy: CopyService
   ) { }
 
-  private problemset: ProblemsetInfo;
+  problemset: ProblemsetInfo;
+
   private selectedProblem = '';
   private lockProblemSelect = false;
   private selectedSubtask = '';
   private subtasks: SubtaskInfo[] = [];
-
   private language: Language = Language.UNKNOWN;
-
   private displayCode = '';
   private latestCode = this.displayCode;
 

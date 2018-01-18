@@ -13,28 +13,28 @@ import { UserSettings } from '../constants/user';
 })
 export class ProfileComponent implements OnInit {
 
-  private password: FormGroup;
-  private settings: FormGroup;
+  password: FormGroup;
+  settings: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
     private message: MessageService,
     private route: Router
-  ) {
-    this.password = fb.group({
+  ) { }
+
+  ngOnInit() {
+    this.getUserSettings();
+
+    this.password = this.fb.group({
       currentPassword: new FormControl('123456', Validators.required),
       password: new FormControl('123456', [Validators.required, passwordLengthValidator]),
       confirmPassword: new FormControl('123456', [Validators.required, passwordMatchValidator])
     });
-    this.settings = fb.group({
+    this.settings = this.fb.group({
       nickname: new FormControl('by', Validators.required),
       anonymous: new FormControl(false)
     });
-  }
-
-  ngOnInit() {
-    this.getUserSettings();
   }
 
   getUserSettings() {

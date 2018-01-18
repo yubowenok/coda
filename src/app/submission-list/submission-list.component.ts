@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
-import { ApiService } from '../api.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
+import { ApiService } from '../api.service';
 import { Submission, Verdict } from '../constants/submission';
 import { LanguageDisplay } from '../constants/language';
 import { ProblemsetInfo } from '../constants/problemset';
@@ -25,15 +25,15 @@ export class SubmissionListComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private route: ActivatedRoute,
-    private router: Router
+    private route: ActivatedRoute
   ) { }
 
-  private problemset: ProblemsetInfo;
-  private submissionList: Submission[];
+  problemset: ProblemsetInfo;
+  submissionList: Submission[];
+  error: { msg: string } | undefined;
+
   private rows = [];
   private columns = [];
-  private error: { msg: string } | undefined;
 
   private listMessages = {
     emptyMessage: 'User has no submissions'
