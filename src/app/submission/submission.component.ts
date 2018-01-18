@@ -36,8 +36,17 @@ export class SubmissionComponent implements OnInit {
   private problemTitle: string;
   private rows = [];
   private columns = [];
+  private error: { msg: string } | undefined;
 
   ngOnInit() {
+    this.api.onProblemsetIdChange(this.route.snapshot.paramMap.get('problemsetId'));
+
+    this.problemset = this.api.latestProblemset;
+    this.api.getCurrentProblemset()
+      .subscribe(problemset => {
+        this.problemset = problemset;
+      });
+
     this.getSubmission();
 
     const timeDisplayPipe = new TimeDisplayPipe();
@@ -45,7 +54,7 @@ export class SubmissionComponent implements OnInit {
     const verdictDisplayPipe = new VerdictDisplayPipe();
     const titleCasePipe = new TitleCasePipe();
     const columns = [
-      { name: '#', prop: 'id', maxWidth: 80, sortable: false },
+      { name: '#', prop: 'submissionNumber', maxWidth: 80, sortable: false },
       { name: 'Problem', prop: 'problem', sortable: false },
       { name: 'Subtask', prop: 'subtask', pipe: titleCasePipe, sortable: false,
         minWidth: 80, maxWidth: 80 },
@@ -72,26 +81,32 @@ export class SubmissionComponent implements OnInit {
   }
 
   getSubmission(): void {
-    const submissionId = this.route.snapshot.paramMap.get('submissionId');
+    const submissionNumber = this.route.snapshot.paramMap.get('submissionNumber');
+    const username = this.route.snapshot.paramMap.get('username');
     const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
-    this.api.getProblemset(problemsetId)
-      .subscribe(problemset => {
-        this.problemset = problemset;
-        this.updateTitle();
-        this.updateTable();
-      });
-    this.api.getSubmission(problemsetId, '', submissionId) // TODO: add username
-      .subscribe(submission => {
-        this.submission = submission;
-        this.updateTitle();
-        this.updateTable();
-      });
+    this.api.getSubmission(problemsetId, username, submissionNumber) // TODO: add username
+      .subscribe(
+        submission => {
+          this.submission = submission;
+          this.update();
+        },
+        err => {
+          this.api.loginErrorHandler(err);
+          this.error = err.error;
+        }
+      );
   }
 
-  updateTable(): void {
+  update(): void {
     if (!this.problemset || !this.submission) {
       return;
     }
+    this.error = undefined;
+    this.updateTitle();
+    this.updateTable();
+  }
+
+  private updateTable(): void {
     const problemNames: { [problemNumber: string]: string } = {};
     for (let i = 0; i < this.problemset.problems.length; i++) {
       const problem = this.problemset.problems[i];
@@ -109,10 +124,7 @@ export class SubmissionComponent implements OnInit {
     }];
   }
 
-  updateTitle(): void {
-    if (!this.problemset || !this.submission) {
-      return;
-    }
+  private updateTitle(): void {
     for (let i = 0; i < this.problemset.problems.length; i++) {
       const problem = this.problemset.problems[i];
       if (problem.number === this.submission.problemNumber) {

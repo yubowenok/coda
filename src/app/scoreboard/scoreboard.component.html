@@ -1,7 +1,8 @@
-<mat-spinner *ngIf="!this.scoreboard || !this.problemset" diameter="50"></mat-spinner>
-<ng-container *ngIf="this.scoreboard && this.problemset">
+<app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
+<mat-spinner *ngIf="(!scoreboard || !problemset) && !error" diameter="50"></mat-spinner>
+<ng-container *ngIf="scoreboard && problemset && !error">
 
-  <h2>Scoreboard of {{this.problemset.title}}</h2>
+  <h2>Scoreboard of {{problemset.title}}</h2>
   <div>
     <mat-radio-group [(ngModel)]="mode" (ngModelChange)="onModeChange($event)">
       <mat-radio-button value="score" color="primary">Score</mat-radio-button>
@@ -23,7 +24,7 @@
 </ng-container>
 
 <ng-template #attemptsTmpl let-row="row" let-value="value">
-  <div *ngIf="value.attempts">
+  <div *ngIf="value.attempts" class="attempted" (click)="gotoSubmissionLink(value)">
     <div *ngIf="value.solved" class="correct">
       <i class="fa fa-lg fa-check-circle"></i>
       <span *ngIf="value.attempts > 1">+{{value.attempts-1}}</span>
@@ -39,7 +40,7 @@
 </ng-template>
 
 <ng-template #scoreTmpl let-row="row" let-value="value">
-  <div *ngIf="value.attempts">
+  <div *ngIf="value.attempts" class="attempted" (click)="gotoSubmissionLink(value)">
     <div *ngIf="value.solved" class="correct">
       <i class="fa fa-lg fa-check-circle"></i>
       {{value.score}}
@@ -55,7 +56,7 @@
 </ng-template>
 
 <ng-template #timeTmpl let-row="row" let-value="value">
-  <div *ngIf="value.attempts">
+  <div *ngIf="value.attempts" class="attempted" (click)="gotoSubmissionLink(value)">
     <div *ngIf="value.solved" class="correct">
       <i class="fa fa-lg fa-check-circle"></i>
       {{value.time | timeDisplay}}

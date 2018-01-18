@@ -1,4 +1,5 @@
-<mat-spinner *ngIf="!this.problemsetList" diameter="50"></mat-spinner>
+<app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
+<mat-spinner *ngIf="!problemsetList && !error" diameter="50"></mat-spinner>
 <mat-card *ngFor="let group of problemsetGroups">
   <mat-card-title>{{group.title}}</mat-card-title>
   <mat-card-content>
@@ -6,41 +7,49 @@
       <mat-list-item *ngFor="let problemset of group.problemsetList" routerLink="/problemset/{{problemset.id}}">
         <mat-icon mat-list-icon>assignment</mat-icon>
         <h3 mat-line>{{problemset.title}}</h3>
-        <p mat-line class="margin-to-top">
-      <span class="time">
-        <label>Start: </label>{{this.displayTime(problemset.startTime)}}
-      </span>
-          <span class="time">
-        <label>End: </label>{{this.displayTime(problemset.endTime)}}
-      </span>
-
-          <span class="float-right">
-        <span class="mode run"
-              matTooltip="{{this.isSelftestMode(problemset) ?
-                  this.tooltips.SELFTEST_MODE : this.tooltips.STANDARD_MODE}}"
-              [routerLink]="['/faq']"
-              fragment="{{this.isSelftestMode(problemset) ? 'selftest' : 'standard'}}"
-        >
-          {{problemset.runMode | titlecase}}
-        </span>
-        <span class="mode judge"
-              matTooltip="{{this.isBlindJudge(problemset) ?
-                  this.tooltips.BLIND_JUDGE : this.tooltips.OPEN_JUDGE}}"
-              [routerLink]="['/faq']"
-              fragment="{{this.isBlindJudge(problemset) ? 'blind' : 'open'}}"
-        >
-          {{problemset.judgeMode | titlecase}}
-        </span>
-        <span class="mode penalty"
-              matTooltip="{{this.isScorePenalty(problemset) ?
-                  this.tooltips.TIME_PENALTY : this.tooltips.SCORE_PENALTY}}"
-              [routerLink]="['/faq']"
-              fragment="{{this.isScorePenalty(problemset) ? 'score-penalty' : 'time-penalty'}}"
-        >
-          {{problemset.penaltyMode | titlecase}} Penalty
-        </span>
-      </span>
-        </p>
+        <div mat-line class="problemset">
+          <div class="time">
+            <span>
+              <label>Start: </label>{{displayTime(problemset.startTime)}}
+            </span>
+            <span>
+              <label>End: </label>{{displayTime(problemset.endTime)}}
+            </span>
+          </div>
+          <mat-chip-list>
+            <mat-chip class="mode run" selected="{{isSelftestMode(problemset)}}"
+                      matTooltip="{{isSelftestMode(problemset) ?
+                      tooltips.SELFTEST_MODE : tooltips.STANDARD_MODE}}"
+                      [routerLink]="['/faq']"
+                      fragment="{{isSelftestMode(problemset) ? 'selftest' : 'standard'}}"
+            >
+              {{problemset.runMode | titlecase}}
+            </mat-chip>
+            <mat-chip class="mode judge" selected="{{isBlindJudge(problemset)}}"
+                      matTooltip="{{isBlindJudge(problemset) ?
+                      tooltips.BLIND_JUDGE : tooltips.OPEN_JUDGE}}"
+                      [routerLink]="['/faq']"
+                      fragment="{{isBlindJudge(problemset) ? 'blind' : 'open'}}"
+            >
+              {{problemset.judgeMode | titlecase}}
+            </mat-chip>
+            <mat-chip class="mode penalty" selected="{{isTimePenalty(problemset)}}"
+                      matTooltip="{{isTimePenalty(problemset) ?
+                      tooltips.TIME_PENALTY : tooltips.SCORE_PENALTY}}"
+                      [routerLink]="['/faq']"
+                      fragment="{{isTimePenalty(problemset) ? 'score-penalty' : 'time-penalty'}}"
+            >
+              {{problemset.penaltyMode | titlecase}} Penalty
+            </mat-chip>
+            <mat-chip class="mode"
+                      *ngIf="problemset.freebies"
+                      [routerLink]="['/faq']"
+                      fragment="freebies"
+                      matTooltip="tooltips.FREEBIES">
+              Freebies × {{problemset.freebies}}
+            </mat-chip>
+          </mat-chip-list>
+        </div>
       </mat-list-item>
     </mat-nav-list>
   </mat-card-content>

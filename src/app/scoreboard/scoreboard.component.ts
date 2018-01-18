@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ApiService } from '../api.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
 
 import { ProblemsetInfo } from '../constants/problemset';
@@ -9,6 +9,8 @@ import { ProblemInfo, SubtaskInfo } from '../constants/problem';
 
 import * as time from '../constants/time';
 import { TimeDisplayPipe } from '../pipe/time-display.pipe';
+import { MessageService } from '../message.service';
+import { problemsetEnded } from '../util';
 
 enum Mode {
   SCORE = 'score',
@@ -30,37 +32,51 @@ export class ScoreboardComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
+    private message: MessageService
   ) { }
 
   private problemset: ProblemsetInfo;
   private scoreboard: Scoreboard;
-  private unavailable = false;
   private rows = [];
   private columns = [];
 
   private mode = Mode.SCORE;
 
+  private error: { msg: string } | undefined;
+
   ngOnInit() {
+    this.api.onProblemsetIdChange(this.route.snapshot.paramMap.get('problemsetId'));
+
+    this.problemset = this.api.latestProblemset;
+    this.api.getCurrentProblemset()
+      .subscribe(problemset => {
+        this.problemset = problemset;
+        this.updateTable();
+      });
+
     this.getScoreboard();
   }
 
   getScoreboard(): void {
     const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
-    if (problemsetId === undefined) {
+    if (!problemsetId) {
+      this.error = { msg: 'invalid problemset id' };
       return;
     }
-    this.api.getProblemset(problemsetId)
-      .subscribe(problemset => {
-        this.problemset = problemset;
-        this.updateTable();
-      });
     this.api.getScoreboard(problemsetId)
-      .subscribe(scoreboard => {
-        this.scoreboard = scoreboard;
-        this.sortParticipants();
-        this.updateTable();
-      });
+      .subscribe(
+        scoreboard => {
+          this.scoreboard = scoreboard;
+          this.sortParticipants();
+          this.updateTable();
+        },
+        err => {
+          this.api.loginErrorHandler(err);
+          this.error = err.error;
+        }
+      );
   }
 
   getModeTemplate(): TemplateRef<any> {
@@ -138,9 +154,13 @@ export class ScoreboardComponent implements OnInit {
           const subtask: SubtaskInfo = problem.subtasks[k];
           const subtaskIndex = `${problem.number}_${subtask.id}`;
           if (participant.problems[problem.number] === undefined) {
-            row[subtaskIndex] = {attempts: 0};
+            row[subtaskIndex] = { attempts: 0 };
           } else {
             row[subtaskIndex] = participant.problems[problem.number][subtask.id];
+            if (row[subtaskIndex]) {
+              // assign username so that we can goto submission link
+              row[subtaskIndex].username = participant.username;
+            }
           }
         }
       }
@@ -149,5 +169,15 @@ export class ScoreboardComponent implements OnInit {
 
     this.columns = newColumns;
     this.rows = newRows;
+  }
+
+  gotoSubmissionLink(cell: { username: string, submissionNumber: string }): void {
+    if (!cell.submissionNumber || !problemsetEnded(this.problemset)) {
+      this.message.info('source code not available to view');
+    } else {
+      this.router.navigate([
+        `/problemset/${this.problemset.id}/submission/${cell.username}/${cell.submissionNumber}`
+      ]);
+    }
   }
 }

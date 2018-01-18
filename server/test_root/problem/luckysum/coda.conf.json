@@ -1,0 +1,8 @@
+{
+  "id": "luckysum",
+  "title": "Lucky Sums",
+  "timeLimit": 2,
+  "subtasks": ["small", "large"],
+  "subtaskOnlySamples": [],
+  "vjudge": false
+}

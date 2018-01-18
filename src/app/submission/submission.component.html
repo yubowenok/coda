@@ -1,6 +1,7 @@
-<mat-spinner *ngIf="!this.submission || !this.problemset" diameter="50"></mat-spinner>
-<ng-container *ngIf="this.submission && this.problemset">
-  <h3>{{this.getUsername()}}'s Submission #{{this.submission.id}}</h3>
+<app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
+<mat-spinner *ngIf="(!submission || !problemset) && !error" diameter="50"></mat-spinner>
+<ng-container *ngIf="submission && problemset && !error">
+  <h3>{{getUsername()}}'s Submission #{{submission.submissionNumber}}</h3>
   <div class="margin-to-top">
     <ngx-datatable
       class="material striped"
@@ -12,28 +13,28 @@
     >
     </ngx-datatable>
   </div>
-  <div class="cases" *ngIf="this.submission.totalCase">
+  <div class="cases" *ngIf="submission.totalCase">
     <h3>
       Test Cases
-      ({{(this.submission.failedCase === 0 ? this.submission.totalCase : this.submission.failedCase - 1) + '/' +
-      this.submission.totalCase}})
+      ({{(submission.failedCase === 0 ? submission.totalCase : submission.failedCase - 1) + '/' +
+      submission.totalCase}})
     </h3>
     <div>
-      <span class="case correct" *ngFor="let number of ((this.submission.failedCase === 0 ?
-            this.submission.totalCase : this.submission.failedCase - 1) | repeat)"
+      <span class="case correct" *ngFor="let number of ((submission.failedCase === 0 ?
+            submission.totalCase : submission.failedCase - 1) | repeat)"
             matTooltip="{{'#' + number + ' Accepted'}}"
       >
         <i class="fa fa-check"></i>
       </span>
-      <ng-container *ngIf="this.submission.failedCase">
+      <ng-container *ngIf="submission.failedCase">
         <span class="case incorrect"
-              matTooltip="{{'#' + this.submission.failedCase + ' ' + (this.submission.verdict | verdictDisplay)}}"
+              matTooltip="{{'#' + submission.failedCase + ' ' + (submission.verdict | verdictDisplay)}}"
         >
           <i class="fa fa-times"></i>
         </span>
         <span class="case unknown"
-              *ngFor="let number of (this.submission.totalCase - this.submission.failedCase | repeat)"
-              matTooltip="{{'#' + (number + this.submission.failedCase) + ' Not Judged'}}"
+              *ngFor="let number of (submission.totalCase - submission.failedCase | repeat)"
+              matTooltip="{{'#' + (number + submission.failedCase) + ' Not Judged'}}"
         >
           <i class="fa fa-question"></i>
         </span>
@@ -42,11 +43,11 @@
   </div>
   <div class="source">
     <h3>Source Code<i class="fa fa-clone btn-copy"
-                      (click)="this.copyText(this.submission.source)"></i></h3>
+                      (click)="copyText(submission.sourceCode)"></i></h3>
     <mat-card>
       <div class="code-block"
-           [appCodeMirror]="this.submission.source"
-           [language]="this.submission.language"
+           [appCodeMirror]="submission.sourceCode"
+           [language]="submission.language"
            readOnly="true">
       </div>
     </mat-card>

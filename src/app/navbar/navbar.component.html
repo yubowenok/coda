@@ -6,19 +6,19 @@
 <app-user></app-user>
 <mat-divider></mat-divider>
 
-<ng-container *ngIf="this.problemset">
+<ng-container *ngIf="problemset && api.getCurrentUser()">
   <div class="section">
     <app-navbar-problemset [problemset]="problemset"></app-navbar-problemset>
   </div>
   <mat-divider></mat-divider>
   <div class="section">
-    <button mat-button routerLink="/problemset/{{this.problemset.id}}/submit">
+    <button mat-button routerLink="/problemset/{{problemset.id}}/submit">
       <i class="fa fa-arrow-circle-up submit-icon"></i>Submit
     </button>
-    <button mat-button routerLink="/problemset/{{this.problemset.id}}/scoreboard">
+    <button mat-button routerLink="/problemset/{{problemset.id}}/scoreboard">
       <i class="fa fa-list"></i>Scoreboard
     </button>
-    <button mat-button routerLink="/problemset/{{this.problemset.id}}/submissions/{{this.getUser().username}}">
+    <button mat-button routerLink="/problemset/{{problemset.id}}/submissions/{{api.getCurrentUser().username}}">
       <i class="fa fa-file"></i>My Submissions
     </button>
   </div>
@@ -26,7 +26,7 @@
 </ng-container>
 
 <mat-accordion>
-  <mat-expansion-panel expanded="{{this.linksExpanded}}"
+  <mat-expansion-panel expanded="{{linksExpanded}}"
                        (opened)="linksExpanded = true" (closed)="linksExpanded = false">
     <mat-expansion-panel-header>
       <mat-panel-title>Links</mat-panel-title>

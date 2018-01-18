@@ -1,29 +1,52 @@
 <mat-tab-group>
   <mat-tab label="Password">
-    <form>
-      <mat-form-field class="">
-        <input matInput placeholder="Current Password" value="" type="password">
+    <form [formGroup]="password" class="margin-to-top">
+      <mat-form-field>
+        <input matInput placeholder="Current Password" type="password"
+               formControlName="currentPassword" [formGroup]="password">
+        <mat-error *ngIf="!password.controls.currentPassword.hasError('tooShort')">
+          Password must be at least 6 characters long
+        </mat-error>
       </mat-form-field>
-      <mat-form-field class="">
-        <input matInput placeholder="New Password" value="" type="password">
+      <mat-form-field>
+        <input matInput placeholder="New Password" type="password"
+               formControlName="password" [formGroup]="password">
+        <mat-error *ngIf="!password.controls.password.hasError('tooShort')">
+          Password must be at least 6 characters long
+        </mat-error>
       </mat-form-field>
-      <mat-form-field class="">
-        <input matInput placeholder="Confirm New Password" value="" type="password">
+      <mat-form-field>
+        <input matInput placeholder="Confirm New Password" type="password"
+               formControlName="confirmPassword" [formGroup]="password">
+        <mat-error *ngIf="!password.controls.confirmPassword.hasError('notMatch')">
+          Passwords must match
+        </mat-error>
       </mat-form-field>
-
-      <button mat-raised-button color="primary">Update Password</button>
     </form>
+    <button mat-raised-button color="primary" class="margin-to-top" [disabled]="password.invalid"
+      (click)="updatePassword()">
+      Update Password
+    </button>
+
   </mat-tab>
-  <mat-tab label="Names">
-    <form>
-      <mat-form-field class="">
-        <input matInput placeholder="Nickname" value="">
+  <mat-tab label="Settings">
+    <form [formGroup]="settings" class="margin-to-top">
+      <mat-form-field>
+        <input matInput placeholder="Nickname"
+               formControlName="nickname" [formGroup]="settings">
+        <mat-error *ngIf="!settings.controls.nickname.hasError('required')">
+          Please enter nickname
+        </mat-error>
       </mat-form-field>
-      <mat-form-field class="">
-        <input matInput placeholder="Anonymized Name" value="">
-      </mat-form-field>
-
-      <button mat-raised-button color="primary">Update Names</button>
+      <div>
+        <mat-checkbox formControlName="anonymous" [formGroup]="settings" color="primary">
+          Appear Anonymous on Scoreboard
+        </mat-checkbox>
+      </div>
     </form>
+    <button mat-raised-button color="primary" class="margin-to-top" [disabled]="settings.invalid"
+      (click)="updateSettings()">
+      Update Settings
+    </button>
   </mat-tab>
 </mat-tab-group>

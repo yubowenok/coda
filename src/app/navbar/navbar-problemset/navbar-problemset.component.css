@@ -45,3 +45,8 @@ mat-progress-bar {
 
 .subtask .score {
 }
+
+.single-task-score {
+  font-size: .8em;
+  margin-left: .5em;
+}

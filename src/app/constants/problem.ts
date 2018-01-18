@@ -13,6 +13,7 @@ export interface ProblemInfo {
   number: string;
   id: string;
   title: string;
+  isSingleTask: boolean; // filled by server
   subtasks: SubtaskInfo[];
 }
 
@@ -20,11 +21,11 @@ export interface ProblemContent {
   title: string;
   statement: string;
   illustration?: {
-    href: string,
-    hrefText: string, // description of href
-    url: string,
-    width: number // width percentage between [0, 1]
+    width: number, // width percentage between [0, 1]
+    filename: string,
+    text: string, // HTML content with link
   };
+  isSingleTask: boolean; // filled by server
   subtasks: {
     id: string,
     score: number,

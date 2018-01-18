@@ -2,14 +2,14 @@
   margin-top: 10px;
 }
 
-.margin-to-top {
-  margin-top: 30px;
-}
-
 table.samples {
   width: 100%;
   text-align: left;
   table-layout: fixed;
+}
+
+.time-limit span {
+  font-weight: normal;
 }
 
 table h4 {
@@ -25,10 +25,6 @@ table h4 {
   line-height: 1.5;
 }
 
-.title > .submit {
-  float: right;
-}
-
 .title > h1 {
   display: inline-block;
 }
@@ -42,13 +38,16 @@ table h4 {
   display: inline-block;
 }
 
+table tr {
+  vertical-align: top;
+}
+
 mat-card {
-  padding: 0;
+  padding: .5em;
   margin-top: .5em;
   margin-bottom: 1em;
 }
 
 pre {
-  padding: .5em;
   font-weight: normal;
 }

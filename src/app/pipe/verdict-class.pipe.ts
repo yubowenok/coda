@@ -10,7 +10,7 @@ export class VerdictClassPipe implements PipeTransform {
     if (value === Verdict.AC) {
       return 'correct bold';
     } else if (value === Verdict.SKIPPED || value === Verdict.PENDING) {
-      return '';
+      return ' bold';
     } else {
       return 'incorrect bold';
     }

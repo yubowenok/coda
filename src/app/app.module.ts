@@ -4,8 +4,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { HttpClientModule } from '@angular/common/http';
-// import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-// import { InMemoryDataService } from './in-memory-data.service';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppMaterialModule } from './app-material.module';
@@ -32,6 +30,7 @@ import { MessageService } from './message.service';
 import { SubmitComponent } from './submit/submit.component';
 import { CopyService } from './copy.service';
 import { CodeMirrorDirective } from './code-mirror.directive';
+import { MessageDialogComponent } from './message.service';
 
 import {
   TimeDisplayPipe,
@@ -43,6 +42,8 @@ import {
   MemoryPipe,
   RepeatPipe
 } from './pipe';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { PageErrorComponent } from './page-error/page-error.component';
 
 @NgModule({
   imports: [
@@ -51,12 +52,6 @@ import {
     BrowserAnimationsModule,
     AppMaterialModule,
     HttpClientModule,
-    /*
-
-HttpClientInMemoryWebApiModule.forRoot(
-InMemoryDataService, { dataEncapsulation: false }
-),
-*/
     FormsModule,
     ReactiveFormsModule,
     NavbarModule,
@@ -84,7 +79,13 @@ InMemoryDataService, { dataEncapsulation: false }
     VerdictClassPipe,
     ExecutionTimePipe,
     MemoryPipe,
-    RepeatPipe
+    RepeatPipe,
+    NotFoundComponent,
+    MessageDialogComponent,
+    PageErrorComponent
+  ],
+  entryComponents: [
+    MessageDialogComponent
   ],
   providers: [
     ApiService,

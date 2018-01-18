@@ -53,6 +53,11 @@ pre.CodeMirror-placeholder {
   box-shadow: none;
 }
 
+.ngx-datatable.material .empty-row {
+  text-align: center;
+  line-height: 3;
+}
+
 .bold,
 .bold div {
   font-weight: bold;
@@ -76,4 +81,12 @@ pre.CodeMirror-placeholder {
 
 .panel-error {
   color: #ff6161;
+}
+
+.margin-to-top {
+  margin-top: 30px;
+}
+
+.float-right {
+  float: right;
 }

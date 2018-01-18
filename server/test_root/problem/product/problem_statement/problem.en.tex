@@ -1,0 +1,39 @@
+\problemname{Interval Product}
+%\illustration{.5}{filename}{Image by \href{url}{Author}}
+
+There is an array of $N$ positive integers, $x_1, x_2, ... x_N$.
+Your friend gives you $Q$ queries, which can be:
+\begin{itemize}
+\item {\tt q l r} : Consider the product $P = x_l \times x_{l+1} \times ... \times x_{r-1} \times x_r$. How many trailing zeroes are there in the binary representation of $P$? (Yay! Your friend no longer cares about the product being positive, negative, or zero.)
+\item {\tt s i v} : Set the value of $x_i$ to $v$.
+\end{itemize}
+Since your friend have a large number of queries, you have to find a way to answer them efficiently.
+
+\section*{Input}
+The first line of the input has an integer $T$, the number of test cases.\\
+Each case has two integer $N, Q$ on the first line.\\
+The next line has $N$ integers, $x_1, x_2, ... x_N$.\\
+Each of the next $Q$ lines gives a query, which can be one of the two types introduced above.
+
+\section*{Output}
+
+For each query of the first type, output the number of trailing zeroes in the binary representation of the interval product.
+
+\section*{Constraints}
+\begin{itemize}
+\item $1 \leq T\leq 15$
+\item $1 \leq N, Q \leq 10^5$
+\item $1 \leq l \leq r \leq N$ for all queries of the first type. $1 \leq i \leq N$ for all queries of the second type.
+\item It is guaranteed that $1 \leq x_i \leq 10^9$ for $1 \leq i \leq N$ before the first query and after every query is processed.
+\end{itemize}
+
+\section*{Subtasks}
+\begin{itemize}
+\item (Small - 20 points): There are only queries of the first type. That is, there will be no changes on the array.
+\item (Large - 30 points): Original constraints.
+\end{itemize}
+
+Note that the last sample case will not appear in the {\it Small} subtask, as it contains queries of the second type.
+
+\section*{Hint}
+The number of trailing zeroes in the binary representation of a decimal integer $P$ equals how many times $P$ can be evenly divided by 2. For example, $44 = (101100)_2$ has two trailing zeroes and can be evenly divided at most twice: $44 / 2 = 22$, $22 / 2 = 11$, and $11$ is odd.

@@ -1,13 +1,12 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
 import { ApiService } from '../api.service';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import { Submission, Verdict } from '../constants/submission';
 import { LanguageDisplay } from '../constants/language';
 import { ProblemsetInfo } from '../constants/problemset';
 
-import * as moment from 'moment';
 import {
   DateDisplayPipe,
   TimeDisplayPipe,
@@ -26,15 +25,30 @@ export class SubmissionListComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   private problemset: ProblemsetInfo;
   private submissionList: Submission[];
   private rows = [];
   private columns = [];
+  private error: { msg: string } | undefined;
+
+  private listMessages = {
+    emptyMessage: 'User has no submissions'
+  };
 
   ngOnInit() {
+    this.api.onProblemsetIdChange(this.route.snapshot.paramMap.get('problemsetId'));
+
+    this.problemset = this.api.latestProblemset;
+    this.api.getCurrentProblemset()
+      .subscribe(problemset => {
+        this.problemset = problemset;
+        this.updateTable();
+      });
+
     this.getSubmissionList();
 
     const timeDisplayPipe = new TimeDisplayPipe();
@@ -42,12 +56,12 @@ export class SubmissionListComponent implements OnInit {
     const verdictDisplayPipe = new VerdictDisplayPipe();
     const titleCasePipe = new TitleCasePipe();
     this.columns = [
-      { name: '#', prop: 'id',
+      { name: '#', prop: 'submissionNumber',
         minWidth: 30, maxWidth: 50 },
       { name: 'Problem', prop: 'problem' },
       { name: 'Subtask', prop: 'subtask', pipe: titleCasePipe,
         minWidth: 80, maxWidth: 80 },
-      { name: '', prop: 'id', cellTemplate: this.sourceLinkTmpl, cellClass: 'center', sortable: false,
+      { name: '', prop: 'submissionNumber', cellTemplate: this.sourceLinkTmpl, cellClass: 'center', sortable: false,
         minWidth: 20, maxWidth: 20 },
       { name: 'Verdict', prop: 'verdict', pipe: verdictDisplayPipe, cellClass: this.getCorrectClass,
         minWidth: 185 },
@@ -81,23 +95,29 @@ export class SubmissionListComponent implements OnInit {
 
   getSubmissionList(): void {
     const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
-    // TODO: const username = '';
-    this.api.getProblemset(problemsetId)
-      .subscribe(problemset => {
-        this.problemset = problemset;
-        this.updateTable();
-      });
-    this.api.getSubmissionList(problemsetId, '')
-      .subscribe(submissionList => {
-        this.submissionList = submissionList;
-        this.updateTable();
-      });
+    const username = this.route.snapshot.paramMap.get('username');
+    if (!username) {
+      this.error = { msg: 'invalid username' };
+      return;
+    }
+    this.api.getSubmissionList(problemsetId, username)
+      .subscribe(
+        submissionList => {
+          this.submissionList = submissionList;
+          this.updateTable();
+        },
+        err => {
+          this.api.loginErrorHandler(err);
+          this.error = err.error;
+        }
+      );
   }
 
   updateTable(): void {
     if (!this.problemset || !this.submissionList) {
       return;
     }
+    this.error = undefined;
 
     const problemNames: { [problemNumber: string]: string } = {};
     for (let i = 0; i < this.problemset.problems.length; i++) {
@@ -110,21 +130,35 @@ export class SubmissionListComponent implements OnInit {
       const submission = this.submissionList[i];
       newRows.push({
         ...submission,
-        executionTimeDisplay: `${submission.verdict === Verdict.TLE ? '> ' : ''}${submission.executionTime}s`,
-        memoryDisplay: `${submission.verdict === Verdict.MLE ? '> ' : ''}${submission.memory}MB`,
+        executionTimeDisplay: this.getExecutionTimeDisplay(submission),
+        memoryDisplay: this.getMemoryDisplay(submission),
         problem: problemNames[submission.problemNumber],
         problemsetTime: submission.outsideProblemsetTime ? -1 : submission.problemsetTime,
-        submitTime: moment(submission.submitTime),
+        submitTime: submission.submitTime,
         language: LanguageDisplay[submission.language]
       });
     }
     this.rows = newRows;
   }
 
-  getSourceLink(id: string): string {
+  getExecutionTimeDisplay(submission: Submission): string {
+    if (submission.verdict === Verdict.PENDING || submission.verdict === Verdict.SKIPPED) {
+      return '-';
+    }
+    return `${submission.verdict === Verdict.TLE ? '> ' : ''}${submission.executionTime}s`;
+  }
+
+  getMemoryDisplay(submission: Submission): string {
+    if (submission.verdict === Verdict.PENDING || submission.verdict === Verdict.SKIPPED) {
+      return '-';
+    }
+    return `${submission.verdict === Verdict.MLE ? '> ' : ''}${submission.memory}MB`;
+  }
+
+  getSourceLink(submissionNumber: string): string {
     const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
     const username = this.route.snapshot.paramMap.get('username');
-    return `/problemset/${problemsetId}/submission/${username}/${id}`;
+    return `/problemset/${problemsetId}/submission/${username}/${submissionNumber}`;
   }
 
   getUsername(): string {

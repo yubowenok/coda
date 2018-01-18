@@ -4,6 +4,7 @@ import * as moment from 'moment';
 
 import { ApiService } from '../api.service';
 import { ProblemsetInfo, RunMode, JudgeMode, PenaltyMode } from '../constants';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-problemset-list',
@@ -25,6 +26,8 @@ export class ProblemsetListComponent implements OnInit {
 
   private fragment: string;
 
+  private error: { msg: string } | undefined;
+
   tooltips = {
     STANDARD_MODE: 'You can submit anytime before the problemset ends.',
     SELFTEST_MODE: 'The problemset has a fixed duration. You can start your session at any time. But once your ' +
@@ -34,7 +37,8 @@ export class ProblemsetListComponent implements OnInit {
     BLIND_JUDGE: 'Submission results will be available after the problemset ends. You will temporarily receive ' +
       'score for attempted problems.',
     SCORE_PENALTY: 'Each incorrect submission results in 10% loss of a subtask\'s score.',
-    TIME_PENALTY: 'Each incorrect submission results in 4 minutes extra time added to the finish time.'
+    TIME_PENALTY: 'Each incorrect submission results in 4 minutes extra time added to the finish time.',
+    FREEBIES: 'Number of incorrect submissions that are exempted from penalty'
   };
 
   ngOnInit() {
@@ -44,10 +48,16 @@ export class ProblemsetListComponent implements OnInit {
 
   getProblemsetList(): void {
     this.api.getProblemsetList()
-      .subscribe(problemsetList => {
-        this.problemsetList = problemsetList;
-        this.updateProblemsetGroups();
-      });
+      .subscribe(
+        (problemsetList: ProblemsetInfo[]) => {
+          this.problemsetList = problemsetList;
+          this.updateProblemsetGroups();
+          this.error = undefined;
+        },
+        (err: HttpErrorResponse) => {
+          this.error = err.error;
+        }
+      );
   }
 
   updateProblemsetGroups(): void {
@@ -78,10 +88,6 @@ export class ProblemsetListComponent implements OnInit {
 
   isSelftestMode(problemset: ProblemsetInfo): boolean {
     return problemset.runMode === RunMode.SELFTEST;
-  }
-
-  isScorePenalty(problemset: ProblemsetInfo): boolean {
-    return problemset.penaltyMode === PenaltyMode.SCORE;
   }
 
   isTimePenalty(problemset: ProblemsetInfo): boolean {

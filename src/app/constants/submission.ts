@@ -23,7 +23,7 @@ export const VerdictDisplay: { [verdict: string]: string } = {
 };
 
 export interface Submission {
-  id: string; // submission id, typically numbered 1, 2, ... for (problemset, username) pair
+  submissionNumber: string; // typically numbered 1, 2, ... for (problemset, username) pair
   problemNumber: string;
   subtask?: string;
   verdict: Verdict;
@@ -38,5 +38,5 @@ export interface Submission {
 }
 
 export interface SubmissionWithSource extends Submission {
-  source: string;
+  sourceCode: string;
 }

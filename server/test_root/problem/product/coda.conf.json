@@ -1,0 +1,6 @@
+{
+  "id": "product",
+  "title": "Interval Product",
+  "timeLimit": 5,
+  "subtasks": ["small", "large"]
+}

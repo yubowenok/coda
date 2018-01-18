@@ -1,21 +1,24 @@
-<ng-container *ngIf="this.problemset">
+<ng-container *ngIf="problemset">
   <div class="padding-horizontal">
-    <h3>{{this.problemset.title}}</h3>
-    <div class="time-display time-till-start" *ngIf="!this.hasStarted()">
+    <h3>{{problemset.title}}</h3>
+    <div class="time-display time-till-start" *ngIf="!hasStarted()">
       <b>Time till start: </b>{{timeTillStart}}
     </div>
-    <div class="time-display time-remaining" *ngIf="this.hasStarted()">
+    <div class="time-display time-remaining" *ngIf="hasStarted()">
       <b>Time Remaining: </b>{{timeRemaining}}
-      <mat-progress-bar mode="determinate" [value]="this.timePassedPercent" color="primary"></mat-progress-bar>
+      <mat-progress-bar mode="determinate" [value]="timePassedPercent" color="primary"></mat-progress-bar>
     </div>
   </div>
-  <div *ngIf="this.hasStarted()">
+  <div *ngIf="hasStarted()">
     <button mat-button *ngFor="let problem of problemset.problems"
-            routerLink="/problemset/{{this.problemset.id}}/problem/{{problem.number}}">
+            routerLink="/problemset/{{problemset.id}}/problem/{{problem.number}}">
       <b>{{problem.number}}</b>
       <i class="fa fa-chevron-right"></i>
-      <span>{{problem.title}}</span>
-      <div class="subtasks">
+      <span>
+        {{problem.title}}
+        <span *ngIf="problem.isSingleTask" class="single-task-score">({{problem.subtasks[0].score}} pts)</span>
+      </span>
+      <div class="subtasks" *ngIf="!problem.isSingleTask">
         <div class="subtask" *ngFor="let subtask of problem.subtasks">
           <b class="id">{{subtask.id | titlecase}}</b><span class="score">{{subtask.score + 'pts'}}</span>
         </div>

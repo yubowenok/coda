@@ -33,7 +33,7 @@ export class LoginComponent {
         if (data === undefined) { // failure handler
           return;
         }
-        this.message.info(`Welcome to coda, ${data.nickname}!`);
+        this.message.info(`Welcome back, ${data.nickname}!`);
         this.location.back();
       });
   }
