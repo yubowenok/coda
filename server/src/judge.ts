@@ -12,86 +12,95 @@ const problemSetRoot = paths.problemsetDir();
 function systemSync(cmd: string) {
   try {
     return child_process.execSync(cmd).toString();
-  } 
-  catch (error) {
-    error.status;  // Might be 127 in your example.
-    error.message; // Holds the message you typically want.
-    error.stderr;  // Holds the stderr output. Use `.toString()`.
-    error.stdout;  // Holds the stdout output. Use `.toString()`.
   }
-};
+  catch (error) {
+    // error.status;  // Might be 127 in your example.
+    // error.message; // Holds the message you typically want.
+    // error.stderr;  // Holds the stderr output. Use `.toString()`.
+    // error.stdout;  // Holds the stdout output. Use `.toString()`.
+  }
+}
 
 function readJsonFile(file: string) {
-    var rawdata = fs.readFileSync(file);
+    const rawdata = fs.readFileSync(file);
     return JSON.parse(rawdata.toString());
 }
 
 function judgeSubmission(problem: string, subtask: string, source: string, timeLimit: number) {
-    if (!timeLimit) timeLimit = 1;
+    if (!timeLimit) {
+        timeLimit = 1;
+    }
 
-    var cmd_line = 
+    let cmd_line =
     'docker exec ' + containerName + ' judge' +
-    ' --source=' +  source + 
+    ' --source=' +  source +
     ' --problem=' + problem;
 
-    if (subtask != '') cmd_line += ' --subtask=' + subtask;
+    if (subtask !== '') {
+        cmd_line += ' --subtask=' + subtask;
+    }
     cmd_line += ' --time=' + timeLimit;
     console.log(cmd_line);
 
     return JSON.parse(systemSync(cmd_line));
 }
 
-
 function judgeProblemSet(problemSetName: string) {
-    var problemSetPath = paths.problemsetDir(problemSetName);
-    var configPath = paths.problemsetConfigPath(problemSetName);
-    var submissionsPath = paths.problemsetSubmissionsPath(problemSetName);
-    var verdictPath = paths.problemsetVerdictsPath(problemSetName);
-    
-    var config = readJsonFile(configPath);
-    var submissions = readJsonFile(submissionsPath); 
-    var verdicts = readJsonFile(verdictPath);
+    const problemSetPath = paths.problemsetDir(problemSetName);
+    const configPath = paths.problemsetConfigPath(problemSetName);
+    const submissionsPath = paths.problemsetSubmissionsPath(problemSetName);
+    const verdictPath = paths.problemsetVerdictsPath(problemSetName);
 
-    var problems= config['problems'];
-    var map: {[name: string]: string} = {};
+    const config = readJsonFile(configPath);
+    const submissions = readJsonFile(submissionsPath);
+    const verdicts = readJsonFile(verdictPath);
 
-    for (var i = 0; i < problems.length; i++) {
+    const problems = config['problems'];
+    const map: {[name: string]: string} = {};
+
+    for (let i = 0; i < problems.length; i++) {
         map[problems[i]['number']] = problems[i]['id'];
     }
 
-    let set = new Set();
+    const set = new Set();
 
-    for (var i = 0; i < verdicts.length; i++) {
+    for (let i = 0; i < verdicts.length; i++) {
         set.add(verdicts[i]['sourceFile']);
     }
-    
-    for (var i = 0; i < submissions.length; i++) {
-        var sourceFile: string = submissions[i]['sourceFile'];
-        if (set.has(sourceFile)) continue;
 
-        var subtask = submissions[i]['subtask'];
-        var problemName = map[submissions[i]['problemNumber']];
-        var userName = submissions[i]['username'];
-        var problemPath = paths.problemDir(problemName);
-        var sourcePath = path.join(problemSetPath, 'source', userName, sourceFile);
-        var timeLimit = readJsonFile(paths.problemConfigPath(problemName))['timeLimit'];
+    for (let i = 0; i < submissions.length; i++) {
+        const sourceFile: string = submissions[i]['sourceFile'];
+        if (set.has(sourceFile)) {
+            continue;
+        }
 
-        if (subtask == 'all') continue;
+        const subtask = submissions[i]['subtask'];
+        const problemName = map[submissions[i]['problemNumber']];
+        const userName = submissions[i]['username'];
+        const problemPath = paths.problemDir(problemName);
+        const sourcePath = path.join(problemSetPath, 'source', userName, sourceFile);
+        const timeLimit = readJsonFile(paths.problemConfigPath(problemName))['timeLimit'];
 
-        var result = judgeSubmission(path.join(dockerRoot, 'problem', problemName), subtask, path.join(dockerRoot, 'problemset', problemSetName, 'source', userName, sourceFile), timeLimit);
+        if (subtask === 'all') {
+            continue;
+        }
 
-        var failedCase = 0;
+        const result = judgeSubmission(path.join(dockerRoot, 'problem', problemName),
+         subtask, path.join(dockerRoot, 'problemset',
+         problemSetName, 'source', userName, sourceFile), timeLimit);
+
+        let failedCase = 0;
         if (result['failedCase']) {
             failedCase = result['totalCases'] + 1 - result['failedCase']['number'];
         }
 
-        var pos1 = sourceFile.indexOf('_') + 1;
-        var pos2 = sourceFile.indexOf('_', pos1 );
-        var submissionNumber = sourceFile.substr(pos1, pos2 - pos1);
+        const pos1 = sourceFile.indexOf('_') + 1;
+        const pos2 = sourceFile.indexOf('_', pos1 );
+        const submissionNumber = sourceFile.substr(pos1, pos2 - pos1);
 
-        var verdict = {
-            'username':userName, 
-            'submissionNumber': Number(submissionNumber), 
+        const verdict = {
+            'username': userName,
+            'submissionNumber': Number(submissionNumber),
             'sourceFile': sourceFile,
             'verdict': result['verdict'],
             'executionTime': Number(result['time']),
@@ -100,12 +109,10 @@ function judgeProblemSet(problemSetName: string) {
         };
         verdicts.push(verdict);
     }
-    
-    fs.writeFileSync(verdictPath, JSON.stringify(verdicts, null, 4));
+    fs.writeFileSync(verdictPath, JSON.stringify(verdicts, undefined, 4));
 }
-
 function judgeAll() {
-    var files = fs.readdirSync(problemSetRoot);
+    const files = fs.readdirSync(problemSetRoot);
     files.forEach(function(file) {
         judgeProblemSet(file);
     });
@@ -128,10 +135,10 @@ function judgeAll() {
   }
   */
 
-// docker run -dit --name coda-test  
+// docker run -dit --name coda-test
 // -v /Users/kaichen/Dev/docker/codaTest:/usr/share/src szfck/nyu-problemtools:1.0.4
-//pull docker image and create a container
-var imageName = 'szfck/nyu-problemtools:1.0.4';
+// pull docker image and create a container
+const imageName = 'szfck/nyu-problemtools:1.0.4';
 // console.log('docker pull ' + imageName);
 
 systemSync('docker pull ' + imageName);
@@ -139,9 +146,12 @@ systemSync('docker pull ' + imageName);
 systemSync('docker stop ' + containerName);
 systemSync('docker rm ' + containerName);
 
-systemSync('docker run -dit --name ' + containerName + 
-' -v ' + path.resolve(localRoot) + ':' + dockerRoot + ' ' + 
+systemSync('docker run -dit --name ' + containerName +
+' -v ' + path.resolve(localRoot) + ':' + dockerRoot + ' ' +
 imageName);
 
+// example to judge one problemSet
 judgeProblemSet('warmup');
-//setInterval(judgeAll, 5 * 1000);
+
+// uncomment code below to judgeall problemSet every 5 seconds
+// setInterval(judgeAll, 5 * 1000);
