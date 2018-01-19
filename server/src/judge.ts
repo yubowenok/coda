@@ -22,100 +22,136 @@ function systemSync(cmd: string) {
 }
 
 function readJsonFile(file: string) {
-    const rawdata = fs.readFileSync(file);
-    return JSON.parse(rawdata.toString());
+  const rawdata = fs.readFileSync(file);
+  return JSON.parse(rawdata.toString());
 }
 
 function judgeSubmission(problem: string, subtask: string, source: string, timeLimit: number) {
-    if (!timeLimit) {
-        timeLimit = 1;
-    }
+  if (!timeLimit) {
+    console.log('WARNNING: prolem ' + problem + ' no set time limit, set default to 1\n');
+    timeLimit = 1;
+  }
 
-    let cmd_line =
+  console.log('judge sourceFile: ' + source + ', problem: ' + problem + ', subtask: ' + subtask + '\n');
+
+  let cmd_line =
     'docker exec ' + containerName + ' judge' +
-    ' --source=' +  source +
+    ' --source=' + source +
     ' --problem=' + problem;
 
-    if (subtask !== '') {
-        cmd_line += ' --subtask=' + subtask;
-    }
-    cmd_line += ' --time=' + timeLimit;
-    console.log(cmd_line);
+  if (subtask !== '') {
+    cmd_line += ' --subtask=' + subtask;
+  }
+  cmd_line += ' --time=' + timeLimit;
+  console.log('execute command line: ' + cmd_line + '\n');
 
-    return JSON.parse(systemSync(cmd_line));
+  return JSON.parse(systemSync(cmd_line));
 }
 
 function judgeProblemSet(problemSetName: string) {
-    const problemSetPath = paths.problemsetDir(problemSetName);
-    const configPath = paths.problemsetConfigPath(problemSetName);
-    const submissionsPath = paths.problemsetSubmissionsPath(problemSetName);
-    const verdictPath = paths.problemsetVerdictsPath(problemSetName);
+  console.log('judging problemset ' + problemSetName + ' ...\n');
 
-    const config = readJsonFile(configPath);
-    const submissions = readJsonFile(submissionsPath);
-    const verdicts = readJsonFile(verdictPath);
+  const problemSetPath = paths.problemsetDir(problemSetName);
+  const configPath = paths.problemsetConfigPath(problemSetName);
+  const submissionsPath = paths.problemsetSubmissionsPath(problemSetName);
+  const verdictPath = paths.problemsetVerdictsPath(problemSetName);
 
-    const problems = config['problems'];
-    const map: {[name: string]: string} = {};
+  if (!fs.existsSync(problemSetPath)) {
+    console.log('WARNNING: problemset not existed\n');
+    return;
+  }
 
-    for (let i = 0; i < problems.length; i++) {
-        map[problems[i]['number']] = problems[i]['id'];
+  if (!fs.existsSync(verdictPath)) {
+    fs.writeFileSync(verdictPath, '[]');
+    console.log('create a new verdicts.json for problemset ' + problemSetName + '\n');
+  }
+
+  if (!fs.existsSync(configPath)) {
+    console.log('WARNNING: config file for ' + problemSetName + ' not existed\n');
+    return;
+  }
+
+  if (!fs.existsSync(submissionsPath)) {
+    console.log('problemset ' + problemSetName + ' has no submission file\n');
+    return;
+  }
+
+  const config = readJsonFile(configPath);
+  const submissions = readJsonFile(submissionsPath);
+  const verdicts = readJsonFile(verdictPath);
+
+  const problems = config['problems'];
+  const map: { [name: string]: string } = {};
+
+  for (let i = 0; i < problems.length; i++) {
+    map[problems[i]['number']] = problems[i]['id'];
+  }
+
+  const set = new Set();
+
+  for (let i = 0; i < verdicts.length; i++) {
+    set.add(verdicts[i]['sourceFile']);
+  }
+
+  for (let i = 0; i < submissions.length; i++) {
+    const sourceFile: string = submissions[i]['sourceFile'];
+    if (set.has(sourceFile)) {
+      continue;
     }
 
-    const set = new Set();
-
-    for (let i = 0; i < verdicts.length; i++) {
-        set.add(verdicts[i]['sourceFile']);
+    if (map[submissions[i]['problemNumber']] === undefined) {
+      console.log('WARNNING: problem number: ' + submissions[i]['problemNumber'] + ' can not find problem path\n');
+      continue;
     }
 
-    for (let i = 0; i < submissions.length; i++) {
-        const sourceFile: string = submissions[i]['sourceFile'];
-        if (set.has(sourceFile)) {
-            continue;
-        }
+    let subtask = submissions[i]['subtask'];
+    const problemName = map[submissions[i]['problemNumber']];
+    const userName = submissions[i]['username'];
+    const problemPath = paths.problemDir(problemName);
+    const sourcePath = path.join(problemSetPath, 'source', userName, sourceFile);
+    const timeLimit = readJsonFile(paths.problemConfigPath(problemName))['timeLimit'];
 
-        const subtask = submissions[i]['subtask'];
-        const problemName = map[submissions[i]['problemNumber']];
-        const userName = submissions[i]['username'];
-        const problemPath = paths.problemDir(problemName);
-        const sourcePath = path.join(problemSetPath, 'source', userName, sourceFile);
-        const timeLimit = readJsonFile(paths.problemConfigPath(problemName))['timeLimit'];
-
-        if (subtask === 'all') {
-            continue;
-        }
-
-        const result = judgeSubmission(path.join(dockerRoot, 'problem', problemName),
-         subtask, path.join(dockerRoot, 'problemset',
-         problemSetName, 'source', userName, sourceFile), timeLimit);
-
-        let failedCase = 0;
-        if (result['failedCase']) {
-            failedCase = result['totalCases'] + 1 - result['failedCase']['number'];
-        }
-
-        const pos1 = sourceFile.indexOf('_') + 1;
-        const pos2 = sourceFile.indexOf('_', pos1 );
-        const submissionNumber = sourceFile.substr(pos1, pos2 - pos1);
-
-        const verdict = {
-            'username': userName,
-            'submissionNumber': Number(submissionNumber),
-            'sourceFile': sourceFile,
-            'verdict': result['verdict'],
-            'executionTime': Number(result['time']),
-            'failedCase': failedCase,
-            'totalCase': result['totalCases']
-        };
-        verdicts.push(verdict);
+    if (subtask === 'all') {
+      subtask = '';
     }
-    fs.writeFileSync(verdictPath, JSON.stringify(verdicts, undefined, 4));
+
+    const result = judgeSubmission(path.join(dockerRoot, 'problem', problemName),
+      subtask, path.join(dockerRoot, 'problemset',
+        problemSetName, 'source', userName, sourceFile), timeLimit);
+
+    let failedCase = 0;
+    if (result['failedCase']) {
+      failedCase = result['totalCases'] + 1 - result['failedCase']['number'];
+    }
+
+    const pos1 = sourceFile.indexOf('_') + 1;
+    const pos2 = sourceFile.indexOf('_', pos1);
+    const submissionNumber = sourceFile.substr(pos1, pos2 - pos1);
+    const verdict = {
+      'username': userName,
+      'submissionNumber': Number(submissionNumber),
+      'sourceFile': sourceFile,
+      'verdict': result['verdict'],
+      'executionTime': Number(result['time']),
+      'failedCase': failedCase,
+      'totalCase': result['totalCases']
+    };
+
+    console.log(verdict);
+    console.log();
+    verdicts.push(verdict);
+  }
+  fs.writeFileSync(verdictPath, JSON.stringify(verdicts, undefined, 4));
+  console.log('end judge problemset ' + problemSetName);
+  console.log('\n');
 }
 function judgeAll() {
-    const files = fs.readdirSync(problemSetRoot);
-    files.forEach(function(file) {
-        judgeProblemSet(file);
-    });
+  console.log('start judging all the problemset ******** \n');
+
+  const files = fs.readdirSync(problemSetRoot);
+  files.forEach(function (file) {
+    judgeProblemSet(file);
+  });
 }
 // { verdict: 'WA',
 //   failedCase: { number: 1, name: 'sample/sample-large' },
@@ -147,11 +183,11 @@ systemSync('docker stop ' + containerName);
 systemSync('docker rm ' + containerName);
 
 systemSync('docker run -dit --name ' + containerName +
-' -v ' + path.resolve(localRoot) + ':' + dockerRoot + ' ' +
-imageName);
+  ' -v ' + path.resolve(localRoot) + ':' + dockerRoot + ' ' +
+  imageName);
 
 // example to judge one problemSet
-judgeProblemSet('warmup');
+// judgeProblemSet('warmup');
 
-// uncomment code below to judgeall problemSet every 5 seconds
-// setInterval(judgeAll, 5 * 1000);
+// judgeall problemSet every 5 seconds
+setInterval(judgeAll, 5 * 1000);
