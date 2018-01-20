@@ -6,7 +6,13 @@ npm run init-judge
 
 ### run judge
 
+#### run once
+
 npm run judge
+
+#### run every 5 seconds
+
+npm run judge -- --interval=5
 
 ### env setting example
 

@@ -5,8 +5,8 @@ function systemSync(cmd: string) {
   try {
     return child_process.execSync(cmd).toString();
   }
-  catch (error) {
-    console.log(`ERROR: ${error}`);
+  catch (err) {
+    console.error('systemSync failed', err);
   }
 }
 

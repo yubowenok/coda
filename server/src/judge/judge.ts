@@ -3,6 +3,18 @@ import * as fs from 'fs';
 import * as paths from '../constants/path';
 import * as path from 'path';
 import * as child_process from 'child_process';
+import * as optimist from 'optimist';
+import {
+  ProblemConfig,
+  ProblemsetConfig,
+  problemsetConfigPath,
+  ProblemsetProblem,
+  Submission,
+  Verdict
+} from '../constants';
+import { getProblem } from '../util/problem';
+import { getProblemset } from '../util/problemset';
+import { getSubmissionList, getVerdicts } from '../util/submission';
 
 const containerName = process.env.CONTAINER_NAME || 'coda-judge-container';
 const dockerRoot = process.env.DOCKER_ROOT || '/usr/share/src';
@@ -15,8 +27,8 @@ function systemSync(cmd: string) {
   try {
     return child_process.execSync(cmd).toString();
   }
-  catch (error) {
-    console.log(`ERROR: ${error}`);
+  catch (err) {
+    console.error('systemSync failed', err);
   }
 }
 
@@ -25,120 +37,94 @@ function readJsonFile(file: string) {
   return JSON.parse(rawdata.toString());
 }
 
-function judgeSubmission(problem: string, subtask: string, source: string, timeLimit: number) {
-  if (!timeLimit) {
-    console.log(`WARNNING: prolem ${problem} no set time limit, set default to 1\n`);
-    timeLimit = 1;
+function judgeSubmission(problemId: string, subtask: string, source: string) {
+  const problemConf: ProblemConfig = getProblem(problemId);
+
+  if (problemConf.timeLimit === undefined) {
+    console.log(`WARNNING: prolem ${problemId} no set time limit\n`);
+    return;
   }
+  console.log(`judge sourceFile: ${source}, problem: ${problemId}, subtask: ${subtask}\n`);
 
-  console.log(`judge sourceFile: ${source}, problem: ${problem}, subtask: ${subtask}\n`);
+  let cmdLine = `docker exec ${containerName} judge --source=${source} --problem=${paths.judgeProblemPath(problemId)}`;
 
-  let cmd_line = `docker exec ${containerName} judge --source=${source} --problem=${problem}`;
-
-  if (subtask !== '') {
-    cmd_line += ` --subtask=${subtask}`;
+  if (subtask === undefined || subtask === '') {
+    console.error(`WARNNING: no subtask for problem ${problemId}`);
+    return;
+  } else {
+    if (subtask !== 'all') {
+      cmdLine += ` --subtask=${subtask}`;
+    }
   }
-  cmd_line += ` --time=${timeLimit}`;
-  console.log(`execute command line: ${cmd_line}\n`);
+  cmdLine += ` --time=${problemConf.timeLimit}`;
+  console.log(`execute command line: ${cmdLine}\n`);
 
-  return JSON.parse(systemSync(cmd_line));
+  return JSON.parse(systemSync(cmdLine));
 }
 
-function judgeProblemSet(problemSetName: string) {
-  console.log(`judging problemset ${problemSetName} ...\n`);
+function judgeProblemSet(problemsetId: string) {
+  console.log(`judging problemset ${problemsetId} ...\n`);
 
-  const problemSetPath = paths.problemsetDir(problemSetName);
-  const configPath = paths.problemsetConfigPath(problemSetName);
-  const submissionsPath = paths.problemsetSubmissionsPath(problemSetName);
-  const verdictPath = paths.problemsetVerdictsPath(problemSetName);
+  const problemset: ProblemsetConfig = getProblemset(problemsetId);
+  const problems: ProblemsetProblem[] = problemset.problems;
+  const submissions: Submission[] = getSubmissionList(problemsetId);
+  const verdicts: Verdict[] = getVerdicts(problemsetId);
 
-  if (!fs.existsSync(problemSetPath)) {
-    console.log('WARNNING: problemset not existed\n');
-    return;
-  }
-
-  if (!fs.existsSync(verdictPath)) {
-    fs.writeFileSync(verdictPath, '[]');
-    console.log(`create a new verdicts.json for problemset ${problemSetName}\n`);
-  }
-
-  if (!fs.existsSync(configPath)) {
-    console.log(`WARNNING: config file for ${problemSetName} not existed\n`);
-    return;
-  }
-
-  if (!fs.existsSync(submissionsPath)) {
-    console.log(`problemset ${problemSetName} has no submission file\n`);
-    return;
-  }
-
-  const config = readJsonFile(configPath);
-  const submissions = readJsonFile(submissionsPath);
-  const verdicts = readJsonFile(verdictPath);
-
-  const problems = config['problems'];
   const map: { [name: string]: string } = {};
 
   for (let i = 0; i < problems.length; i++) {
-    map[problems[i]['number']] = problems[i]['id'];
+    map[problems[i].number] = problems[i].id;
   }
 
-  const set = new Set();
+  const set: { [sourceFile: string]: any } = new Set();
 
   for (let i = 0; i < verdicts.length; i++) {
-    set.add(verdicts[i]['sourceFile']);
+    set.add(verdicts[i].sourceFile);
   }
 
   for (let i = 0; i < submissions.length; i++) {
-    const sourceFile: string = submissions[i]['sourceFile'];
+    const sourceFile: string = submissions[i].sourceFile;
     if (set.has(sourceFile)) {
       continue;
     }
 
-    if (map[submissions[i]['problemNumber']] === undefined) {
-      console.log(`WARNNING: problem number: ${submissions[i]['problemNumber']} can not find problem path\n`);
+    if (map[submissions[i].problemNumber] === undefined) {
+      console.log(`WARNNING: problem number: ${submissions[i].problemNumber} can not find problem path\n`);
       continue;
     }
 
-    let subtask = submissions[i]['subtask'];
-    const problemName = map[submissions[i]['problemNumber']];
-    const userName = submissions[i]['username'];
-    const problemPath = paths.problemDir(problemName);
-    const sourcePath = path.join(problemSetPath, 'source', userName, sourceFile);
-    const timeLimit = readJsonFile(paths.problemConfigPath(problemName))['timeLimit'];
+    const subtask = submissions[i].subtask;
+    const problemId = map[submissions[i].problemNumber];
+    const username = submissions[i].username;
 
-    if (subtask === 'all') {
-      subtask = '';
-    }
-
-    const result = judgeSubmission(path.join(dockerRoot, 'problem', problemName),
-      subtask, path.join(dockerRoot, 'problemset',
-        problemSetName, 'source', userName, sourceFile), timeLimit);
+    const result = judgeSubmission(
+      problemId,
+      subtask,
+      paths.judgeSubmissionSourcePath(problemsetId, submissions[i]),
+    );
 
     let failedCase = 0;
-    if (result['failedCase']) {
-      failedCase = result['totalCases'] + 1 - result['failedCase']['number'];
+    if (result.failedCase !== undefined) {
+      failedCase = result.totalCases + 1 - result.failedCase.number;
     }
 
-    const pos1 = sourceFile.indexOf('_') + 1;
-    const pos2 = sourceFile.indexOf('_', pos1);
-    const submissionNumber = sourceFile.substr(pos1, pos2 - pos1);
-    const verdict = {
-      'username': userName,
-      'submissionNumber': Number(submissionNumber),
-      'sourceFile': sourceFile,
-      'verdict': result['verdict'],
-      'executionTime': Number(result['time']),
-      'failedCase': failedCase,
-      'totalCase': result['totalCases']
+    const verdict: Verdict = {
+      username: username,
+      submissionNumber: Number(submissions[i].problemNumber),
+      sourceFile: sourceFile,
+      verdict: result.verdict,
+      executionTime: Number(result.time),
+      memory: 64,
+      failedCase: failedCase,
+      totalCase: result.totalCases
     };
 
     console.log(verdict);
     console.log();
     verdicts.push(verdict);
   }
-  fs.writeFileSync(verdictPath, JSON.stringify(verdicts, undefined, 4));
-  console.log(`end judge problemset ${problemSetName}\n`);
+  fs.writeFileSync(paths.problemsetVerdictsPath(problemsetId), JSON.stringify(verdicts, undefined, 2));
+  console.log(`end judge problemset ${problemsetId}\n`);
 }
 function judgeAll() {
   console.log('start judging all the problemset ******** \n');
@@ -148,27 +134,6 @@ function judgeAll() {
     judgeProblemSet(file);
   });
 }
-// { verdict: 'WA',
-//   failedCase: { number: 1, name: 'sample/sample-large' },
-//   time: '0.00',
-//   totalCases: 4 }
-
-/*
-{
-    "username": "by123",
-    "submissionNumber": 1,
-    "sourceFile": "by123_1_A_small.cpp",
-    "verdict": "AC",
-    "executionTime": 0.05,
-    "memory": 128,
-    "failedCase": 0,
-    "totalCase": 2
-  }
-  */
-
-// docker run -dit --name coda-test
-// -v /Users/kaichen/Dev/docker/codaTest:/usr/share/src szfck/nyu-problemtools:1.0.4
-// pull docker image and create a container
 
 const dockerStr = systemSync(`docker ps -a`);
 
@@ -179,8 +144,14 @@ if (dockerStr.indexOf(containerName) > -1) {
 
 systemSync(`docker run -dit --name ${containerName} -v ${path.resolve(localRoot)}:${dockerRoot} ${imageName}`);
 
-// example to judge one problemSet
-// judgeProblemSet('warmup');
+const interval = optimist.argv.interval;
 
-// judgeall problemSet every 5 seconds
-setInterval(judgeAll, 5 * 1000);
+console.log(interval);
+
+if (interval === undefined) {
+  // run judge once
+  judgeAll();
+} else {
+  // run judge every interval seconds
+  setInterval(judgeAll, interval * 1000);
+}
