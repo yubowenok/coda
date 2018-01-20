@@ -22,7 +22,7 @@ export class ProblemsetListComponent implements OnInit {
 
   error: { msg: string } | undefined;
 
-  tooltips = {
+  tooltip = {
     STANDARD_MODE: 'You can submit anytime before the problemset ends.',
     SELFTEST_MODE: 'The problemset has a fixed duration. You can start your session at any time. But once your ' +
     'session is started you cannot pause it. Only start your session when you have enough free time to work on ' +

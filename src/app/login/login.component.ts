@@ -6,6 +6,8 @@ import { UserInfo } from '../constants/user';
 import { Location } from '@angular/common';
 import { MessageService } from '../message.service';
 
+import { usernameLengthValidator, passwordLengthValidator } from '../util';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -22,8 +24,8 @@ export class LoginComponent {
     private message: MessageService
   ) {
     this.form = fb.group({
-      username: new FormControl('by123@nyu.edu', Validators.required),
-      password: new FormControl('123456', Validators.required),
+      username: new FormControl('by123@nyu.edu', [Validators.required, usernameLengthValidator]),
+      password: new FormControl('123456', [Validators.required, passwordLengthValidator])
     });
   }
 

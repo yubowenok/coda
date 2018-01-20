@@ -13,6 +13,15 @@ switch (process.env.NODE_ENV) {
   default:
     envFile = fs.existsSync('.env') ? '.env' : '.env.example';
 }
-console.log(`using env file ${envFile}`);
+console.log(`using env file "${envFile}"`);
 dotenv.config({path: envFile});
-console.log(`coda data is located at ${process.env.CODA_ROOT}`);
+console.log(`data is located at "${process.env.CODA_ROOT}"`);
+
+if (process.env.CODA_USER) {
+  process.setuid(process.env.CODA_USER);
+  console.log(`running as user "${process.env.CODA_USER}"`);
+}
+if (process.env.CODA_GROUP) {
+  process.setgid(process.env.CODA_GROUP);
+  console.log(`running as group "${process.env.CODA_GROUP}"`);
+}

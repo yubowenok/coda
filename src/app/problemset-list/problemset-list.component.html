@@ -6,8 +6,8 @@
     <mat-nav-list>
       <mat-list-item *ngFor="let problemset of group.problemsetList" routerLink="/problemset/{{problemset.id}}">
         <mat-icon mat-list-icon>assignment</mat-icon>
-        <h3 mat-line>{{problemset.title}}</h3>
-        <div mat-line class="problemset">
+        <h3 mat-line class="row">{{problemset.title}}</h3>
+        <div mat-line class="problemset row">
           <div class="time">
             <span>
               <label>Start: </label>{{displayTime(problemset.startTime)}}
@@ -16,10 +16,12 @@
               <label>End: </label>{{displayTime(problemset.endTime)}}
             </span>
           </div>
+        </div>
+        <div mat-line class="row">
           <mat-chip-list>
             <mat-chip class="mode run" selected="{{isSelftestMode(problemset)}}"
                       matTooltip="{{isSelftestMode(problemset) ?
-                      tooltips.SELFTEST_MODE : tooltips.STANDARD_MODE}}"
+                      tooltip.SELFTEST_MODE : tooltip.STANDARD_MODE}}"
                       [routerLink]="['/faq']"
                       fragment="{{isSelftestMode(problemset) ? 'selftest' : 'standard'}}"
             >
@@ -27,7 +29,7 @@
             </mat-chip>
             <mat-chip class="mode judge" selected="{{isBlindJudge(problemset)}}"
                       matTooltip="{{isBlindJudge(problemset) ?
-                      tooltips.BLIND_JUDGE : tooltips.OPEN_JUDGE}}"
+                      tooltip.BLIND_JUDGE : tooltip.OPEN_JUDGE}}"
                       [routerLink]="['/faq']"
                       fragment="{{isBlindJudge(problemset) ? 'blind' : 'open'}}"
             >
@@ -35,7 +37,7 @@
             </mat-chip>
             <mat-chip class="mode penalty" selected="{{isTimePenalty(problemset)}}"
                       matTooltip="{{isTimePenalty(problemset) ?
-                      tooltips.TIME_PENALTY : tooltips.SCORE_PENALTY}}"
+                      tooltip.TIME_PENALTY : tooltip.SCORE_PENALTY}}"
                       [routerLink]="['/faq']"
                       fragment="{{isTimePenalty(problemset) ? 'score-penalty' : 'time-penalty'}}"
             >
@@ -45,7 +47,7 @@
                       *ngIf="problemset.freebies"
                       [routerLink]="['/faq']"
                       fragment="freebies"
-                      matTooltip="{{tooltips.FREEBIES}}">
+                      matTooltip="{{tooltip.FREEBIES}}">
               Freebies × {{problemset.freebies}}
             </mat-chip>
           </mat-chip-list>

@@ -1,4 +1,7 @@
-import { Response, Request, NextFunction, Express } from 'express';
+import { Response, Request, Express } from 'express';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as paths from '../constants/path';
 import {
   getProblemset,
   getProblem,
@@ -7,10 +10,7 @@ import {
   isAuthenticated,
   parseStatement
 } from '../util';
-import * as path from 'path';
-import * as paths from '../constants/path';
-import * as fs from 'fs';
-import { ProblemConfig, ProblemsetProblem, WebStatement } from '../constants';
+import { ProblemConfig, ProblemsetProblem } from '../constants';
 
 /**
  * Creates a web format problem.
@@ -56,7 +56,7 @@ module.exports = function(app: Express) {
     isAuthenticated,
     isValidProblemsetId,
     isValidProblemNumber,
-    (req: Request, res: Response, next: NextFunction) => {
+    (req: Request, res: Response) => {
     const problemsetId = req.params.problemsetId;
     const problemNumber = req.params.problemNumber;
     const problemset = getProblemset(problemsetId);

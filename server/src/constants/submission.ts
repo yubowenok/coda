@@ -1,7 +1,22 @@
+import * as _ from 'lodash';
+
 export enum Language {
   C = 'C',
   CPP = 'CPP',
   JAVA = 'JAVA'
+}
+
+export const LanguageList = _.values(Language);
+
+export const LanguageSuffix: { [lang: string]: string } = {
+  C: 'c',
+  CPP: 'cpp',
+  JAVA: 'java'
+};
+
+export enum BlindJudgeStatus {
+  SKIPPED = 'SKIPPED',
+  FINAL = 'FINAL' // last subtask submission that counts
 }
 
 export interface Submission {
@@ -14,6 +29,7 @@ export interface Submission {
   problemsetTime: number; // # seconds since problemset / selftest session starts
   submitTime: string; // date string
   outsideProblemsetTime?: boolean;
+  blindJudgeStatus?: BlindJudgeStatus; // for blind judge
 }
 
 export interface SubmissionDict {
@@ -23,6 +39,7 @@ export interface SubmissionDict {
 export enum VerdictType {
   PENDING = 'PENDING',
   SKIPPED = 'SKIPPED',
+  WAITING = 'WAITING',
   AC = 'AC',
   CE = 'CE',
   WA = 'WA',
@@ -60,6 +77,7 @@ export interface JudgedSubmission {
   outsideProblemsetTime: boolean;
   failedCase?: number; // 0 if AC
   totalCase?: number;
+  blindJudgeStatus?: BlindJudgeStatus;
 }
 
 export interface JudgedSubmissionWithSource extends JudgedSubmission {

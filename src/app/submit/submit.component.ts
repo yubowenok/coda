@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ProblemsetInfo } from '../constants/problemset';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../api.service';
 
 import { Language } from '../constants/language';
 import { SubtaskInfo } from '../constants/problem';
 import { CopyService } from '../copy.service';
+import { MessageService } from '../message.service';
+import { SubmitData } from '../constants/submission';
 
 @Component({
   selector: 'app-submit',
@@ -16,11 +18,14 @@ export class SubmitComponent implements OnInit {
 
   constructor(
     private api: ApiService,
+    private copy: CopyService,
+    private message: MessageService,
     private route: ActivatedRoute,
-    private copy: CopyService
+    private router: Router
   ) { }
 
   problemset: ProblemsetInfo;
+  error: { msg: string } | undefined;
 
   private selectedProblem = '';
   private lockProblemSelect = false;
@@ -31,6 +36,10 @@ export class SubmitComponent implements OnInit {
   private latestCode = this.displayCode;
 
   ngOnInit() {
+    this.route.params.subscribe((params: { problemsetId: string, problemNumber: string }) => {
+      this.api.onProblemsetIdChange(params.problemsetId);
+    });
+
     this.getProblemset();
   }
 
@@ -65,11 +74,17 @@ export class SubmitComponent implements OnInit {
   getProblemset(): void {
     const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
     this.api.getProblemset(problemsetId)
-      .subscribe(problemset => {
-        this.problemset = problemset;
-        this.getSelectedProblem();
-        this.getSubtasks();
-      });
+      .subscribe(
+        problemset => {
+          this.problemset = problemset;
+          this.getSelectedProblem();
+          this.getSubtasks();
+        },
+        err => {
+          this.api.loginErrorHandler(err);
+          this.error = err.error;
+        }
+      );
   }
 
   getSubtasks(): void {
@@ -92,7 +107,25 @@ export class SubmitComponent implements OnInit {
   }
 
   submit() {
-
+    const data: SubmitData = {
+      username: this.api.getCurrentUser().username,
+      problemsetId: this.problemset.id,
+      problemNumber: this.selectedProblem,
+      subtask: this.selectedSubtask || 'all',
+      language: this.language,
+      sourceCode: this.latestCode
+    };
+    this.api.submit(data)
+      .subscribe(
+        (submissionNumber: number) => {
+          this.message.info(`Solution #${submissionNumber} submitted!`);
+          this.router.navigate(
+            [`/problemset/${data.problemsetId}/submission/${data.username}/${submissionNumber}`]);
+        },
+        err => {
+          this.message.error(err.error.msg);
+        }
+      );
   }
 
   copyText(text: string): void {

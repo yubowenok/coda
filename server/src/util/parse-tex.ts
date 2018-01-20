@@ -34,31 +34,16 @@ const parseCenter = (input: string): string => {
 };
 
 /**
- * Replaces {\it } {\tt } blocks by <it></it> <tt></tt> tags.
+ * Replaces {\it } {\tt } {\bf } blocks by <it></it> <tt></tt> <bf></bf> tags.
  */
 const parseFontStyle = (input: string): string => {
-  // parse it
-  const PARSE_IT = '{\\it';
-  let it_start = input.indexOf(PARSE_IT);
-  while (it_start !== -1) {
-    const it_end = input.indexOf('}', it_start);
-    input = input.substring(0, it_start) +
-      `<it>${input.substring(it_start + PARSE_IT.length + 1, it_end)}</it>` +
-      input.substring(it_end + 1);
-    it_start = input.indexOf(PARSE_IT, it_end);
-  }
-
-  // parse tt
-  const PARSE_TT = '{\\tt';
-  let tt_start = input.indexOf(PARSE_TT);
-  while (tt_start !== -1) {
-    const tt_end = input.indexOf('}', tt_start);
-    input = input.substring(0, tt_start) +
-      `<tt>${input.substring(tt_start + PARSE_TT.length + 1, tt_end)}</tt>` +
-      input.substring(tt_end + 1);
-    tt_start = input.indexOf(PARSE_TT, tt_end);
-  }
-
+  ['it', 'tt', 'bf'].forEach((tag: string) => {
+    (input.match(RegExp(`{\\\\${tag}([^}]*)}`, 'g')) || [])
+      .forEach((matched: string) => {
+        const content = matched.match(RegExp(`^{\\\\${tag}(.*)}$`))[1];
+        input = input.replace(matched, `<${tag}>${content}</${tag}>`);
+      });
+  });
   return input;
 };
 
@@ -130,7 +115,7 @@ const parseIllustration = (input: string): { illustration?: WebIllustration, inp
  * Parses \section*{Subtasks} into a list of HTML. Describes each subtask with one HTML string.
  */
 const parseSubtasks = (input: string): string[] => {
-  const SUBTASK_PATTERN = 'Subtasks';
+  const SUBTASK_PATTERN = '\\section*{Subtasks}';
   const TASK_PATTERN = '\\item ';
   const SUBTASK_END = '\\end{itemize}';
   const subtaskStart = input.indexOf(SUBTASK_PATTERN);
@@ -208,22 +193,23 @@ export const parseSection = (input: string): string => {
 export const parseStatement = (input: string): WebStatement => {
   input = removeComments(input);
 
-  const parsedSubtasks = parseSubtasks(input);
   const parsedTitle = parseProblemName(input);
   input = parsedTitle.input;
   const parsedIllustration: { illustration?: WebIllustration, input: string } = parseIllustration(input);
   input = parsedIllustration.input;
-  let parsedStatement = parseSection(input);
-  parsedStatement = parseCenter(parsedStatement);
-  parsedStatement = parseItemize(parsedStatement);
-  parsedStatement = parseFontStyle(parsedStatement);
-  parsedStatement = parseQuotes(parsedStatement);
-  parsedStatement = parseParagraphs(parsedStatement);
+
+  input = parseFontStyle(input);
+  input = parseQuotes(input);
+  const parsedSubtasks = parseSubtasks(input); // must appear before parseSection/parseItemize
+  input = parseSection(input);
+  input = parseCenter(input);
+  input = parseItemize(input);
+  input = parseParagraphs(input);
 
   return {
     title: parsedTitle.title,
     illustration: parsedIllustration.illustration,
-    statement: parsedStatement,
+    statement: input,
     subtasks: parsedSubtasks
   };
 };

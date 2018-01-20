@@ -8,7 +8,7 @@ mat-list-item {
 
 .time span {
   display: inline-block;
-  min-width: 150px;
+  min-width: 120px;
 }
 
 .mat-line.problemset {
@@ -20,6 +20,7 @@ mat-chip.mode {
   cursor: pointer;
   text-align: center;
   display: inline-block;
+  line-height: .75;
 }
 
 .mode.run {
@@ -40,4 +41,9 @@ mat-card {
 
 mat-card-title {
   font-size: 1.5em;
+}
+
+.mat-nav-list .mat-list-item .row.mat-line {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }

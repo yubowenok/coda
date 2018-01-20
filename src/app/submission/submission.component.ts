@@ -1,14 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
 import * as moment from 'moment';
 
 import { ApiService } from '../api.service';
 import { CopyService } from '../copy.service';
-import { Verdict } from '../constants/submission';
-import { LanguageDisplay } from '../constants/language';
-import { SubmissionWithSource } from '../constants/submission';
-import { ProblemsetInfo } from '../constants/problemset';
+import {
+  Verdict,
+  ColumnWidth,
+  LanguageDisplay,
+  SubmissionWithSource,
+  ProblemsetInfo,
+  SECOND_MS
+} from '../constants';
+import { executionTimeDisplay } from '../util';
 
 import {
   TimeDisplayPipe,
@@ -17,12 +22,14 @@ import {
   VerdictClassPipe
 } from '../pipe';
 
+const PENDING_RECHECK_INTERVAL = 10 * SECOND_MS;
+
 @Component({
   selector: 'app-submission',
   templateUrl: './submission.component.html',
   styleUrls: ['./submission.component.css']
 })
-export class SubmissionComponent implements OnInit {
+export class SubmissionComponent implements OnInit, OnDestroy {
 
   constructor(
     private api: ApiService,
@@ -37,6 +44,7 @@ export class SubmissionComponent implements OnInit {
   private problemTitle: string;
   private rows = [];
   private columns = [];
+  private recheckHandler: NodeJS.Timer | undefined;
 
   ngOnInit() {
     this.api.onProblemsetIdChange(this.route.snapshot.paramMap.get('problemsetId'));
@@ -54,23 +62,48 @@ export class SubmissionComponent implements OnInit {
     const verdictDisplayPipe = new VerdictDisplayPipe();
     const titleCasePipe = new TitleCasePipe();
     const columns = [
-      { name: '#', prop: 'submissionNumber', maxWidth: 80, sortable: false },
-      { name: 'Problem', prop: 'problem', sortable: false },
-      { name: 'Subtask', prop: 'subtask', pipe: titleCasePipe, sortable: false,
-        minWidth: 80, maxWidth: 80 },
-      { name: 'Lang', prop: 'language', sortable: false,
-        minWidth: 60, maxWidth: 60 },
-      { name: 'Verdict', prop: 'verdict', pipe: verdictDisplayPipe, sortable: false,
+      {
+        name: '#', prop: 'submissionNumber', sortable: false,
+        ...ColumnWidth.SUBMISSION_NUMBER
+      },
+      {
+        name: 'Problem', prop: 'problem', sortable: false,
+        ...ColumnWidth.PROBLEM
+      },
+      {
+        name: 'Subtask', prop: 'subtask', pipe: titleCasePipe, sortable: false,
+        ...ColumnWidth.SUBTASK
+      },
+      {
+        name: 'Lang', prop: 'language', sortable: false,
+        ...ColumnWidth.LANGUAGE
+      },
+      {
+        name: 'Verdict', prop: 'verdict', pipe: verdictDisplayPipe, sortable: false,
         cellClass: this.getCorrectClass,
-        minWidth: 185 },
-      { name: 'Execution', prop: 'executionTimeDisplay', sortable: false },
+        ...ColumnWidth.VERDICT
+      },
+      {
+        name: 'Execution', prop: 'executionTimeDisplay', sortable: false,
+        ...ColumnWidth.EXECUTION_TIME
+      },
       // { name: 'Memory', prop: 'memoryDisplay', sortable: false },
-      { name: 'Time', prop: 'problemsetTime', pipe: timeDisplayPipe, sortable: false,
-        minWidth: 100, maxWidth: 100 },
-      { name: 'Date', prop: 'submitTime', pipe: dateDisplayPipe, sortable: false,
-        minWidth: 210, maxWidth: 210 }
+      {
+        name: 'Time', prop: 'problemsetTime', pipe: timeDisplayPipe, sortable: false,
+        ...ColumnWidth.PROBLEMSET_TIME
+      },
+      {
+        name: 'Date', prop: 'submitTime', pipe: dateDisplayPipe, sortable: false,
+        ...ColumnWidth.SUBMIT_TIME
+      }
     ];
     this.columns = columns;
+  }
+
+  ngOnDestroy() {
+    if (this.recheckHandler !== undefined) {
+      clearInterval(this.recheckHandler);
+    }
   }
 
   getCorrectClass(cell: { row: { verdict: Verdict } }): string {
@@ -81,10 +114,10 @@ export class SubmissionComponent implements OnInit {
   }
 
   getSubmission(): void {
-    const submissionNumber = this.route.snapshot.paramMap.get('submissionNumber');
-    const username = this.route.snapshot.paramMap.get('username');
     const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
-    this.api.getSubmission(problemsetId, username, submissionNumber) // TODO: add username
+    const username = this.route.snapshot.paramMap.get('username');
+    const submissionNumber = +this.route.snapshot.paramMap.get('submissionNumber');
+    this.api.getSubmission(problemsetId, username, submissionNumber)
       .subscribe(
         submission => {
           this.submission = submission;
@@ -104,6 +137,30 @@ export class SubmissionComponent implements OnInit {
     this.error = undefined;
     this.updateTitle();
     this.updateTable();
+    this.checkPending();
+  }
+
+  /**
+   * If the submission verdict is PENDING, then recheck later.
+   */
+  private checkPending(): void {
+    if (this.recheckHandler !== undefined) {
+      clearInterval(this.recheckHandler);
+    }
+    if (this.submission.verdict !== Verdict.PENDING) {
+      return;
+    }
+    const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
+    const username = this.route.snapshot.paramMap.get('username');
+    const submissionNumber = +this.route.snapshot.paramMap.get('submissionNumber');
+
+    this.recheckHandler = setInterval(() => {
+      this.api.getSubmission(problemsetId, username, submissionNumber)
+        .subscribe(submission => {
+          this.submission.verdict = submission.verdict;
+          this.update();
+        });
+    }, PENDING_RECHECK_INTERVAL);
   }
 
   private updateTable(): void {
@@ -116,7 +173,8 @@ export class SubmissionComponent implements OnInit {
     const submission = this.submission;
     this.rows = [{
       ...submission,
-      executionTimeDisplay: `${submission.verdict === Verdict.TLE ? '> ' : ''}${submission.executionTime}s`,
+      subtask: submission.subtask === 'all' ? '-' : submission.subtask,
+      executionTimeDisplay: executionTimeDisplay(submission),
       // memoryDisplay: `${submission.verdict === Verdict.MLE ? '> ' : ''}${submission.memory}MB`,
       problem: problemNames[submission.problemNumber],
       submitTime: moment(submission.submitTime),

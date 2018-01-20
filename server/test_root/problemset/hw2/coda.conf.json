@@ -34,6 +34,5 @@
     }
   ],
   "allowGroups": ["spring18"],
-  "showCaseNumber": true,
-  "private": true
+  "showCaseNumber": true
 }

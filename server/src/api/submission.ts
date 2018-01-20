@@ -1,4 +1,4 @@
-import { Response, Request, NextFunction, Express } from 'express';
+import { Response, Request, Express } from 'express';
 import {
   isAuthenticated,
   isValidProblemsetId,
@@ -7,10 +7,13 @@ import {
   getSubmission,
   checkSubmission,
   getSubmissionList,
+  getProblemset,
   getVerdict,
   getVerdictDict,
   getJudgedSubmission,
-  getJudgedSubmissionWithSource
+  getJudgedSubmissionWithSource,
+  updateVerdictForBlindJudge,
+  updateVerdictsForBlindJudge
 } from '../util';
 
 module.exports = function(app: Express) {
@@ -22,15 +25,19 @@ module.exports = function(app: Express) {
     isValidProblemsetId,
     isValidUsername,
     isAuthorizedUser,
-    (req: Request, res: Response, next: NextFunction) => {
+    (req: Request, res: Response) => {
     const problemsetId = req.params.problemsetId;
     const username = req.params.username;
     const submissionNumber = +req.params.submissionNumber;
     if (!checkSubmission(problemsetId, username, submissionNumber)) {
-      res.status(404).json({ msg: 'submission does not exist' });
+      return res.status(404).json({ msg: 'submission does not exist' });
     }
     const submission = getSubmission(problemsetId, username, submissionNumber);
-    res.json(getJudgedSubmissionWithSource(problemsetId, submission, getVerdict(problemsetId, submission)));
+    const judgedSubmission = getJudgedSubmissionWithSource(problemsetId, submission,
+      getVerdict(problemsetId, submission));
+
+    updateVerdictForBlindJudge(getProblemset(problemsetId), judgedSubmission);
+    res.json(judgedSubmission);
   });
 
   /**
@@ -41,13 +48,15 @@ module.exports = function(app: Express) {
     isValidProblemsetId,
     isValidUsername,
     isAuthorizedUser,
-    (req: Request, res: Response, next: NextFunction) => {
+    (req: Request, res: Response) => {
       const problemsetId = req.params.problemsetId;
       const username = req.params.username;
       const verdicts = getVerdictDict(problemsetId);
-      const submissions = getSubmissionList(problemsetId, username)
+      const judgedSubmissions = getSubmissionList(problemsetId, username)
         .map(submission => getJudgedSubmission(submission, verdicts && submission.username in verdicts ?
           verdicts[submission.username][submission.submissionNumber] : undefined));
-      res.json(submissions);
+
+      updateVerdictsForBlindJudge(getProblemset(problemsetId), judgedSubmissions);
+      res.json(judgedSubmissions);
   });
 };

@@ -17,7 +17,7 @@ const app = express();
 // Express configuration
 app.set('port', process.env.PORT || 3000);
 app.set('trust proxy', 1);
-app.use(function(req: Request, res: Response, next: NextFunction) {
+app.use((req: Request, res: Response, next: NextFunction) => {
   const origin = req.get('origin');
   if (process.env.ALLOW_ORIGIN.split(';').indexOf(origin) !== -1) {
     res.header('Access-Control-Allow-Origin', origin);
@@ -53,6 +53,10 @@ require('./api/scoreboard')(app);
 require('./api/user')(app);
 
 // Serve the web content
-app.use('/', express.static(path.join(__dirname, '/../../dist')));
+app.use('/', express.static(path.join(__dirname, '../../dist')));
+
+app.get('*', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../../dist/index.html'));
+});
 
 module.exports = app;

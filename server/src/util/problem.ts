@@ -43,7 +43,22 @@ export const isValidProblemNumber = (req: Request, res: Response, next: NextFunc
   const problemNumber = req.params.problemNumber;
   const problemset = getProblemset(problemsetId);
   if (problemset.problems.map(problem => problem.number).indexOf(problemNumber) === -1) {
-    res.status(404).json({ msg: 'invalid problem number' });
+    return res.status(404).json({ msg: 'invalid problem number' });
+  }
+  next();
+};
+
+/**
+ * Checks if the subtask in the request URL is valid, assuming problemsetId and problemNumber are valid.
+ */
+export const isValidSubtask = (req: Request, res: Response, next: NextFunction) => {
+  const problemsetId = req.params.problemsetId;
+  const problemNumber = req.params.problemNumber;
+  const subtask = req.params.subtask;
+  const problemset = getProblemset(problemsetId);
+  const problem = problemset.problems.filter(prob => prob.number === problemNumber)[0];
+  if (problem.subtasks.map(task => task.id).indexOf(subtask) === -1) {
+    return res.status(404).json({ msg: 'invalid subtask' });
   }
   next();
 };

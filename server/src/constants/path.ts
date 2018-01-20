@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { Submission } from './submission';
+import { Language, LanguageSuffix, Submission } from './submission';
 
 const PROBLEMSET_DIR = path.join(process.env.CODA_ROOT, 'problemset');
 const PROBLEM_DIR = path.join(process.env.CODA_ROOT, 'problem');
@@ -28,6 +28,10 @@ export const problemsetSessionsPath = (problemsetId: string): string => {
   return path.join(PROBLEMSET_DIR, problemsetId, 'sessions.json');
 };
 
+export const problemsetSourceDir = (problemsetId: string): string => {
+  return path.join(PROBLEMSET_DIR, problemsetId, 'source');
+};
+
 export const problemsetVerdictsPath = (problemsetId: string): string => {
   return path.join(PROBLEMSET_DIR, problemsetId, 'verdicts.json');
 };
@@ -48,6 +52,24 @@ export const problemSamplesPath = (problemId: string): string => {
   return path.join(PROBLEM_DIR, problemId, 'data/sample');
 };
 
+/**
+ * Gives the file name of a submission to save.
+ */
+export const submissionFileName = (username: string, submissionNumber: number, problemNumber: string, subtask: string,
+                                   language: Language): string => {
+  return `${username}_${submissionNumber}_${problemNumber}_${subtask}.${LanguageSuffix[language]}`;
+};
+
+/**
+ * Gives where the submit API shall save the source. sourceName is determined by submissionFileName().
+ */
+export const submissionSavePath = (problemsetId: string, username: string, sourceName: string): string => {
+  return path.join(problemsetSourceDir(problemsetId), username, sourceName);
+};
+
+/**
+ * Retrieves saved submission path from submission record.
+ */
 export const submissionSourcePath = (problemsetId: string, submission: Submission): string => {
   return path.join(PROBLEMSET_DIR, problemsetId,
     'source', submission.username, submission.sourceFile);

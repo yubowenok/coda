@@ -69,6 +69,14 @@ export const getProblemsetList = (): ProblemsetConfig[] => {
   return list;
 };
 
+/**
+ * @returns Number of seconds since problemset starts till now.
+ */
+export const getProblemsetTime = (problemset: ProblemsetConfig): number => {
+  // TODO: this does not handle user session in Selftest!
+  return Math.floor((new Date().getTime() - new Date(problemset.startTime).getTime()) / 1000);
+};
+
 export const getProblemsetScoreDict = (problemsetId: string): ProblemsetScoreDict => {
   const problemset = getProblemset(problemsetId);
   const dict: ProblemsetScoreDict = {};

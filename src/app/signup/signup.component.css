@@ -6,3 +6,15 @@ mat-form-field {
 .notice {
   margin-bottom: 10px;
 }
+
+.btn-create-account {
+  margin-top: 30px;
+}
+
+.info {
+  cursor: pointer;
+  float: right;
+  margin-bottom: -1em;
+  margin-right: -1.1em;
+  color: #555;
+}

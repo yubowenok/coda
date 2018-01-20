@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 import { of } from 'rxjs/observable/of';
 import { Subject } from 'rxjs/Subject';
-import {catchError, distinctUntilChanged, tap} from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { MessageService } from './message.service';
 import {
   API_URL,
@@ -17,7 +17,8 @@ import {
   SignupInfo,
   UserInfo,
   LoginInfo,
-  UserSettings
+  UserSettings,
+  SubmitData
 } from './constants';
 import * as time from './constants/time';
 
@@ -36,20 +37,30 @@ const httpOptions = {
   withCredentials: true
 };
 
-enum ApiType {
-  PROBLEM = 'problem',
-  PROBLEMSET = 'problemset',
-  PROBLEMSET_LIST = 'problemsets',
-  SCOREBOARD = 'scoreboard',
-  SUBMISSION = 'submission',
-  SUBMISSION_LIST = 'submissions',
-  SIGNUP = 'signup',
-  LOGIN = 'login',
-  LOGOUT = 'logout',
-  CHECK_LOGIN = 'check-login',
-  SETTINGS = 'settings',
-  UPDATE_PASSWORD = 'update-password',
-  UPDATE_SETTINGS = 'update-settings'
+class ApiUrl {
+
+  private static base = (url: string): string => `${API_URL}${url}`;
+
+  static login = () => ApiUrl.base('/login');
+  static checkLogin = () => ApiUrl.base('/check-login');
+  static logout = () => ApiUrl.base('/logout');
+  static signup = () => ApiUrl.base('/signup');
+  static settings = () => ApiUrl.base('/settings');
+  static updatePassword = () => ApiUrl.base('/update-password');
+  static updateSettings = () => ApiUrl.base('/update-settings');
+  static problemsetList = () => ApiUrl.base('/problemsets');
+  static problemset = (problemsetId: string) => ApiUrl.base(`/problemset/${problemsetId}`);
+  static problem = (problemsetId: string, problemNumber: string) =>
+    `${ApiUrl.problemset(problemsetId)}/problem/${problemNumber}`
+  static submission = (problemsetId: string, username: string, submissionNumber: number) =>
+    `${ApiUrl.problemset(problemsetId)}/submission/${username}/${submissionNumber}`
+  static submissionList = (problemsetId: string, username: string) =>
+    `${ApiUrl.problemset(problemsetId)}/submissions/${username}`
+  static scoreboard = (problemsetId: string) =>
+    `${ApiUrl.problemset(problemsetId)}/scoreboard`
+  static submit = (problemsetId: string, problemNumber: string, subtask: string) =>
+    `${ApiUrl.problem(problemsetId, problemNumber)}/submit/${subtask}`
+
 }
 
 @Injectable()
@@ -117,7 +128,7 @@ export class ApiService {
   }
 
   getProblemsetList(): Observable<ProblemsetInfo[]> {
-    return this.http.get<ProblemsetInfo[]>(this.url(ApiType.PROBLEMSET_LIST))
+    return this.http.get<ProblemsetInfo[]>(ApiUrl.problemsetList())
       .pipe(
         tap(problemsets => {
           console.log('fetched problemset list', problemsets);
@@ -131,8 +142,7 @@ export class ApiService {
     if (cached !== null) {
       return cached;
     }
-    const url = `${this.url(ApiType.PROBLEMSET)}/${id}`;
-    return this.http.get<ProblemsetInfo>(url, httpOptions)
+    return this.http.get<ProblemsetInfo>(ApiUrl.problemset(id), httpOptions)
       .pipe(
         tap(problemset => {
           console.log(`fetched problemset ${id}`, problemset);
@@ -151,8 +161,7 @@ export class ApiService {
     if (cached !== null) {
       return cached;
     }
-    const url = `${this.url(ApiType.PROBLEMSET)}/${problemsetId}/${ApiType.PROBLEM}/${problemNumber}`;
-    return this.http.get<ProblemContent>(url, httpOptions)
+    return this.http.get<ProblemContent>(ApiUrl.problem(problemsetId, problemNumber), httpOptions)
       .pipe(
         tap(problem => {
           console.log(`fetched problem ${cacheId}`, problem);
@@ -165,33 +174,31 @@ export class ApiService {
       );
   }
 
-  getScoreboard(id: string): Observable<Scoreboard> {
-    const cached = this.getCache(id, this.scoreboardCache, RefetchInterval.SCOREBOARD);
+  getScoreboard(problemsetId: string): Observable<Scoreboard> {
+    const cached = this.getCache(problemsetId, this.scoreboardCache, RefetchInterval.SCOREBOARD);
     if (cached !== null) {
       return cached;
     }
-    const url = `${this.url(ApiType.PROBLEMSET)}/${id}/${ApiType.SCOREBOARD}`;
-    return this.http.get<Scoreboard>(url, httpOptions)
+    return this.http.get<Scoreboard>(ApiUrl.scoreboard(problemsetId), httpOptions)
       .pipe(
         tap(scoreboard => {
-          console.log(`fetched scoreboard ${id}`, scoreboard);
-          this.scoreboardCache[id] = {
+          console.log(`fetched scoreboard ${problemsetId}`, scoreboard);
+          this.scoreboardCache[problemsetId] = {
             data: scoreboard,
             lastFetched: new Date().getTime()
           };
         }),
-        catchError(this.handleError<Scoreboard>(`getScoreboard ${id}`))
+        catchError(this.handleError<Scoreboard>(`getScoreboard ${problemsetId}`))
       );
   }
 
-  getSubmission(problemsetId: string, username: string, submissionNumber: string): Observable<SubmissionWithSource> {
+  getSubmission(problemsetId: string, username: string, submissionNumber: number): Observable<SubmissionWithSource> {
     const cacheId = `${problemsetId}_${username}_${submissionNumber}`;
     const cached = this.getCache(cacheId, this.submissionCache, RefetchInterval.SUBMISSION);
     if (cached !== null) {
       return cached;
     }
-    const url = `${this.url(ApiType.PROBLEMSET)}/${problemsetId}/${ApiType.SUBMISSION}/${username}/${submissionNumber}`;
-    return this.http.get<SubmissionWithSource>(url, httpOptions)
+    return this.http.get<SubmissionWithSource>(ApiUrl.submission(problemsetId, username, submissionNumber), httpOptions)
       .pipe(
         tap(submission => {
           console.log(`fetched submission ${problemsetId} ${submissionNumber}`, submission);
@@ -206,18 +213,25 @@ export class ApiService {
     if (cached !== null) {
       return cached;
     }
-    const url = `${this.url(ApiType.PROBLEMSET)}/${problemsetId}/${ApiType.SUBMISSION_LIST}/${username}`;
-    return this.http.get<Submission[]>(url, httpOptions)
+    return this.http.get<Submission[]>(ApiUrl.submissionList(problemsetId, username), httpOptions)
       .pipe(
         tap(submissions => {
           console.log(`fetched submissions ${problemsetId}`, submissions);
         }),
-        catchError(this.handleError<Submission[]>(`getSubmissions ${problemsetId}`, []))
+        catchError(this.handleError<Submission[]>(`getSubmissions ${problemsetId}`))
+      );
+  }
+
+  submit(data: SubmitData): Observable<number> {
+    return this.http.post<number>(ApiUrl.submit(data.problemsetId, data.problemNumber, data.subtask), data,
+      httpOptions)
+      .pipe(
+        catchError(this.handleError<number>('submit'))
       );
   }
 
   signup(info: SignupInfo): Observable<UserInfo> {
-    return this.http.post<UserInfo>(this.url(ApiType.SIGNUP), info, httpOptions)
+    return this.http.post<UserInfo>(ApiUrl.signup(), info, httpOptions)
       .pipe(
         tap((userInfo: UserInfo) => {
           this.user = userInfo;
@@ -227,7 +241,7 @@ export class ApiService {
   }
 
   login(info: LoginInfo): Observable<UserInfo> {
-    return this.http.post<UserInfo>(this.url(ApiType.LOGIN), info, httpOptions)
+    return this.http.post<UserInfo>(ApiUrl.login(), info, httpOptions)
       .pipe(
         tap((userInfo: UserInfo) => {
           this.user = userInfo;
@@ -237,7 +251,7 @@ export class ApiService {
   }
 
   logout(): Observable<boolean> {
-    return this.http.post<boolean>(this.url(ApiType.LOGOUT), {}, httpOptions)
+    return this.http.post<boolean>(ApiUrl.logout(), {}, httpOptions)
       .pipe(
         tap(res => {
           if (res === true) {
@@ -278,14 +292,14 @@ export class ApiService {
     password: string,
     confirmPassword: string
   }): Observable<boolean> {
-    return this.http.post<boolean>(this.url(ApiType.UPDATE_PASSWORD), passwords, httpOptions)
+    return this.http.post<boolean>(ApiUrl.updatePassword(), passwords, httpOptions)
       .pipe(
         catchError(this.handleError<boolean>('updatePassword'))
       );
   }
 
   updateSettings(settings: UserSettings): Observable<UserSettings> {
-    return this.http.post<UserSettings>(this.url(ApiType.UPDATE_SETTINGS), settings, httpOptions)
+    return this.http.post<UserSettings>(ApiUrl.updateSettings(), settings, httpOptions)
       .pipe(
         tap((serverSettings: UserSettings) => {
           Object.assign(this.user, serverSettings);
@@ -295,7 +309,7 @@ export class ApiService {
   }
 
   getUserSettings(): Observable<UserSettings> {
-    return this.http.get<UserSettings>(this.url(ApiType.SETTINGS), httpOptions)
+    return this.http.get<UserSettings>(ApiUrl.settings(), httpOptions)
       .pipe(
         tap((serverSettings: UserSettings) => {
           Object.assign(this.user, serverSettings);
@@ -315,16 +329,12 @@ export class ApiService {
   }
 
   private checkLogin(): Observable<UserInfo> {
-    return this.http.post<UserInfo>(this.url(ApiType.CHECK_LOGIN), {}, httpOptions)
+    return this.http.post<UserInfo>(ApiUrl.checkLogin(), {}, httpOptions)
       .pipe(
         tap((info: UserInfo) => {
           this.user = info;
         })
       );
-  }
-
-  private url(type: ApiType) {
-    return API_URL + type;
   }
 
   /**

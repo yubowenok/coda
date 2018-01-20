@@ -23,6 +23,24 @@ table {
   justify-content: center;
 }
 
+.pending * {
+  display: inline-block;
+  position: relative;
+}
+
+.pending span {
+  margin-left: .5em;
+  bottom: 5px;
+}
+
+.pending mat-spinner {
+  left: 0;
+}
+
+.status {
+  font-size: .8em;
+}
+
 /* Offset mysterious margin */
 .case.incorrect {
   margin-left: -3px;
