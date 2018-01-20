@@ -1,11 +1,13 @@
-import './config/env';
+import '../config/env';
 import * as fs from 'fs';
-import * as paths from './constants/path';
+import * as paths from '../constants/path';
 import * as path from 'path';
 import * as child_process from 'child_process';
 
-const containerName = 'coda-test';
-const dockerRoot = '/usr/share/src';
+const containerName = process.env.CONTAINER_NAME || 'coda-judge-container';
+const dockerRoot = process.env.DOCKER_ROOT || '/usr/share/src';
+const imageName = process.env.IMAGE_NAME || 'szfck/nyu-problemtools:1.0.4';
+
 const localRoot = process.env.CODA_ROOT;
 const problemSetRoot = paths.problemsetDir();
 
@@ -14,10 +16,7 @@ function systemSync(cmd: string) {
     return child_process.execSync(cmd).toString();
   }
   catch (error) {
-    // error.status;  // Might be 127 in your example.
-    // error.message; // Holds the message you typically want.
-    // error.stderr;  // Holds the stderr output. Use `.toString()`.
-    // error.stdout;  // Holds the stdout output. Use `.toString()`.
+    console.log(`ERROR: ${error}`);
   }
 }
 
@@ -28,28 +27,25 @@ function readJsonFile(file: string) {
 
 function judgeSubmission(problem: string, subtask: string, source: string, timeLimit: number) {
   if (!timeLimit) {
-    console.log('WARNNING: prolem ' + problem + ' no set time limit, set default to 1\n');
+    console.log(`WARNNING: prolem ${problem} no set time limit, set default to 1\n`);
     timeLimit = 1;
   }
 
-  console.log('judge sourceFile: ' + source + ', problem: ' + problem + ', subtask: ' + subtask + '\n');
+  console.log(`judge sourceFile: ${source}, problem: ${problem}, subtask: ${subtask}\n`);
 
-  let cmd_line =
-    'docker exec ' + containerName + ' judge' +
-    ' --source=' + source +
-    ' --problem=' + problem;
+  let cmd_line = `docker exec ${containerName} judge --source=${source} --problem=${problem}`;
 
   if (subtask !== '') {
-    cmd_line += ' --subtask=' + subtask;
+    cmd_line += ` --subtask=${subtask}`;
   }
-  cmd_line += ' --time=' + timeLimit;
-  console.log('execute command line: ' + cmd_line + '\n');
+  cmd_line += ` --time=${timeLimit}`;
+  console.log(`execute command line: ${cmd_line}\n`);
 
   return JSON.parse(systemSync(cmd_line));
 }
 
 function judgeProblemSet(problemSetName: string) {
-  console.log('judging problemset ' + problemSetName + ' ...\n');
+  console.log(`judging problemset ${problemSetName} ...\n`);
 
   const problemSetPath = paths.problemsetDir(problemSetName);
   const configPath = paths.problemsetConfigPath(problemSetName);
@@ -63,16 +59,16 @@ function judgeProblemSet(problemSetName: string) {
 
   if (!fs.existsSync(verdictPath)) {
     fs.writeFileSync(verdictPath, '[]');
-    console.log('create a new verdicts.json for problemset ' + problemSetName + '\n');
+    console.log(`create a new verdicts.json for problemset ${problemSetName}\n`);
   }
 
   if (!fs.existsSync(configPath)) {
-    console.log('WARNNING: config file for ' + problemSetName + ' not existed\n');
+    console.log(`WARNNING: config file for ${problemSetName} not existed\n`);
     return;
   }
 
   if (!fs.existsSync(submissionsPath)) {
-    console.log('problemset ' + problemSetName + ' has no submission file\n');
+    console.log(`problemset ${problemSetName} has no submission file\n`);
     return;
   }
 
@@ -100,7 +96,7 @@ function judgeProblemSet(problemSetName: string) {
     }
 
     if (map[submissions[i]['problemNumber']] === undefined) {
-      console.log('WARNNING: problem number: ' + submissions[i]['problemNumber'] + ' can not find problem path\n');
+      console.log(`WARNNING: problem number: ${submissions[i]['problemNumber']} can not find problem path\n`);
       continue;
     }
 
@@ -142,8 +138,7 @@ function judgeProblemSet(problemSetName: string) {
     verdicts.push(verdict);
   }
   fs.writeFileSync(verdictPath, JSON.stringify(verdicts, undefined, 4));
-  console.log('end judge problemset ' + problemSetName);
-  console.log('\n');
+  console.log(`end judge problemset ${problemSetName}\n`);
 }
 function judgeAll() {
   console.log('start judging all the problemset ******** \n');
@@ -174,17 +169,15 @@ function judgeAll() {
 // docker run -dit --name coda-test
 // -v /Users/kaichen/Dev/docker/codaTest:/usr/share/src szfck/nyu-problemtools:1.0.4
 // pull docker image and create a container
-const imageName = 'szfck/nyu-problemtools:1.0.4';
-// console.log('docker pull ' + imageName);
 
-systemSync('docker pull ' + imageName);
+const dockerStr = systemSync(`docker ps -a`);
 
-systemSync('docker stop ' + containerName);
-systemSync('docker rm ' + containerName);
+if (dockerStr.indexOf(containerName) > -1) {
+  systemSync(`docker stop ${containerName}`);
+  systemSync(`docker rm ${containerName}`);
+}
 
-systemSync('docker run -dit --name ' + containerName +
-  ' -v ' + path.resolve(localRoot) + ':' + dockerRoot + ' ' +
-  imageName);
+systemSync(`docker run -dit --name ${containerName} -v ${path.resolve(localRoot)}:${dockerRoot} ${imageName}`);
 
 // example to judge one problemSet
 // judgeProblemSet('warmup');

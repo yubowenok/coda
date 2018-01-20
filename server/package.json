@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "scripts": {
     "start": "npm run build-ts && node dist/server.js",
-    "judge": "npm run build-ts && node dist/judge.js",
+    "judge": "npm run build-ts && node dist/judge/judge.js",
+    "init-judge": "npm run build-ts && node dist/judge/judgeInit.js",
     "build": "npm run build-ts",
     "serve": "npm run build-ts && NODE_ENV=production node dist/server.js",
     "watch-node": "nodemon dist/server.js",
