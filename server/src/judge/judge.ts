@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as paths from '../constants/path';
 import * as path from 'path';
 import * as child_process from 'child_process';
-import * as optimist from 'optimist';
+import * as yargs from 'yargs';
 import {
   ProblemConfig,
   ProblemsetConfig,
@@ -26,8 +26,7 @@ const problemSetRoot = paths.problemsetDir();
 function systemSync(cmd: string) {
   try {
     return child_process.execSync(cmd).toString();
-  }
-  catch (err) {
+  } catch (err) {
     console.error('systemSync failed', err);
   }
 }
@@ -41,10 +40,10 @@ function judgeSubmission(problemId: string, subtask: string, source: string) {
   const problemConf: ProblemConfig = getProblem(problemId);
 
   if (problemConf.timeLimit === undefined) {
-    console.log(`WARNNING: prolem ${problemId} no set time limit\n`);
+    console.log(`WARNNING: prolem ${problemId} no set time limit`);
     return;
   }
-  console.log(`judge sourceFile: ${source}, problem: ${problemId}, subtask: ${subtask}\n`);
+  console.log(`judge sourceFile: ${source}, problem: ${problemId}, subtask: ${subtask}`);
 
   let cmdLine = `docker exec ${containerName} judge --source=${source} --problem=${paths.judgeProblemPath(problemId)}`;
 
@@ -57,13 +56,13 @@ function judgeSubmission(problemId: string, subtask: string, source: string) {
     }
   }
   cmdLine += ` --time=${problemConf.timeLimit}`;
-  console.log(`execute command line: ${cmdLine}\n`);
+  console.log(`execute command line: ${cmdLine}`);
 
   return JSON.parse(systemSync(cmdLine));
 }
 
 function judgeProblemSet(problemsetId: string) {
-  console.log(`judging problemset ${problemsetId} ...\n`);
+  console.log(`judging problemset ${problemsetId} ...`);
 
   const problemset: ProblemsetConfig = getProblemset(problemsetId);
   const problems: ProblemsetProblem[] = problemset.problems;
@@ -89,7 +88,7 @@ function judgeProblemSet(problemsetId: string) {
     }
 
     if (map[submissions[i].problemNumber] === undefined) {
-      console.log(`WARNNING: problem number: ${submissions[i].problemNumber} can not find problem path\n`);
+      console.log(`WARNNING: problem number: ${submissions[i].problemNumber} can not find problem path`);
       continue;
     }
 
@@ -120,14 +119,13 @@ function judgeProblemSet(problemsetId: string) {
     };
 
     console.log(verdict);
-    console.log();
     verdicts.push(verdict);
   }
   fs.writeFileSync(paths.problemsetVerdictsPath(problemsetId), JSON.stringify(verdicts, undefined, 2));
-  console.log(`end judge problemset ${problemsetId}\n`);
+  console.log(`end judge problemset ${problemsetId}`);
 }
 function judgeAll() {
-  console.log('start judging all the problemset ******** \n');
+  console.log('start judging all the problemset ******** ');
 
   const files = fs.readdirSync(problemSetRoot);
   files.forEach(function (file) {
@@ -144,7 +142,7 @@ if (dockerStr.indexOf(containerName) > -1) {
 
 systemSync(`docker run -dit --name ${containerName} -v ${path.resolve(localRoot)}:${dockerRoot} ${imageName}`);
 
-const interval = optimist.argv.interval;
+const interval = yargs.argv.interval;
 
 console.log(interval);
 
