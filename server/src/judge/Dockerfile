@@ -18,4 +18,3 @@ RUN apt-get install -y default-jdk python3-pip
 
 
 CMD ["/bin/bash"]
-

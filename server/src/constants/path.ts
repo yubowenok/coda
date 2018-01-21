@@ -4,6 +4,9 @@ import { Language, LanguageSuffix, Submission } from './submission';
 const PROBLEMSET_DIR = path.join(process.env.CODA_ROOT, 'problemset');
 const PROBLEM_DIR = path.join(process.env.CODA_ROOT, 'problem');
 
+const JUDGE_PROBLEMSET_DIR = path.join(process.env.DOCKER_ROOT, 'problemset');
+const JUDGE_PROBLEM_DIR = path.join(process.env.DOCKER_ROOT, 'problem');
+
 export const usersPath = (): string => {
   return path.join(process.env.CODA_ROOT, 'users.json');
 };
@@ -73,4 +76,17 @@ export const submissionSavePath = (problemsetId: string, username: string, sourc
 export const submissionSourcePath = (problemsetId: string, submission: Submission): string => {
   return path.join(PROBLEMSET_DIR, problemsetId,
     'source', submission.username, submission.sourceFile);
+};
+
+export const judgeProblemPath = (problemId: string): string => {
+  return path.join(JUDGE_PROBLEM_DIR, problemId);
+};
+
+export const judgeSubmissionSourcePath = (problemsetId: string, submission: Submission): string => {
+  return path.join(JUDGE_PROBLEMSET_DIR, problemsetId,
+    'source', submission.username, submission.sourceFile);
+};
+
+export const runningProblemsetConfigPath = (runningProblemsetConfigId: string): string => {
+  return path.join(process.env.CODA_ROOT, `${runningProblemsetConfigId}.json`);
 };

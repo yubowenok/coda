@@ -32,6 +32,10 @@ const getVerdicts = (problemsetId: string): Verdict[] => {
   return json === '' ? [] : JSON.parse(json);
 };
 
+export const getVerdictsList = (problemsetId: string): Verdict[] => {
+  return getVerdicts(problemsetId);
+};
+
 const submissionSorter = (a: Submission, b: Submission): number => {
   if (a.problemsetTime === b.problemsetTime) {
     if (a.username === b.username) {
