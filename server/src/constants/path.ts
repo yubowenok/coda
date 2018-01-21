@@ -64,3 +64,7 @@ export const judgeSubmissionSourcePath = (problemsetId: string, submission: Subm
   return path.join(JUDGE_PROBLEMSET_DIR, problemsetId,
     'source', submission.username, submission.sourceFile);
 };
+
+export const runningProblemsetConfigPath = (runningProblemsetConfigId: string): string => {
+  return path.join(process.env.CODA_ROOT, `${runningProblemsetConfigId}.json`);
+};

@@ -12,13 +12,16 @@ import {
   Submission,
   Verdict
 } from '../constants';
-import { getProblem } from '../util/problem';
-import { getProblemset } from '../util/problemset';
-import { getSubmissionList, getVerdicts } from '../util/submission';
+import {
+  getProblem,
+  getProblemset,
+  getSubmissionList,
+  getVerdictsList
+} from '../util';
 
 const containerName = process.env.CONTAINER_NAME || 'coda-judge-container';
 const dockerRoot = process.env.DOCKER_ROOT || '/usr/share/src';
-const imageName = process.env.IMAGE_NAME || 'szfck/nyu-problemtools:1.0.4';
+const imageName = process.env.IMAGE_NAME || 'szfck/nyu-problemtools:latest';
 
 const localRoot = process.env.CODA_ROOT;
 const problemSetRoot = paths.problemsetDir();
@@ -29,11 +32,6 @@ function systemSync(cmd: string) {
   } catch (err) {
     console.error('systemSync failed', err);
   }
-}
-
-function readJsonFile(file: string) {
-  const rawdata = fs.readFileSync(file);
-  return JSON.parse(rawdata.toString());
 }
 
 function judgeSubmission(problemId: string, subtask: string, source: string) {
@@ -67,7 +65,7 @@ function judgeProblemSet(problemsetId: string) {
   const problemset: ProblemsetConfig = getProblemset(problemsetId);
   const problems: ProblemsetProblem[] = problemset.problems;
   const submissions: Submission[] = getSubmissionList(problemsetId);
-  const verdicts: Verdict[] = getVerdicts(problemsetId);
+  const verdicts: Verdict[] = getVerdictsList(problemsetId);
 
   const map: { [name: string]: string } = {};
 
@@ -124,10 +122,18 @@ function judgeProblemSet(problemsetId: string) {
   fs.writeFileSync(paths.problemsetVerdictsPath(problemsetId), JSON.stringify(verdicts, undefined, 2));
   console.log(`end judge problemset ${problemsetId}`);
 }
-function judgeAll() {
-  console.log('start judging all the problemset ******** ');
 
-  const files = fs.readdirSync(problemSetRoot);
+function judgeAll(runningProblemsetConfigId: string) {
+  let files: string[] = [];
+
+  if (runningProblemsetConfigId === undefined) {
+    files = fs.readdirSync(problemSetRoot);
+    console.log('start judging all the problemset ******** ');
+  } else {
+    console.log(`start judgeing problemsets from ${runningProblemsetConfigId}`);
+    files = JSON.parse(fs.readFileSync(paths.runningProblemsetConfigPath(runningProblemsetConfigId), 'utf8'));
+  }
+
   files.forEach(function (file) {
     judgeProblemSet(file);
   });
@@ -143,13 +149,14 @@ if (dockerStr.indexOf(containerName) > -1) {
 systemSync(`docker run -dit --name ${containerName} -v ${path.resolve(localRoot)}:${dockerRoot} ${imageName}`);
 
 const interval = yargs.argv.interval;
-
-console.log(interval);
+const runningProblemset = yargs.argv.problemset;
 
 if (interval === undefined) {
   // run judge once
-  judgeAll();
+  judgeAll(runningProblemset);
 } else {
   // run judge every interval seconds
-  setInterval(judgeAll, interval * 1000);
+  setInterval(function() {
+    judgeAll(runningProblemset);
+  }, interval * 1000);
 }

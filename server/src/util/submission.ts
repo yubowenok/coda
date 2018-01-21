@@ -21,9 +21,13 @@ const getSubmissions = (problemsetId: string): Submission[] => {
 /**
  * Reads verdicts.json and gets all verdicts for a problemset.
  */
-export const getVerdicts = (problemsetId: string): Verdict[] => {
+const getVerdicts = (problemsetId: string): Verdict[] => {
   const verdictsPath = paths.problemsetVerdictsPath(problemsetId);
   return fs.existsSync(verdictsPath) ? JSON.parse(fs.readFileSync(verdictsPath, 'utf8')) : [];
+};
+
+export const getVerdictsList = (problemsetId: string): Verdict[] => {
+  return getVerdicts(problemsetId);
 };
 
 const submissionSorter = (a: Submission, b: Submission): number => {

@@ -14,6 +14,10 @@ npm run judge
 
 npm run judge -- --interval 5
 
+#### judge specified problemsets1.json (under CODA_ROOT)
+
+npm run judge -- --problemset problemsets1
+
 ### env setting example
 
 CONTAINER_NAME=coda-judge-container
