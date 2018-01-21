@@ -2,6 +2,16 @@
 <mat-spinner *ngIf="(!submission || !problemset) && !error" diameter="50"></mat-spinner>
 <ng-container *ngIf="submission && problemset && !error">
   <h3>{{getUsername()}}'s Submission #{{submission.submissionNumber}}</h3>
+  <div class="pending status" *ngIf="submission.verdict === 'PENDING'">
+    <mat-spinner diameter="20"></mat-spinner>
+    <span>Waiting to be judged</span>
+  </div>
+  <div class="status" *ngIf="submission.verdict === 'WAITING'">
+    <span>This submission will be judged at the end of the problemset.</span>
+  </div>
+  <div class="status" *ngIf="submission.verdict === 'SKIPPED'">
+    <span>This submission will not be judged because a new submission exists.</span>
+  </div>
   <div class="margin-to-top">
     <ngx-datatable
       class="material striped"

@@ -21,8 +21,9 @@ export class ProblemComponent implements OnInit {
     private copy: CopyService
   ) { }
 
-  private problem: ProblemContent;
-  private error: { msg: string } | undefined;
+  problem: ProblemContent;
+
+  error: { msg: string } | undefined;
 
   ngOnInit() {
     this.route.params.subscribe((params: { problemsetId: string, problemNumber: string }) => {

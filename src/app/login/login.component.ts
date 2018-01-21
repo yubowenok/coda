@@ -6,6 +6,8 @@ import { UserInfo } from '../constants/user';
 import { Location } from '@angular/common';
 import { MessageService } from '../message.service';
 
+import { usernameLengthValidator, passwordLengthValidator } from '../util';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -17,25 +19,30 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private api: ApiService,
+    public api: ApiService,
     private location: Location,
     private message: MessageService
   ) {
     this.form = fb.group({
-      username: new FormControl('by123@nyu.edu', Validators.required),
-      password: new FormControl('123456', Validators.required),
+      username: new FormControl('by123@nyu.edu', [Validators.required, usernameLengthValidator]),
+      password: new FormControl('123456', [Validators.required, passwordLengthValidator])
     });
   }
 
   login(): void {
     this.api.login(this.form.value)
-      .subscribe((data: UserInfo | undefined) => {
-        if (data === undefined) { // failure handler
-          return;
+      .subscribe(
+        (data: UserInfo | undefined) => {
+          if (data === undefined) { // failure handler
+            return;
+          }
+          this.message.info(`Welcome back, ${data.nickname}!`);
+          this.location.back();
+        },
+        err => {
+           this.message.error(err.error.msg);
         }
-        this.message.info(`Welcome back, ${data.nickname}!`);
-        this.location.back();
-      });
+      );
   }
 
 }

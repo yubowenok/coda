@@ -20,7 +20,7 @@ export class ProblemsetComponent implements OnInit {
 
   @Input() problemset: ProblemsetInfo;
 
-  private error: { msg: string } | undefined;
+  error: { msg: string } | undefined;
 
   ngOnInit() {
     this.getProblemset();

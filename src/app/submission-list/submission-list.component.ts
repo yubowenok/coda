@@ -1,11 +1,13 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
-import { ApiService } from '../api.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
-import { Submission, Verdict } from '../constants/submission';
+import { ApiService } from '../api.service';
+import { Submission, Verdict, ColumnWidth } from '../constants/submission';
 import { LanguageDisplay } from '../constants/language';
 import { ProblemsetInfo } from '../constants/problemset';
+
+import { executionTimeDisplay } from '../util';
 
 import {
   DateDisplayPipe,
@@ -25,15 +27,15 @@ export class SubmissionListComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private route: ActivatedRoute,
-    private router: Router
+    private route: ActivatedRoute
   ) { }
 
-  private problemset: ProblemsetInfo;
-  private submissionList: Submission[];
+  problemset: ProblemsetInfo;
+  submissionList: Submission[];
+  error: { msg: string } | undefined;
+
   private rows = [];
   private columns = [];
-  private error: { msg: string } | undefined;
 
   private listMessages = {
     emptyMessage: 'User has no submissions'
@@ -56,23 +58,43 @@ export class SubmissionListComponent implements OnInit {
     const verdictDisplayPipe = new VerdictDisplayPipe();
     const titleCasePipe = new TitleCasePipe();
     this.columns = [
-      { name: '#', prop: 'submissionNumber',
-        minWidth: 30, maxWidth: 50 },
-      { name: 'Problem', prop: 'problem' },
-      { name: 'Subtask', prop: 'subtask', pipe: titleCasePipe,
-        minWidth: 80, maxWidth: 80 },
-      { name: '', prop: 'submissionNumber', cellTemplate: this.sourceLinkTmpl, cellClass: 'center', sortable: false,
-        minWidth: 20, maxWidth: 20 },
-      { name: 'Verdict', prop: 'verdict', pipe: verdictDisplayPipe, cellClass: this.getCorrectClass,
-        minWidth: 185 },
-      { name: 'Lang', prop: 'language',
-        minWidth: 60, maxWidth: 60},
-      { name: 'Execution', prop: 'executionTimeDisplay', comparator: this.executionTimeSorter },
-      { name: 'Memory', prop: 'memoryDisplay', comparator: this.memorySorter },
-      { name: 'Time', prop: 'problemsetTime', pipe: timeDisplayPipe,
-        minWidth: 100, maxWidth: 100 },
-      { name: 'Date', prop: 'submitTime', pipe: dateDisplayPipe,
-        minWidth: 210, maxWidth: 210 }
+      {
+        name: '#', prop: 'submissionNumber',
+        ...ColumnWidth.SUBMISSION_NUMBER
+      },
+      {
+        name: 'Problem', prop: 'problem',
+        ...ColumnWidth.PROBLEM
+      },
+      {
+        name: 'Subtask', prop: 'subtask', pipe: titleCasePipe,
+        ...ColumnWidth.SUBTASK
+      },
+      {
+        name: '', prop: 'sourceCode', cellTemplate: this.sourceLinkTmpl, cellClass: 'center', sortable: false,
+        ...ColumnWidth.SOURCE_CODE
+      },
+      {
+        name: 'Verdict', prop: 'verdict', pipe: verdictDisplayPipe, cellClass: this.getCorrectClass,
+        ...ColumnWidth.VERDICT
+      },
+      {
+        name: 'Lang', prop: 'language',
+        ...ColumnWidth.LANGUAGE
+      },
+      {
+        name: 'Execution', prop: 'executionTimeDisplay', comparator: this.executionTimeSorter,
+        ...ColumnWidth.EXECUTION_TIME
+      },
+      // { name: 'Memory', prop: 'memoryDisplay', comparator: this.memorySorter },
+      {
+        name: 'Time', prop: 'problemsetTime', pipe: timeDisplayPipe,
+        ...ColumnWidth.PROBLEMSET_TIME
+      },
+      {
+        name: 'Date', prop: 'submitTime', pipe: dateDisplayPipe,
+        ...ColumnWidth.SUBMIT_TIME
+      }
     ];
   }
 
@@ -130,29 +152,17 @@ export class SubmissionListComponent implements OnInit {
       const submission = this.submissionList[i];
       newRows.push({
         ...submission,
-        executionTimeDisplay: this.getExecutionTimeDisplay(submission),
-        memoryDisplay: this.getMemoryDisplay(submission),
+        subtask: submission.subtask === 'all' ? '-' : submission.subtask,
+        executionTimeDisplay: executionTimeDisplay(submission),
+        // memoryDisplay: this.getMemoryDisplay(submission),
         problem: problemNames[submission.problemNumber],
         problemsetTime: submission.outsideProblemsetTime ? -1 : submission.problemsetTime,
         submitTime: submission.submitTime,
-        language: LanguageDisplay[submission.language]
+        language: LanguageDisplay[submission.language],
+        sourceCode: submission.submissionNumber
       });
     }
     this.rows = newRows;
-  }
-
-  getExecutionTimeDisplay(submission: Submission): string {
-    if (submission.verdict === Verdict.PENDING || submission.verdict === Verdict.SKIPPED) {
-      return '-';
-    }
-    return `${submission.verdict === Verdict.TLE ? '> ' : ''}${submission.executionTime}s`;
-  }
-
-  getMemoryDisplay(submission: Submission): string {
-    if (submission.verdict === Verdict.PENDING || submission.verdict === Verdict.SKIPPED) {
-      return '-';
-    }
-    return `${submission.verdict === Verdict.MLE ? '> ' : ''}${submission.memory}MB`;
   }
 
   getSourceLink(submissionNumber: string): string {

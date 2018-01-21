@@ -1,14 +1,27 @@
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 
+let envFile: string;
 switch (process.env.NODE_ENV) {
   case 'production':
-    dotenv.config({path: '.env'});
+    envFile = '.env';
     break;
   case 'test':
-    dotenv.config({path: '.env.test'});
+    envFile = '.env.test';
     break;
   case 'development':
   default:
-    dotenv.config({path: fs.existsSync('.env') ? '.env' : '.env.example'});
+    envFile = fs.existsSync('.env') ? '.env' : '.env.example';
+}
+console.log(`using env file "${envFile}"`);
+dotenv.config({path: envFile});
+console.log(`data is located at "${process.env.CODA_ROOT}"`);
+
+if (process.env.CODA_USER) {
+  process.setuid(process.env.CODA_USER);
+  console.log(`running as user "${process.env.CODA_USER}"`);
+}
+if (process.env.CODA_GROUP) {
+  process.setgid(process.env.CODA_GROUP);
+  console.log(`running as group "${process.env.CODA_GROUP}"`);
 }

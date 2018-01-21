@@ -4,15 +4,15 @@
   <mat-form-field>
     <input matInput placeholder="Username / Email"
            formControlName="username" [formGroup]="form">
-    <mat-error *ngIf="!form.controls.username.hasError('email') || !form.controls.username.hasError('required')">
-      Please enter a valid email address
+    <mat-error *ngIf="form.controls.username.hasError('required') || form.controls.username.hasError('length')">
+      Please enter a valid username or email address
     </mat-error>
   </mat-form-field>
 
   <mat-form-field>
     <input matInput placeholder="Password" value="" type="password"
            formControlName="password" [formGroup]="form">
-    <mat-error *ngIf="!form.controls.password.hasError('required')">
+    <mat-error *ngIf="form.controls.password.hasError('required') || form.controls.password.hasError('length')">
       Please enter a valid password
     </mat-error>
   </mat-form-field>

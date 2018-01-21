@@ -7,15 +7,20 @@ import {
   VerdictType,
   VerdictDict,
   JudgedSubmission,
-  JudgedSubmissionWithSource
-} from '../constants/submission';
+  JudgedSubmissionWithSource,
+  BlindJudgeStatus,
+  ProblemsetConfig,
+  JudgeMode
+} from '../constants';
+import { checkProblemsetEnded } from './problemset';
 
 /**
  * Reads submission.json and gets all submissions for a problemset;
  */
 const getSubmissions = (problemsetId: string): Submission[] => {
   const submissionsPath = paths.problemsetSubmissionsPath(problemsetId);
-  return fs.existsSync(submissionsPath) ? JSON.parse(fs.readFileSync(submissionsPath, 'utf8')) : [];
+  const json = (fs.existsSync(submissionsPath) && fs.readFileSync(submissionsPath, 'utf8')) || '';
+  return json === '' ? [] : JSON.parse(json);
 };
 
 /**
@@ -23,7 +28,8 @@ const getSubmissions = (problemsetId: string): Submission[] => {
  */
 const getVerdicts = (problemsetId: string): Verdict[] => {
   const verdictsPath = paths.problemsetVerdictsPath(problemsetId);
-  return fs.existsSync(verdictsPath) ? JSON.parse(fs.readFileSync(verdictsPath, 'utf8')) : [];
+  const json = fs.existsSync(verdictsPath) && fs.readFileSync(verdictsPath, 'utf8');
+  return json === '' ? [] : JSON.parse(json);
 };
 
 export const getVerdictsList = (problemsetId: string): Verdict[] => {
@@ -165,8 +171,8 @@ export const getJudgedSubmission = (submission: Submission, verdict: Verdict | u
       totalCase: 0,
       verdict: VerdictType.PENDING,
       executionTime: 0,
-      sourceFile: submission.sourceFile,
-      memory: 0
+      sourceFile: submission.sourceFile
+      // memory: 0
     };
   }
   return {
@@ -181,7 +187,8 @@ export const getJudgedSubmission = (submission: Submission, verdict: Verdict | u
     // from verdict
     verdict: verdict.verdict,
     executionTime: verdict.executionTime,
-    memory: verdict.memory
+    // memory: verdict.memory
+    blindJudgeStatus: submission.blindJudgeStatus
   };
 };
 
@@ -209,4 +216,23 @@ export const checkIgnoredSubmission = (submission: JudgedSubmission): boolean =>
 
 export const checkPendingSubmission = (submission: JudgedSubmission): boolean => {
   return submission.verdict === VerdictType.PENDING;
+};
+
+export const updateVerdictForBlindJudge = (problemset: ProblemsetConfig, submission: JudgedSubmission): void => {
+  if (problemset.judgeMode !== JudgeMode.BLIND || !submission.blindJudgeStatus) {
+    return;
+  }
+
+  if (submission.blindJudgeStatus === BlindJudgeStatus.SKIPPED) {
+    submission.verdict = VerdictType.SKIPPED;
+  } else if (submission.blindJudgeStatus === BlindJudgeStatus.FINAL && !checkProblemsetEnded(problemset)) {
+    submission.verdict = VerdictType.WAITING;
+  }
+};
+
+export const updateVerdictsForBlindJudge = (problemset: ProblemsetConfig, submissions: JudgedSubmission[]): void => {
+  if (problemset.judgeMode !== JudgeMode.BLIND) {
+    return;
+  }
+  submissions.forEach(submission => updateVerdictForBlindJudge(problemset, submission));
 };

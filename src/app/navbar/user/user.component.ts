@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../../api.service';
+import { Router } from '@angular/router';
 
 import { UserInfo } from '../../constants/user';
 import { MessageService } from '../../message.service';
@@ -13,7 +14,8 @@ export class UserComponent {
 
   constructor(
     private api: ApiService,
-    private message: MessageService
+    private message: MessageService,
+    private router: Router
   ) { }
 
   getUser(): UserInfo | undefined {
@@ -25,6 +27,7 @@ export class UserComponent {
       .subscribe(res => {
         if (res === true) {
           this.message.info('logged out');
+          this.router.navigate(['/problemsets']);
         }
       });
   }

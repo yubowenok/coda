@@ -26,8 +26,13 @@ tt,
   font-family: monospace;
 }
 
+bf,
+.bf {
+  font-weight: bold;
+}
+
 form {
-  max-width: 400px;
+  max-width: 300px;
 }
 
 mat-spinner.mat-progress-spinner {

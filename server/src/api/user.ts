@@ -47,14 +47,14 @@ module.exports = function(app: Express) {
     })(req, res, next);
   });
 
-  app.post('/api/check-login', (req: Request, res: Response, next: NextFunction) => {
+  app.post('/api/check-login', (req: Request, res: Response) => {
     if (req.user) {
       return res.json(toWebUser(req.user));
     }
     res.json(false);
   });
 
-  app.post('/api/logout', (req: Request, res: Response, next: NextFunction) => {
+  app.post('/api/logout', (req: Request, res: Response) => {
     req.logout();
     res.json(true);
   });
@@ -116,7 +116,7 @@ module.exports = function(app: Express) {
     });
   });
 
-  app.get('/api/settings', isAuthenticated, (req: Request, res: Response, next: NextFunction) => {
+  app.get('/api/settings', isAuthenticated, (req: Request, res: Response) => {
     const settings: UserSettings = {
       nickname: req.user.nickname,
       anonymous: req.user.anonymous
@@ -124,7 +124,7 @@ module.exports = function(app: Express) {
     res.json(settings);
   });
 
-  app.post('/api/update-settings', isAuthenticated, (req: Request, res: Response, next: NextFunction) => {
+  app.post('/api/update-settings', isAuthenticated, (req: Request, res: Response) => {
     req.check('nickname', 'nickname must not be empty').notEmpty();
     req.check('anonymous', 'anonymous must be boolean').isBoolean();
     const errors = req.validationErrors() as MappedError[];
@@ -152,7 +152,7 @@ module.exports = function(app: Express) {
     res.json(settings);
   });
 
-  app.post('/api/update-password', isAuthenticated, (req: Request, res: Response, next: NextFunction) => {
+  app.post('/api/update-password', isAuthenticated, (req: Request, res: Response) => {
     req.check('password', 'password must contain at least 6 characters').isLength({ min: MIN_PASSWORD_LENGTH });
     req.check('confirmPassword', 'passwords must match').equals(req.body.password);
     const errors = req.validationErrors() as MappedError[];

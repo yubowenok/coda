@@ -48,7 +48,7 @@ export class MessageService {
   }
 
   error(msg: string) {
-    this.snackBar.open(`Error: ${msg}`, '×', {
+    this.snackBar.open(`${msg}`, '×', {
       duration: ERROR_DURATION,
       panelClass: ['panel-error']
     });

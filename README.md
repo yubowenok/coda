@@ -13,7 +13,6 @@ Suggested nodejs version 8.9.4, npm version 5.6.
 Coda has two components: the web and the server. Install the two parts separately.
 
 ```bash
-npm install -g @angular/cli
 npm install
 npm --prefix ./server install
 ```
@@ -22,13 +21,15 @@ npm --prefix ./server install
 
 ```bash
 npm --prefix ./server start
-ng serve --open
+npm start
 ```
+
+Coda shall then be served at http://localhost:4200.
 
 ### Run in production
 
 ```bash
-ng build
+npm run build
 npm --prefix ./server run build
 npm --prefix ./server run serve
 ```
@@ -36,4 +37,8 @@ npm --prefix ./server run serve
 Then copy the files at /dist/ and /server/dist/ to your server deployment.
 Maintain the relative directory structure between web and server.
 
-Configure CODA_ROOT path in /server/.env. See /server/.env.example for an example configuration.
+Configure CODA_ROOT path and ALLOW_ORIGIN in /server/.env. See /server/.env.example for an example configuration.
+
+CODA_ROOT must be a valid Coda storage directory.
+See /server/test_root for a small storage directory example.
+This directory must be readable and writable for the user that runs the Coda server.

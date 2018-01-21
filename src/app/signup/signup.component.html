@@ -1,31 +1,19 @@
 <div *ngIf="api.getCurrentUser()">You have already signed up.</div>
-
-<div *ngIf="!api.getCurrentUser()">
-  <div class="notice">
-    <b>NOTE!</b> You must signup using an invitation code.
-    All enrolled students should have received an invitation code in your university mailbox.
-    If you have enrolled but not yet received the code, please contact the instructor.
-  </div>
-  <div class="notice">
-    <b>NOTE!</b> You must use your university email as username.
-    Please use your netID email address like <span class="tt">by123@nyu.edu</span>.
-    Do not use email alias like <span class="tt">bowen.yu@nyu.edu</span>.
-  </div>
-</div>
-
 <form [formGroup]="form" *ngIf="!api.getCurrentUser()">
   <mat-form-field>
+    <i class="info fa fa-lg fa-info-circle" matTooltip="{{tooltip.INVITATION_CODE}}"></i>
     <input matInput placeholder="Invitation Code"
            formControlName="invitationCode" [formGroup]="form">
-    <mat-error *ngIf="!form.controls.invitationCode.hasError('required')">
+    <mat-error *ngIf="form.controls.invitationCode.hasError('required')">
       Please enter your invitation code
     </mat-error>
   </mat-form-field>
 
   <mat-form-field>
+    <i class="info fa fa-lg fa-info-circle" matTooltip="{{tooltip.EMAIL}}"></i>
     <input matInput placeholder="Email"
            formControlName="email" [formGroup]="form">
-    <mat-error *ngIf="!form.controls.email.hasError('email') || !form.controls.email.hasError('required')">
+    <mat-error *ngIf="form.controls.email.hasError('email') || form.controls.email.hasError('required')">
       Please enter a valid email address
     </mat-error>
   </mat-form-field>
@@ -33,15 +21,18 @@
   <mat-form-field>
     <input matInput placeholder="Username"
            formControlName="username" [formGroup]="form">
-    <mat-error *ngIf="!form.controls.username.hasError('username')">
-      Username must only contain lowercase letters, digits, or underscores. Username must start with a letter.
+    <mat-error *ngIf="form.controls.username.hasError('characters')">
+      Username must start with a letter and contain only lowercase letters, digits, or underscores
+    </mat-error>
+    <mat-error *ngIf="form.controls.username.hasError('length')">
+      Username must be at least 3 characters long
     </mat-error>
   </mat-form-field>
 
   <mat-form-field>
     <input matInput placeholder="Password" value="" type="password"
            formControlName="password" [formGroup]="form">
-    <mat-error *ngIf="!form.controls.password.hasError('tooShort')">
+    <mat-error *ngIf="form.controls.password.hasError('length')">
       Password must be at least 6 characters long
     </mat-error>
   </mat-form-field>
@@ -49,7 +40,7 @@
   <mat-form-field>
     <input matInput placeholder="Confirm Password" value="" type="password"
            formControlName="confirmPassword" [formGroup]="form">
-    <mat-error *ngIf="!form.controls.confirmPassword.hasError('notMatch')">
+    <mat-error *ngIf="form.controls.confirmPassword.hasError('mismatch')">
       Passwords must match
     </mat-error>
   </mat-form-field>
@@ -57,9 +48,13 @@
   <mat-form-field>
     <input matInput placeholder="Full Name" value=""
            formControlName="fullName" [formGroup]="form">
+    <mat-error *ngIf="form.controls.fullName.hasError('required')">
+      Full name is required
+    </mat-error>
   </mat-form-field>
 
-  <button mat-raised-button color="primary" (click)="signup()" [disabled]="form.invalid">
+  <button mat-raised-button class="btn-create-account" color="primary"
+          (click)="signup()" [disabled]="form.invalid">
     Create Account
   </button>
 </form>

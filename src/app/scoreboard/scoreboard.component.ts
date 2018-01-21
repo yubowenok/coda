@@ -37,14 +37,13 @@ export class ScoreboardComponent implements OnInit {
     private message: MessageService
   ) { }
 
-  private problemset: ProblemsetInfo;
-  private scoreboard: Scoreboard;
+  problemset: ProblemsetInfo;
+  scoreboard: Scoreboard;
+  error: { msg: string } | undefined;
+
   private rows = [];
   private columns = [];
-
   private mode = Mode.SCORE;
-
-  private error: { msg: string } | undefined;
 
   ngOnInit() {
     this.api.onProblemsetIdChange(this.route.snapshot.paramMap.get('problemsetId'));
@@ -128,7 +127,8 @@ export class ScoreboardComponent implements OnInit {
       for (let j = 0; j < problem.subtasks.length; j++) {
         const subtask: SubtaskInfo = problem.subtasks[j];
         newColumns.push({
-          name: `${problem.number} - ${new TitleCasePipe().transform(subtask.id)}`,
+          name: problem.isSingleTask ? problem.number :
+            `${problem.number} - ${new TitleCasePipe().transform(subtask.id)}`,
           prop: `${problem.number}_${subtask.id}`,
           score: subtask.score,
           headerClass: 'header center',
@@ -173,7 +173,7 @@ export class ScoreboardComponent implements OnInit {
 
   gotoSubmissionLink(cell: { username: string, submissionNumber: string }): void {
     if (!cell.submissionNumber || !problemsetEnded(this.problemset)) {
-      this.message.info('source code not available to view');
+      this.message.info('source code not available before problemset ends');
     } else {
       this.router.navigate([
         `/problemset/${this.problemset.id}/submission/${cell.username}/${cell.submissionNumber}`

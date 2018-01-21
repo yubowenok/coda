@@ -1,4 +1,4 @@
-import { Response, Request, NextFunction, Express } from 'express';
+import { Response, Request, Express } from 'express';
 import { ProblemsetConfig, ProblemsetProblem } from '../constants/problemset';
 import {
   getProblemsetDict,
@@ -39,7 +39,7 @@ module.exports = function(app: Express) {
   app.get('/api/problemset/:problemsetId',
     isAuthenticated,
     isValidProblemsetId,
-    (req: Request, res: Response, next: NextFunction) => {
+    (req: Request, res: Response) => {
     const problemsetId = req.params.problemsetId;
     const problemsetDict = getProblemsetDict();
     res.json(toWebProblemset(problemsetDict[problemsetId]));
@@ -48,7 +48,7 @@ module.exports = function(app: Express) {
   /**
    * Problemset list
    */
-  app.get('/api/problemsets', (req: Request, res: Response, next: NextFunction) => {
+  app.get('/api/problemsets', (req: Request, res: Response) => {
     const problemsetList = getProblemsetList().map((problemset: ProblemsetConfig) => {
       return toWebProblemset(problemset);
     });

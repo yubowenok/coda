@@ -61,11 +61,20 @@ export const getProblemsetDict = (): ProblemsetDict => {
  * @returns A list of problemset configurations, sorted by startTime.
  */
 export const getProblemsetList = (): ProblemsetConfig[] => {
-  const list: ProblemsetConfig[] = getAllProblemsets();
+  const list: ProblemsetConfig[] = getAllProblemsets()
+    .filter(problemset => !problemset.private);
   list.sort((a: ProblemsetConfig, b: ProblemsetConfig) => {
     return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
   });
   return list;
+};
+
+/**
+ * @returns Number of seconds since problemset starts till now.
+ */
+export const getProblemsetTime = (problemset: ProblemsetConfig): number => {
+  // TODO: this does not handle user session in Selftest!
+  return Math.floor((new Date().getTime() - new Date(problemset.startTime).getTime()) / 1000);
 };
 
 export const getProblemsetScoreDict = (problemsetId: string): ProblemsetScoreDict => {

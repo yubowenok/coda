@@ -13,33 +13,34 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class ProblemsetListComponent implements OnInit {
 
-  constructor(
-    private api: ApiService,
-    private route: ActivatedRoute
-  ) { }
-
-  private problemsetGroups: {
+  problemsetGroups: {
     title: string,
     problemsetList: ProblemsetInfo[]
   }[];
-  private problemsetList: ProblemsetInfo[];
 
-  private fragment: string;
+  problemsetList: ProblemsetInfo[];
 
-  private error: { msg: string } | undefined;
+  error: { msg: string } | undefined;
 
-  tooltips = {
+  tooltip = {
     STANDARD_MODE: 'You can submit anytime before the problemset ends.',
     SELFTEST_MODE: 'The problemset has a fixed duration. You can start your session at any time. But once your ' +
-      'session is started you cannot pause it. Only start your session when you have enough free time to work on ' +
-      'the problemset.',
+    'session is started you cannot pause it. Only start your session when you have enough free time to work on ' +
+    'the problemset.',
     OPEN_JUDGE: 'Submission results are available right after the submissions.',
-    BLIND_JUDGE: 'Submission results will be available after the problemset ends. You will temporarily receive ' +
-      'score for attempted problems.',
+    BLIND_JUDGE: 'Submission results will be available after the problemset ends. Scoreboard shows your maximum ' +
+    'possible score if everything you submit is correct.',
     SCORE_PENALTY: 'Each incorrect submission results in 10% loss of a subtask\'s score.',
     TIME_PENALTY: 'Each incorrect submission results in 4 minutes extra time added to the finish time.',
     FREEBIES: 'Number of incorrect submissions that are exempted from penalty'
   };
+
+  private fragment: string;
+
+  constructor(
+    private api: ApiService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit() {
     this.getProblemsetList();

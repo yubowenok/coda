@@ -14,14 +14,14 @@ import { ProblemsetInfo } from '../constants/problemset';
 
 export class NavbarComponent implements OnInit {
 
-  logoUrl: string = !environment.production ? 'assets/logo.png' : 'logo.png';
+  logoUrl = 'assets/logo.png';
 
   problemset: ProblemsetInfo;
 
   public linksExpanded = true;
 
   constructor(
-    private api: ApiService
+    public api: ApiService
   ) {
     this.api.getCurrentProblemset()
       .subscribe(problemset => this.problemset = problemset);

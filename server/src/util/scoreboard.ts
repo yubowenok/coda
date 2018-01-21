@@ -170,7 +170,7 @@ export const getParticipantScores = (problemset: ProblemsetConfig, submissionDic
  * Removes verdicts from scoreboard so that judgements are not shown during blindly judged problemset.
  * Changes are made in place.
  */
-export const updateObfuscatedBlindJudgments = (participants: ParticipantScore[]): void => {
+export const updateScoreboardForBlindJudge = (participants: ParticipantScore[]): void => {
   participants.forEach(participant => {
     participant.score = 0;
     participant.finishTime = 0;

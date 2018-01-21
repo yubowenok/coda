@@ -1,4 +1,4 @@
-import { Response, Request, NextFunction, Express } from 'express';
+import { Response, Request, Express } from 'express';
 import {
   isValidProblemsetId,
   isAuthenticated,
@@ -7,7 +7,7 @@ import {
   getParticipantScores,
   filterSubmissionDictForBlindJudge,
   checkProblemsetEnded,
-  updateObfuscatedBlindJudgments,
+  updateScoreboardForBlindJudge,
   updateTimePenalty
 } from '../util';
 import {
@@ -21,12 +21,12 @@ module.exports = function(app: Express) {
   app.get('/api/problemset/:problemsetId/scoreboard',
     isAuthenticated,
     isValidProblemsetId,
-    (req: Request, res: Response, next: NextFunction) => {
+    (req: Request, res: Response) => {
 
     const problemsetId = req.params.problemsetId;
     const problemset = getProblemset(problemsetId);
     if (problemset.scoreboardMode === ScoreboardMode.DISABLED) {
-      res.status(404).json({ msg: 'scoreboard disabled' });
+      return res.status(404).json({ msg: 'scoreboard disabled' });
     }
     let submissionDict: SubmissionDict = getSubmissionDict(problemsetId);
     if (problemset.judgeMode === JudgeMode.BLIND) {
@@ -37,7 +37,7 @@ module.exports = function(app: Express) {
 
     // Obstruct blind judgments.
     if (problemset.judgeMode === JudgeMode.BLIND && !checkProblemsetEnded(problemset)) {
-      updateObfuscatedBlindJudgments(participants);
+      updateScoreboardForBlindJudge(participants);
     }
 
     // Calculate time penalty

@@ -11,7 +11,8 @@ export class TimeDisplayPipe implements PipeTransform {
       return 'practice'; // After the problemset ends
     }
     t *= time.SECOND_MS;
-    const hours = Math.floor(t / time.HOUR_MS);
+    const days = Math.floor(t / time.DAY_MS);
+    const hours = Math.floor(t % time.DAY_MS / time.HOUR_MS);
     let minutes: number | string = Math.floor(t % time.HOUR_MS / time.MINUTE_MS);
     let seconds: number | string = t % time.MINUTE_MS / time.SECOND_MS;
     if (minutes < 10) {
@@ -20,7 +21,8 @@ export class TimeDisplayPipe implements PipeTransform {
     if (seconds < 10) {
       seconds = '0' + seconds;
     }
-    return hours ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
+    const inDay = hours ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
+    return days ? `${days}d ${inDay}` : inDay;
   }
 
 }
