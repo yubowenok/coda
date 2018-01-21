@@ -111,7 +111,6 @@ function judgeProblemSet(problemsetId: string) {
       sourceFile: sourceFile,
       verdict: result.verdict,
       executionTime: Number(result.time),
-      memory: 64,
       failedCase: failedCase,
       totalCase: result.totalCases
     };
