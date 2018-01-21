@@ -4,6 +4,7 @@ label {
 
 mat-list-item {
   cursor: pointer;
+  margin-bottom: 10px;
 }
 
 .time span {

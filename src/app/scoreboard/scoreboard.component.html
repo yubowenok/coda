@@ -63,6 +63,7 @@
     </div>
     <div *ngIf="value.attempts && value.solved === false" class="incorrect">
       <i class="fa fa-lg fa-times-circle"></i>
+      {{value.time | timeDisplay}}
     </div>
     <div *ngIf="value.attempts && value.solved === undefined" class="pending">
       <i class="fa fa-lg fa-question-circle"></i>

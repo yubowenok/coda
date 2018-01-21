@@ -25,3 +25,7 @@ if (process.env.CODA_GROUP) {
   process.setgid(process.env.CODA_GROUP);
   console.log(`running as group "${process.env.CODA_GROUP}"`);
 }
+
+process.env.CONTAINER_NAME = process.env.CONTAINER_NAME || 'coda-judge-container';
+process.env.DOCKER_ROOT = process.env.DOCKER_ROOT || '/usr/share/src';
+process.env.IMAGE_NAME = process.env.IMAGE_NAME || 'szfck/nyu-problemtools:latest';

@@ -3,7 +3,7 @@ import { TitleCasePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '../api.service';
-import { Submission, Verdict, ColumnWidth } from '../constants/submission';
+import { Submission, Verdict, SubmissionColumnWidth as ColumnWidth } from '../constants/submission';
 import { LanguageDisplay } from '../constants/language';
 import { ProblemsetInfo } from '../constants/problemset';
 

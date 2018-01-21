@@ -7,7 +7,6 @@ import * as yargs from 'yargs';
 import {
   ProblemConfig,
   ProblemsetConfig,
-  problemsetConfigPath,
   ProblemsetProblem,
   Submission,
   Verdict
@@ -16,15 +15,15 @@ import {
   getProblem,
   getProblemset,
   getSubmissionList,
+  getProblemsetList,
   getVerdictsList
 } from '../util';
 
-const containerName = process.env.CONTAINER_NAME || 'coda-judge-container';
-const dockerRoot = process.env.DOCKER_ROOT || '/usr/share/src';
-const imageName = process.env.IMAGE_NAME || 'szfck/nyu-problemtools:latest';
+const containerName = process.env.CONTAINER_NAME;
+const dockerRoot = process.env.DOCKER_ROOT;
+const imageName = process.env.IMAGE_NAME;
 
 const localRoot = process.env.CODA_ROOT;
-const problemSetRoot = paths.problemsetDir();
 
 function systemSync(cmd: string) {
   try {
@@ -107,7 +106,7 @@ function judgeProblemSet(problemsetId: string) {
 
     const verdict: Verdict = {
       username: username,
-      submissionNumber: Number(submissions[i].problemNumber),
+      submissionNumber: submissions[i].submissionNumber,
       sourceFile: sourceFile,
       verdict: result.verdict,
       executionTime: Number(result.time),
@@ -123,22 +122,21 @@ function judgeProblemSet(problemsetId: string) {
 }
 
 function judgeAll(runningProblemsetConfigId: string) {
-  let files: string[] = [];
+  let problemsetIds: string[];
 
   if (runningProblemsetConfigId === undefined) {
-    files = fs.readdirSync(problemSetRoot);
+    problemsetIds = getProblemsetList().map(problemset => problemset.id);
     console.log('start judging all the problemset ******** ');
   } else {
     console.log(`start judgeing problemsets from ${runningProblemsetConfigId}`);
-    files = JSON.parse(fs.readFileSync(paths.runningProblemsetConfigPath(runningProblemsetConfigId), 'utf8'));
+    problemsetIds = JSON.parse(fs.readFileSync(paths.runningProblemsetConfigPath(runningProblemsetConfigId),
+      'utf8'));
   }
 
-  files.forEach(function (file) {
-    judgeProblemSet(file);
-  });
+  problemsetIds.forEach(problemsetId => judgeProblemSet(problemsetId));
 }
 
-const dockerStr = systemSync(`docker ps -a`);
+const dockerStr = systemSync('docker ps -a');
 
 if (dockerStr.indexOf(containerName) > -1) {
   systemSync(`docker stop ${containerName}`);

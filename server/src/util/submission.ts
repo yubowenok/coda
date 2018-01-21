@@ -13,6 +13,7 @@ import {
   JudgeMode
 } from '../constants';
 import { checkProblemsetEnded } from './problemset';
+import { getProblemsetProblem } from './problem';
 
 /**
  * Reads submission.json and gets all submissions for a problemset;
@@ -162,7 +163,8 @@ export const getVerdict = (problemsetId: string, submission: Submission): Verdic
 /**
  * Creates a judged submission record, filling in verdict info.
  */
-export const getJudgedSubmission = (submission: Submission, verdict: Verdict | undefined): JudgedSubmission => {
+export const getJudgedSubmission = (problemsetId: string, submission: Submission,
+                                    verdict: Verdict | undefined): JudgedSubmission => {
   if (!verdict) {
     verdict = {
       username: submission.username,
@@ -175,7 +177,7 @@ export const getJudgedSubmission = (submission: Submission, verdict: Verdict | u
       // memory: 0
     };
   }
-  return {
+  const result: JudgedSubmission = {
     // from submission record
     submissionNumber: submission.submissionNumber,
     problemNumber: submission.problemNumber,
@@ -188,8 +190,20 @@ export const getJudgedSubmission = (submission: Submission, verdict: Verdict | u
     verdict: verdict.verdict,
     executionTime: verdict.executionTime,
     // memory: verdict.memory
-    blindJudgeStatus: submission.blindJudgeStatus
+    blindJudgeStatus: submission.blindJudgeStatus,
+    failedCase: verdict.failedCase,
+    totalCase: verdict.totalCase
   };
+
+  if (result.verdict === VerdictType.TLE) {
+    // Send time limit as execution time, so that web displays it as "> ${TL}s".
+    const timeLimit = getProblemsetProblem(problemsetId, submission.problemNumber).timeLimit;
+    if (result.executionTime > timeLimit) {
+      result.executionTime = timeLimit;
+    }
+  }
+
+  return result;
 };
 
 /**
@@ -197,10 +211,14 @@ export const getJudgedSubmission = (submission: Submission, verdict: Verdict | u
  */
 export const getJudgedSubmissionWithSource = (problemsetId: string, submission: Submission,
                                        verdict: Verdict | undefined): JudgedSubmissionWithSource => {
-  return {
-    ...getJudgedSubmission(submission, verdict),
+  const result: JudgedSubmissionWithSource = {
+    ...getJudgedSubmission(problemsetId, submission, verdict),
     sourceCode: fs.readFileSync(paths.submissionSourcePath(problemsetId, submission), 'utf8')
   };
+  if (result.verdict === VerdictType.CE) {
+    result.compileError = fs.readFileSync(paths.submissionCompileErrorPath(problemsetId, submission), 'utf8');
+  }
+  return result;
 };
 
 export const checkIncorrectSubmission = (submission: JudgedSubmission): boolean => {

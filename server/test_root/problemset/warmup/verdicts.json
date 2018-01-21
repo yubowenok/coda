@@ -25,5 +25,15 @@
     "executionTime": 0.00,
     "failedCase": 1,
     "totalCase": 2
+  },
+  {
+    "username": "by123",
+    "submissionNumber": 7,
+    "sourceFile": "by123_7_A_small.cpp",
+    "verdict": "CE",
+    "executionTime": 0.00,
+    "failedCase": 1,
+    "totalCase": 2,
+    "compileError": "by123_7_A_small.cpp.ce"
   }
 ]

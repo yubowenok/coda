@@ -23,6 +23,11 @@
     >
     </ngx-datatable>
   </div>
+  <div *ngIf="submission.compileError">
+    <h3>Compiler</h3>
+    <pre class="compile-error">{{submission.compileError}}</pre>
+  </div>
+
   <div class="cases" *ngIf="submission.totalCase">
     <h3>
       Test Cases

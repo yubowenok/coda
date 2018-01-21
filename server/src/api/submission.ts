@@ -53,8 +53,9 @@ module.exports = function(app: Express) {
       const username = req.params.username;
       const verdicts = getVerdictDict(problemsetId);
       const judgedSubmissions = getSubmissionList(problemsetId, username)
-        .map(submission => getJudgedSubmission(submission, verdicts && submission.username in verdicts ?
-          verdicts[submission.username][submission.submissionNumber] : undefined));
+        .map(submission => getJudgedSubmission(problemsetId, submission,
+          verdicts && submission.username in verdicts ?
+            verdicts[submission.username][submission.submissionNumber] : undefined));
 
       updateVerdictsForBlindJudge(getProblemset(problemsetId), judgedSubmissions);
       res.json(judgedSubmissions);

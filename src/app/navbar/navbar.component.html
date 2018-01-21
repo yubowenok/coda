@@ -11,7 +11,7 @@
     <app-navbar-problemset [problemset]="problemset"></app-navbar-problemset>
   </div>
   <mat-divider></mat-divider>
-  <div class="section">
+  <div class="section" *ngIf="problemset.started">
     <button mat-button routerLink="/problemset/{{problemset.id}}/submit">
       <i class="fa fa-arrow-circle-up submit-icon"></i>Submit
     </button>

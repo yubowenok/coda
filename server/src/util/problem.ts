@@ -18,6 +18,12 @@ export const getProblem = (problemId: string): ProblemConfig => {
   return problemConf;
 };
 
+export const getProblemsetProblem = (problemsetId: string, problemNumber: string): ProblemConfig => {
+  const problemId = getProblemset(problemsetId).problems
+    .filter(problem => problem.number === problemNumber)[0].id;
+  return getProblem(problemId);
+};
+
 /**
  * Creates a dictionary that maps each subtask id to its easier subtask id's (including itself).
  */

@@ -23,3 +23,8 @@ export interface Scoreboard {
   id: string; // problemset id
   participants: ParticipantScore[];
 }
+
+export const ScoreboardColumnWidth = {
+  RANK: { maxWidth: 80 },
+  SCORE: { minWidth: 50, maxWidth: 100 }
+};

@@ -28,7 +28,8 @@ export const problemsetEnded = (problemset: ProblemsetInfo): boolean => {
 export const executionTimeDisplay = (submission: Submission): string => {
   if (submission.verdict === Verdict.PENDING ||
     submission.verdict === Verdict.SKIPPED ||
-    submission.verdict === Verdict.WAITING) {
+    submission.verdict === Verdict.WAITING ||
+    submission.verdict === Verdict.CE) {
     return '-';
   }
   return `${submission.verdict === Verdict.TLE ? '> ' : ''}${submission.executionTime}s`;

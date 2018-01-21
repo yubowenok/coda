@@ -82,4 +82,5 @@ export interface JudgedSubmission {
 
 export interface JudgedSubmissionWithSource extends JudgedSubmission {
   sourceCode: string;
+  compileError?: string;
 }

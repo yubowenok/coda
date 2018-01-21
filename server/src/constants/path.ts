@@ -78,6 +78,15 @@ export const submissionSourcePath = (problemsetId: string, submission: Submissio
     'source', submission.username, submission.sourceFile);
 };
 
+/**
+ * Retrieves the compile error file for the submission. The CE file is at the same directory as the source code. Its
+ * name is given by the source code's name appended by ".ce".
+ */
+export const submissionCompileErrorPath = (problemsetId: string, submission: Submission): string => {
+  return path.join(PROBLEMSET_DIR, problemsetId,
+    'source', submission.username, `${submission.sourceFile}.ce`);
+};
+
 export const judgeProblemPath = (problemId: string): string => {
   return path.join(JUDGE_PROBLEM_DIR, problemId);
 };

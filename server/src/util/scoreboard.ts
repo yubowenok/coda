@@ -94,7 +94,7 @@ export const getParticipantScores = (problemset: ProblemsetConfig, submissionDic
     const problems = participant.problems;
 
     submissionDict[username].forEach((sub: Submission) => {
-      const submission = getJudgedSubmission(sub, getVerdict(problemset.id, sub));
+      const submission = getJudgedSubmission(problemset.id, sub, getVerdict(problemset.id, sub));
       if (!(submission.problemNumber in problems)) {
         problems[submission.problemNumber] = {};
       }

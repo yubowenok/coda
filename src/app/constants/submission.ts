@@ -43,18 +43,19 @@ export interface Submission {
 
 export interface SubmissionWithSource extends Submission {
   sourceCode: string;
+  compileError?: string;
 }
 
-export const ColumnWidth = {
+export const SubmissionColumnWidth = {
   SUBMISSION_NUMBER: { maxWidth: 40 },
   PROBLEM: {},
-  SUBTASK: { maxWidth: 80 },
+  SUBTASK: { maxWidth: 100 },
   SOURCE_CODE: { maxWidth: 20 },
-  VERDICT: { maxWidth: 185 },
-  LANGUAGE: { maxWidth: 60 },
-  EXECUTION_TIME: { maxWidth: 80 },
-  PROBLEMSET_TIME: { maxWidth: 90 },
-  SUBMIT_TIME: { minWidth: 190, maxWidth: 220 }
+  VERDICT: {}, // maxWidth: 185
+  LANGUAGE: { maxWidth: 75 },
+  EXECUTION_TIME: {}, // maxWidth: 80
+  PROBLEMSET_TIME: {}, //  maxWidth: 90
+  SUBMIT_TIME: { minWidth: 200 } // maxWidth: 220
 };
 
 export interface SubmitData {

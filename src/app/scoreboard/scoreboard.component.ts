@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
 
 import { ProblemsetInfo } from '../constants/problemset';
-import { ParticipantScore, Scoreboard } from '../constants/scoreboard';
+import { ParticipantScore, Scoreboard, ScoreboardColumnWidth as ColumnWidth } from '../constants/scoreboard';
 import { ProblemInfo, SubtaskInfo } from '../constants/problem';
 
 import * as time from '../constants/time';
@@ -115,9 +115,9 @@ export class ScoreboardComponent implements OnInit {
     const timeDisplayPipe = new TimeDisplayPipe();
     const subtaskTemplate = this.getModeTemplate();
     const newColumns: {}[] = [
-      { name: 'Rank', maxWidth: 80 },
+      { name: 'Rank', ...ColumnWidth.RANK },
       { name: 'Name' },
-      { name: 'Score', minWidth: 50, maxWidth: 60 },
+      { name: 'Score', ...ColumnWidth.SCORE },
       { name: 'Finish Time', prop: 'finishTime', pipe: timeDisplayPipe }
     ];
 

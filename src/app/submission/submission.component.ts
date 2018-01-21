@@ -7,7 +7,7 @@ import { ApiService } from '../api.service';
 import { CopyService } from '../copy.service';
 import {
   Verdict,
-  ColumnWidth,
+  SubmissionColumnWidth as ColumnWidth,
   LanguageDisplay,
   SubmissionWithSource,
   ProblemsetInfo,
@@ -157,7 +157,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
     this.recheckHandler = setInterval(() => {
       this.api.getSubmission(problemsetId, username, submissionNumber)
         .subscribe(submission => {
-          this.submission.verdict = submission.verdict;
+          this.submission = submission;
           this.update();
         });
     }, PENDING_RECHECK_INTERVAL);

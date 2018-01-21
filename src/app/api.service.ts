@@ -321,6 +321,7 @@ export class ApiService {
   loginErrorHandler(err: HttpErrorResponse): void {
     if (this.isRequireLogin(err)) {
       this.message.requireLogin();
+      this.user = undefined;
     }
   }
 

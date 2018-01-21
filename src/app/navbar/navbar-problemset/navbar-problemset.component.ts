@@ -30,17 +30,8 @@ export class NavbarProblemsetComponent implements OnInit, OnDestroy {
     clearInterval(this.interval);
   }
 
-  hasStarted(): boolean {
-    // TODO: replace this by checking problemset.started
-    if (this.problemset.runMode === RunMode.SELFTEST) {
-      console.error('hasStarted is not implemented for SELFTEST');
-      return false;
-    }
-    return this.problemset.startTime < new Date().getTime();
-  }
-
   getTimes(): void {
-    if (this.hasStarted()) {
+    if (this.problemset.started) {
       if (this.problemset.runMode === RunMode.SELFTEST) {
         this.getSelftestTimeRemaining();
       } else {

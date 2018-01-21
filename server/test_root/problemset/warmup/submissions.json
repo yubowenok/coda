@@ -61,6 +61,17 @@
     "outsideProblemsetTime": true
   },
   {
+    "username": "by123",
+    "submissionNumber": 7,
+    "problemNumber": "A",
+    "subtask": "small",
+    "sourceFile": "by123_7_A_small.cpp",
+    "language": "CPP",
+    "problemsetTime": 86461,
+    "submitTime": "Tue Jan 14 2018 10:01:01 GMT-0500",
+    "outsideProblemsetTime": true
+  },
+  {
     "username": "jz123",
     "submissionNumber": 1,
     "problemNumber": "A",
