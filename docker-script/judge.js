@@ -105,7 +105,7 @@ function toJsonResult(str, source, fileName) {
 
   var pos = str.indexOf('[');
   var nxt = str.indexOf(']');
-  pos -= 5; // TODO(bowen): add comment about what is this constant
+  pos -= 5; // 5 = max length of (AC, TLE, RE...) + a safty margin
   str = str.substr(pos, nxt - pos + 1);
 
   var res = {
