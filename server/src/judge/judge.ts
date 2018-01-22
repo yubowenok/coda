@@ -25,7 +25,7 @@ import {
 const containerName = process.env.CONTAINER_NAME;
 const dockerRoot = process.env.DOCKER_ROOT;
 const imageName = process.env.IMAGE_NAME;
-const judgeFileName = 'TTMMPPTest';
+const judgeFileName = 'Solution';
 
 const localRoot = process.env.CODA_ROOT;
 
@@ -65,9 +65,15 @@ function judgeSubmission(problemId: string, subtask: string, source: string): Do
 function changeJavaClass(contents: string, name: string) {
   contents = '' + contents.replace(/ +(?= )/g, '');
   let pos = contents.indexOf('public class ');
-  pos += 'public class '.length;
-  const nxt = contents.indexOf('{', pos);
-  contents = contents.substr(0, pos) + name + contents.substr(nxt);
+
+  if (pos > -1) {
+    pos += 'public class '.length;
+    const nxt = contents.indexOf('{', pos);
+    if (nxt > -1) {
+      contents = contents.substr(0, pos) + name + contents.substr(nxt);
+    }
+  }
+
   return contents;
 }
 
