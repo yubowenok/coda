@@ -178,7 +178,7 @@ export class ScoreboardComponent implements OnInit {
     this.rows = newRows;
   }
 
-  onSelect(event) {
+  onSelect() {
     // Fix selection at current user
     this.selected = [this.selectedRow];
   }

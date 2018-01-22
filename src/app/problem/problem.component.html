@@ -31,7 +31,7 @@
             <div>
               <h4>Input {{i + 1}}<i class="fa fa-clone btn-copy"
                                     (click)="copyText(sample.in, 'Input ' + (i + 1) + ' copied')"></i></h4>
-              <span class="special-sample it">{{displaySubtaskOnlySample(sample)}}</span>
+              <span class="special-sample">{{displaySubtaskOnlySample(sample)}}</span>
             </div>
             <mat-card>
               <pre [ngStyle]="getSampleHeight(sample)">{{sample.in}}</pre>

@@ -35,6 +35,8 @@ export class CodeMirrorDirective implements OnChanges {
     });
     editor.on('change', (cm: CodeMirror) => {
       this.codeUpdated.emit(cm.getValue());
+      // Update height to resolve https://github.com/yubowenok/coda/issues/10
+      editor.setSize(null, '100%');
     });
     editor.setSize(null, '100%');
   }

@@ -6,6 +6,10 @@ Coda Online Judge Platform
 
 Light-weight contest & practice platform for Coding Of Data structure and Algorithm.
 
+![image](https://user-images.githubusercontent.com/1314429/35206822-4d568f18-ff0d-11e7-956c-c7bea2706c20.png)
+![image](https://user-images.githubusercontent.com/1314429/35206851-78459c28-ff0d-11e7-8c9d-3355124aa5fd.png)
+
+
 ### Install
 
 Suggested nodejs version 8.9.4, npm version 5.6.

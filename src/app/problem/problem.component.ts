@@ -58,8 +58,9 @@ export class ProblemComponent implements OnInit {
     let res = '';
     for (let i = 0; i < specialSamples.length; i++) {
       if (sample.id === specialSamples[i].sample) {
+        const multiple = specialSamples[i].subtasks.length > 1;
         res = `(${specialSamples[i].subtasks
-          .map((s) => new TitleCasePipe().transform(s)).join(', ')} subtasks)`;
+          .map((s) => new TitleCasePipe().transform(s)).join(', ')} subtask${multiple ? 's' : ''})`;
       }
     }
     return res;
