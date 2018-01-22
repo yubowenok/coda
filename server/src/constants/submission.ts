@@ -60,6 +60,14 @@ export interface Verdict {
   totalCase: number;
 }
 
+export interface DockerVerdict {
+  verdict: VerdictType;
+  time: number;
+  failedCase: {number: number; name: string};
+  totalCases: number;
+  compilationError?: string;
+}
+
 export interface VerdictDict {
   [username: string]: { [submissionNumber: number]: Verdict };
 }

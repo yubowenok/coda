@@ -9,7 +9,10 @@ import {
   ProblemsetConfig,
   ProblemsetProblem,
   Submission,
-  Verdict
+  Verdict,
+  submissionSourcePath,
+  DockerVerdict,
+  VerdictType
 } from '../constants';
 import {
   getProblem,
@@ -22,6 +25,7 @@ import {
 const containerName = process.env.CONTAINER_NAME;
 const dockerRoot = process.env.DOCKER_ROOT;
 const imageName = process.env.IMAGE_NAME;
+const judgeFileName = 'TTMMPPTest';
 
 const localRoot = process.env.CODA_ROOT;
 
@@ -33,7 +37,7 @@ function systemSync(cmd: string) {
   }
 }
 
-function judgeSubmission(problemId: string, subtask: string, source: string) {
+function judgeSubmission(problemId: string, subtask: string, source: string): DockerVerdict {
   const problemConf: ProblemConfig = getProblem(problemId);
 
   if (problemConf.timeLimit === undefined) {
@@ -58,14 +62,22 @@ function judgeSubmission(problemId: string, subtask: string, source: string) {
   return JSON.parse(systemSync(cmdLine));
 }
 
+function changeJavaClass(contents: string, name: string) {
+  contents = '' + contents.replace(/ +(?= )/g, '');
+  let pos = contents.indexOf('public class ');
+  pos += 'public class '.length;
+  const nxt = contents.indexOf('{', pos);
+  contents = contents.substr(0, pos) + name + contents.substr(nxt);
+  return contents;
+}
+
 function judgeProblemSet(problemsetId: string) {
-  console.log(`judging problemset ${problemsetId} ...`);
+  // console.log(`judging problemsetId ${problemsetId}`);
 
   const problemset: ProblemsetConfig = getProblemset(problemsetId);
   const problems: ProblemsetProblem[] = problemset.problems;
   const submissions: Submission[] = getSubmissionList(problemsetId);
   const verdicts: Verdict[] = getVerdictsList(problemsetId);
-
   const map: { [name: string]: string } = {};
 
   for (let i = 0; i < problems.length; i++) {
@@ -80,6 +92,7 @@ function judgeProblemSet(problemsetId: string) {
 
   for (let i = 0; i < submissions.length; i++) {
     const sourceFile: string = submissions[i].sourceFile;
+
     if (set.has(sourceFile)) {
       continue;
     }
@@ -88,20 +101,32 @@ function judgeProblemSet(problemsetId: string) {
       console.log(`WARNNING: problem number: ${submissions[i].problemNumber} can not find problem path`);
       continue;
     }
-
     const subtask = submissions[i].subtask;
     const problemId = map[submissions[i].problemNumber];
     const username = submissions[i].username;
+    const sourcePath = paths.submissionSourcePath(problemsetId, submissions[i]);
 
-    const result = judgeSubmission(
+    // copy source code to accepted folder to judge
+    let content = fs.readFileSync(sourcePath).toString();
+    if (path.extname(sourceFile) === '.java') {
+      // change java class name
+      content = changeJavaClass(content, judgeFileName);
+    }
+    const subproblemPath = paths.problemDir(problemId);
+    const tmpFileName = judgeFileName + path.extname(sourceFile);
+    const dockerSource = paths.dockerJudgeSourcePath(problemId, subtask, tmpFileName);
+    const copyFilePath = paths.localJudgeSourcePath(problemId, subtask, tmpFileName);
+
+    fs.writeFileSync(copyFilePath, content);
+
+    const result: DockerVerdict = judgeSubmission(
       problemId,
       subtask,
-      paths.judgeSubmissionSourcePath(problemsetId, submissions[i]),
+      dockerSource
     );
 
-    let failedCase = 0;
-    if (result.failedCase !== undefined) {
-      failedCase = result.totalCases + 1 - result.failedCase.number;
+    if (result.time === undefined) {
+      result.time = 0;
     }
 
     const verdict: Verdict = {
@@ -109,16 +134,31 @@ function judgeProblemSet(problemsetId: string) {
       submissionNumber: submissions[i].submissionNumber,
       sourceFile: sourceFile,
       verdict: result.verdict,
-      executionTime: Number(result.time),
-      failedCase: failedCase,
+      executionTime: result.time,
+      failedCase: result.failedCase.number,
       totalCase: result.totalCases
     };
 
+    if (result.verdict === VerdictType.CE) {
+      let ceMsg = result.compilationError;
+      while (true) {
+        const pos = ceMsg.indexOf(dockerSource);
+        if (pos > -1) {
+          ceMsg = ceMsg.substr(0, pos) + sourceFile + ceMsg.substr(pos + dockerSource.length);
+        } else {
+          break;
+        }
+      }
+      fs.writeFileSync(`${sourcePath}.ce`, ceMsg);
+    }
+
     console.log(verdict);
     verdicts.push(verdict);
+
+    fs.unlinkSync(copyFilePath);
+
   }
   fs.writeFileSync(paths.problemsetVerdictsPath(problemsetId), JSON.stringify(verdicts, undefined, 2));
-  console.log(`end judge problemset ${problemsetId}`);
 }
 
 function judgeAll(runningProblemsetConfigId: string) {
@@ -143,7 +183,7 @@ if (dockerStr.indexOf(containerName) > -1) {
   systemSync(`docker rm ${containerName}`);
 }
 
-systemSync(`docker run -dit --name ${containerName} -v ${path.resolve(localRoot)}:${dockerRoot} ${imageName}`);
+systemSync(`docker run -dit --name ${containerName} -v ${path.resolve(localRoot)}:${dockerRoot}:ro ${imageName}`);
 
 const interval = yargs.argv.interval;
 const runningProblemset = yargs.argv.problemset;
