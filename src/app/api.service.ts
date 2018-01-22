@@ -130,22 +130,18 @@ export class ApiService {
   getProblemsetList(): Observable<ProblemsetInfo[]> {
     return this.http.get<ProblemsetInfo[]>(ApiUrl.problemsetList())
       .pipe(
-        tap(problemsets => {
-          console.log('fetched problemset list', problemsets);
-        }),
         catchError(this.handleError('getProblemsetList', []))
       );
   }
 
-  getProblemset(id: string): Observable<ProblemsetInfo> {
+  getProblemset(id: string, noCache?: boolean): Observable<ProblemsetInfo> {
     const cached = this.getCache(id, this.problemsetCache, RefetchInterval.PROBLEMSET);
-    if (cached !== null) {
+    if (noCache !== true && cached !== null) {
       return cached;
     }
     return this.http.get<ProblemsetInfo>(ApiUrl.problemset(id), httpOptions)
       .pipe(
         tap(problemset => {
-          console.log(`fetched problemset ${id}`, problemset);
           this.problemsetCache[id] = {
             data: problemset,
             lastFetched: new Date().getTime()
@@ -164,7 +160,6 @@ export class ApiService {
     return this.http.get<ProblemContent>(ApiUrl.problem(problemsetId, problemNumber), httpOptions)
       .pipe(
         tap(problem => {
-          console.log(`fetched problem ${cacheId}`, problem);
           this.problemCache[cacheId] = {
             data: problem,
             lastFetched: new Date().getTime()
@@ -182,7 +177,6 @@ export class ApiService {
     return this.http.get<Scoreboard>(ApiUrl.scoreboard(problemsetId), httpOptions)
       .pipe(
         tap(scoreboard => {
-          console.log(`fetched scoreboard ${problemsetId}`, scoreboard);
           this.scoreboardCache[problemsetId] = {
             data: scoreboard,
             lastFetched: new Date().getTime()
@@ -200,9 +194,6 @@ export class ApiService {
     }
     return this.http.get<SubmissionWithSource>(ApiUrl.submission(problemsetId, username, submissionNumber), httpOptions)
       .pipe(
-        tap(submission => {
-          console.log(`fetched submission ${problemsetId} ${submissionNumber}`, submission);
-        }),
         catchError(this.handleError<SubmissionWithSource>(`getSubmission ${problemsetId} ${submissionNumber}`))
       );
   }
@@ -215,9 +206,6 @@ export class ApiService {
     }
     return this.http.get<Submission[]>(ApiUrl.submissionList(problemsetId, username), httpOptions)
       .pipe(
-        tap(submissions => {
-          console.log(`fetched submissions ${problemsetId}`, submissions);
-        }),
         catchError(this.handleError<Submission[]>(`getSubmissions ${problemsetId}`))
       );
   }
@@ -266,8 +254,11 @@ export class ApiService {
     return this.user ? this.user : undefined;
   }
 
-  onProblemsetIdChange(id?: string) {
+  changeProblemsetId(id?: string) {
     if (id) {
+      if (this.latestProblemset !== undefined && this.latestProblemset.id === id) {
+        return; // do not fire if problemset id doesn't change
+      }
       this.getProblemset(id)
         .subscribe(problemset => this.setCurrentProblemset(problemset));
     }

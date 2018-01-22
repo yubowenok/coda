@@ -17,3 +17,8 @@ mat-radio-button {
 .attempted:hover {
   font-size: 1.02em;
 }
+
+/deep/ .datatable-body-row.active .datatable-row-group {
+  background-color: #ddd !important;
+}
+

@@ -43,6 +43,9 @@ export const isValidUsername = (req: Request, res: Response, next: NextFunction)
 export const isAuthorizedUser = (req: Request, res: Response, next: NextFunction) => {
   const username = req.params.username;
   const problemsetId = req.params.problemsetId;
+  if (req.user.admin) {
+    return next();
+  }
   if (problemsetId) {
     const problemset = getProblemset(problemsetId);
     if (checkProblemsetEnded(problemset)) {

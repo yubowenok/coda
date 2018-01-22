@@ -42,11 +42,13 @@ export class ScoreboardComponent implements OnInit {
   error: { msg: string } | undefined;
 
   private rows = [];
+  private selected = [];
+  private selectedRow;
   private columns = [];
   private mode = Mode.SCORE;
 
   ngOnInit() {
-    this.api.onProblemsetIdChange(this.route.snapshot.paramMap.get('problemsetId'));
+    this.api.changeProblemsetId(this.route.snapshot.paramMap.get('problemsetId'));
 
     this.problemset = this.api.latestProblemset;
     this.api.getCurrentProblemset()
@@ -145,6 +147,7 @@ export class ScoreboardComponent implements OnInit {
       const row = {
         rank: i + 1,
         name: participant.name,
+        username: participant.username,
         score: participant.score,
         finishTime: participant.finishTime
       };
@@ -164,11 +167,20 @@ export class ScoreboardComponent implements OnInit {
           }
         }
       }
+      if (this.api.getCurrentUser() && row.username === this.api.getCurrentUser().username) {
+        this.selectedRow = row;
+        this.selected = [row];
+      }
       newRows.push(row);
     }
 
     this.columns = newColumns;
     this.rows = newRows;
+  }
+
+  onSelect(event) {
+    // Fix selection at current user
+    this.selected = [this.selectedRow];
   }
 
   gotoSubmissionLink(cell: { username: string, submissionNumber: string }): void {

@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-
 import * as moment from 'moment';
 
 import { ProblemsetInfo, RunMode } from '../../constants/problemset';
 import * as time from '../../constants/time';
+import { ApiService } from '../../api.service';
 
 @Component({
   selector: 'app-navbar-problemset',
@@ -14,16 +14,25 @@ export class NavbarProblemsetComponent implements OnInit, OnDestroy {
 
   @Input() problemset: ProblemsetInfo;
 
-  constructor() { }
+  constructor(
+    private api: ApiService
+  ) { }
 
   private timeRemaining = '';
   private timeTillStart = '';
   private timePassedPercent = 0;
 
-  private interval: number;
+  private interval: NodeJS.Timer | undefined;
 
   ngOnInit() {
-    this.interval = setInterval(this.getTimes.bind(this), time.SECOND_MS);
+    this.interval = setInterval(() => {
+      this.getTimes();
+    }, time.SECOND_MS);
+
+    this.api.getCurrentProblemset()
+      .subscribe(problemset => {
+        this.problemset = problemset;
+      });
   }
 
   ngOnDestroy() {
@@ -49,7 +58,17 @@ export class NavbarProblemsetComponent implements OnInit, OnDestroy {
   getStandardTimeTillStart(): void {
     const now: moment.Moment = moment();
     const start: moment.Moment = moment(this.problemset.startTime);
-    this.timeTillStart = this.displayTime(start.diff(now));
+    const timeDiff = start.diff(now);
+    this.timeTillStart = this.displayTime(timeDiff);
+
+    // Refresh when problemset starts
+    if (timeDiff <= 0) {
+      // Disable cache for reload
+      this.api.getProblemset(this.problemset.id, true)
+        .subscribe(problemset => {
+          this.api.setCurrentProblemset(problemset);
+        });
+    }
   }
 
   getStandardTimeRemaining(): void {
@@ -61,7 +80,8 @@ export class NavbarProblemsetComponent implements OnInit, OnDestroy {
     const now: moment.Moment = moment();
     const end: moment.Moment = moment(this.problemset.endTime);
     const total = this.problemset.endTime - this.problemset.startTime;
-    this.timeRemaining = this.displayTime(end.diff(now));
+    const timeDiff = end.diff(now);
+    this.timeRemaining = this.displayTime(timeDiff);
     this.timePassedPercent = Math.floor((1 - end.diff(now) / total) * 100);
   }
 

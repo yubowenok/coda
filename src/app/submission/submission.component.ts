@@ -47,7 +47,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   private recheckHandler: NodeJS.Timer | undefined;
 
   ngOnInit() {
-    this.api.onProblemsetIdChange(this.route.snapshot.paramMap.get('problemsetId'));
+    this.api.changeProblemsetId(this.route.snapshot.paramMap.get('problemsetId'));
 
     this.problemset = this.api.latestProblemset;
     this.api.getCurrentProblemset()

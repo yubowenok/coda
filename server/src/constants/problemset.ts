@@ -59,3 +59,16 @@ export interface ProblemsetScoreDict {
 export interface ProblemsetEasierSubtasksDict {
   [problemNumber: string]: ProblemEasierSubtasksDict;
 }
+
+export interface WebProblemset {
+  id: string;
+  title: string;
+  started: boolean;
+  runMode: RunMode;
+  judgeMode: JudgeMode;
+  penaltyMode: PenaltyMode;
+  scoreboardMode: ScoreboardMode;
+  problems: ProblemsetProblem[];
+  startTime: number;
+  endTime: number;
+}

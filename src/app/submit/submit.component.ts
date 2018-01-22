@@ -37,7 +37,7 @@ export class SubmitComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe((params: { problemsetId: string, problemNumber: string }) => {
-      this.api.onProblemsetIdChange(params.problemsetId);
+      this.api.changeProblemsetId(params.problemsetId);
     });
 
     this.getProblemset();

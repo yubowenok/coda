@@ -3,33 +3,45 @@ import { ProblemsetConfig, ProblemsetProblem } from '../constants/problemset';
 import {
   getProblemsetDict,
   getProblemsetList,
+  getProblem,
   isValidProblemsetId,
-  isAuthenticated
+  isAuthenticated,
+  checkProblemsetStarted
 } from '../util';
-import { getProblem } from '../util/problem';
+import {
+  WebProblemset
+} from '../constants';
 
 /**
  * Creates a web format problemset.
  * Merges problem's subtasks info into the problemset config.
  */
-const toWebProblemset = (problemset: ProblemsetConfig): Object => {
-  const startTime = new Date(problemset.startTime).getTime();
-  const obj = {
-    ...problemset,
-    startTime: startTime,
-    endTime: new Date(problemset.endTime).getTime(),
-    started: startTime < new Date().getTime()
+const toWebProblemset = (problemset: ProblemsetConfig): WebProblemset => {
+  const result: WebProblemset = {
+    id: problemset.id,
+    title: problemset.title,
+    started: checkProblemsetStarted(problemset),
+    runMode: problemset.runMode,
+    judgeMode: problemset.judgeMode,
+    scoreboardMode: problemset.scoreboardMode,
+    penaltyMode: problemset.penaltyMode,
+    problems: [],
+    startTime: new Date(problemset.startTime).getTime(),
+    endTime: new Date(problemset.endTime).getTime()
   };
 
-  obj.problems = obj.problems.map((problemsetProblem: ProblemsetProblem) => {
-    const problem = getProblem(problemsetProblem.id);
-    return {
-      ...problemsetProblem,
-      isSingleTask: !problem.subtasks || problem.subtasks.length <= 1,
-      title: problem.title
-    };
-  });
-  return obj;
+  if (result.started) {
+    result.problems = problemset.problems.map((problemsetProblem: ProblemsetProblem) => {
+      const problem = getProblem(problemsetProblem.id);
+      return {
+        ...problemsetProblem,
+        isSingleTask: !problem.subtasks || problem.subtasks.length <= 1,
+        title: problem.title
+      };
+    });
+  }
+
+  return result;
 };
 
 module.exports = function(app: Express) {

@@ -27,12 +27,19 @@ export class ProblemComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe((params: { problemsetId: string, problemNumber: string }) => {
-      this.getProblem(params.problemsetId, params.problemNumber);
-      this.api.onProblemsetIdChange(params.problemsetId);
+      this.api.changeProblemsetId(params.problemsetId);
+      this.getProblem();
     });
+
+    this.api.getCurrentProblemset()
+      .subscribe(problemset => {
+        this.getProblem();
+      });
   }
 
-  getProblem(problemsetId: string, problemNumber: string): void {
+  getProblem(): void {
+    const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
+    const problemNumber = this.route.snapshot.paramMap.get('problemNumber');
     this.api.getProblem(problemsetId, problemNumber)
       .subscribe(
         (problem: ProblemContent) => {

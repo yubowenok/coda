@@ -91,6 +91,15 @@ export const getProblemsetScoreDict = (problemsetId: string): ProblemsetScoreDic
   return dict;
 };
 
+export const checkProblemsetStarted = (problemset: ProblemsetConfig): boolean => {
+  if (problemset.runMode === RunMode.STANDARD) {
+    return new Date(problemset.startTime).getTime() <= new Date().getTime();
+  } else if (problemset.runMode === RunMode.SELFTEST) {
+    console.error('isProblemsetStarted not implemented for SELFTEST');
+    return false;
+  }
+};
+
 export const checkProblemsetEnded = (problemset: ProblemsetConfig): boolean => {
   if (problemset.runMode === RunMode.STANDARD) {
     return new Date(problemset.endTime).getTime() <= new Date().getTime();

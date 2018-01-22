@@ -42,7 +42,7 @@ export class SubmissionListComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.api.onProblemsetIdChange(this.route.snapshot.paramMap.get('problemsetId'));
+    this.api.changeProblemsetId(this.route.snapshot.paramMap.get('problemsetId'));
 
     this.problemset = this.api.latestProblemset;
     this.api.getCurrentProblemset()

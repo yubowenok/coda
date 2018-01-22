@@ -9,6 +9,8 @@ export interface User {
   fullName: string;
   nickname: string;
   anonymous: boolean;
+
+  admin?: boolean;
 }
 
 export interface UserSettings {

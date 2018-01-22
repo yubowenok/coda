@@ -8,7 +8,8 @@ import {
   isValidProblemsetId,
   isValidProblemNumber,
   isAuthenticated,
-  parseStatement
+  parseStatement,
+  checkProblemsetStarted
 } from '../util';
 import { ProblemConfig, ProblemsetProblem } from '../constants';
 
@@ -39,6 +40,13 @@ const toWebProblem = (problemsetProblem: ProblemsetProblem, problem: ProblemConf
       };
     });
 
+  // Sort samples by id's. They are by default sorted by filename, so "sample-large.in" would incorrectly appear
+  // before "sample.in".
+  samples.sort((a: { id: string }, b: { id: string }) => {
+    if (a === b) return 0;
+    return a < b ? -1 : 1;
+  });
+
   return {
     title: problem.title,
     timeLimit: problem.timeLimit,
@@ -60,6 +68,11 @@ module.exports = function(app: Express) {
     const problemsetId = req.params.problemsetId;
     const problemNumber = req.params.problemNumber;
     const problemset = getProblemset(problemsetId);
+
+    if (!checkProblemsetStarted(problemset)) {
+      return res.status(401).json({ msg: 'Problemset has not started '});
+    }
+
     let found = false;
     problemset.problems.forEach((prob: ProblemsetProblem) => {
       if (prob.number === problemNumber) {

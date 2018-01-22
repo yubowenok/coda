@@ -24,6 +24,14 @@ export class ProblemsetComponent implements OnInit {
 
   ngOnInit() {
     this.getProblemset();
+
+    this.api.getCurrentProblemset()
+      .subscribe(problemset => {
+        if (problemset === undefined) {
+          return;
+        }
+        this.loadProblemset(problemset);
+      });
   }
 
   getProblemset(): void {
@@ -32,26 +40,30 @@ export class ProblemsetComponent implements OnInit {
       .subscribe(
         problemset => {
           this.api.setCurrentProblemset(problemset);
-          this.problemset = problemset;
-          this.error = undefined;
-
-          if (!problemset.started) {
-            this.error = { msg: 'Problemset has not started' };
-            return;
-          }
-          const problemNumber = this.route.snapshot.paramMap.get('problemNumber');
-          if (problemNumber == null) {
-            const firstProblemNumber = problemset.problems[0].number;
-            this.router.navigate([`/problemset/${problemsetId}/problem/${firstProblemNumber}`], {
-              replaceUrl: true
-            });
-          }
+          this.loadProblemset(problemset);
         },
         err => {
           this.api.loginErrorHandler(err);
           this.error = err.error;
         }
       );
+  }
+
+  loadProblemset(problemset: ProblemsetInfo): void {
+    this.problemset = problemset;
+    this.error = undefined;
+
+    if (!problemset.started) {
+      this.error = { msg: 'Problemset has not started' };
+      return;
+    }
+    const problemNumber = this.route.snapshot.paramMap.get('problemNumber');
+    if (problemNumber == null) {
+      const firstProblemNumber = problemset.problems[0].number;
+      this.router.navigate([`/problemset/${problemset.id}/problem/${firstProblemNumber}`], {
+        replaceUrl: true
+      });
+    }
   }
 
 }

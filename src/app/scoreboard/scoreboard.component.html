@@ -18,6 +18,9 @@
       [columnMode]="'force'"
       [rows]="rows"
       [columns]="columns"
+      [selected]="selected"
+      [selectionType]="'single'"
+      (select)="onSelect($event)"
     >
     </ngx-datatable>
   </div>
