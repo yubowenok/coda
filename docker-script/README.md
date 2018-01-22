@@ -4,11 +4,11 @@
 
 npm install
 
-npm link judge.js
-
 ### usage
 
-judge 
+```
+node judge.js -- [args]
+```
 
 --source=user_submission_filename
 

@@ -9,6 +9,7 @@
 # dependencies
 /node_modules
 /server/node_modules
+/docker-script/node_modules
 
 # API keys and secrets
 .env

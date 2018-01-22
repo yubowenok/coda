@@ -229,7 +229,8 @@ export const checkIncorrectSubmission = (submission: JudgedSubmission): boolean 
 };
 
 export const checkIgnoredSubmission = (submission: JudgedSubmission): boolean => {
-  return submission.verdict === VerdictType.SKIPPED;
+  return submission.verdict === VerdictType.SKIPPED ||
+    submission.verdict === VerdictType.CE; // CE does not count as wrong
 };
 
 export const checkPendingSubmission = (submission: JudgedSubmission): boolean => {

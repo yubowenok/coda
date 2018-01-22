@@ -10,7 +10,6 @@ import {
   ProblemsetProblem,
   Submission,
   Verdict,
-  submissionSourcePath,
   DockerVerdict,
   VerdictType
 } from '../constants';

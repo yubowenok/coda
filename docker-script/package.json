@@ -1,7 +1,6 @@
 {
-  "name": "judge",
+  "name": "coda-docker-judge-script",
   "version": "0.0.1",
-  "description": "",
   "main": "judge.js",
   "bin": {
     "judge": "judge.js"
@@ -10,6 +9,5 @@
     "optimist": "^0.6.1"
   },
   "devDependencies": {},
-  "author": "Kai Chen",
-  "license": "ISC"
+  "author": "Kai Chen"
 }

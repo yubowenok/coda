@@ -337,6 +337,12 @@ export class ApiService {
    */
   private handleError<T> (operation = 'operation', result?: T) {
     return (res: any): Observable<T> => {
+      // Handle ERR_CONNECTION_REFUSED status 0
+      if (res.status === 0) {
+        this.message.error('lost connection to the server');
+        return of(result as T);
+      }
+
       // display error if there is a msg field
       if (res.error && res.error.msg) {
         console.error(res.error.msg);
