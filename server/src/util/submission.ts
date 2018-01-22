@@ -30,7 +30,7 @@ const getSubmissions = (problemsetId: string): Submission[] => {
 const getVerdicts = (problemsetId: string): Verdict[] => {
   const verdictsPath = paths.problemsetVerdictsPath(problemsetId);
   const json = fs.existsSync(verdictsPath) && fs.readFileSync(verdictsPath, 'utf8');
-  return json === '' ? [] : JSON.parse(json);
+  return json ? JSON.parse(json) : [];
 };
 
 export const getVerdictsList = (problemsetId: string): Verdict[] => {

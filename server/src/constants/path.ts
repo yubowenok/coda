@@ -96,6 +96,24 @@ export const judgeSubmissionSourcePath = (problemsetId: string, submission: Subm
     'source', submission.username, submission.sourceFile);
 };
 
+export const dockerJudgeSourcePath = (problemId: string, subtask: string, file: string): string => {
+  let sourcePath = path.join(process.env.DOCKER_ROOT, 'problem', problemId);
+  if (subtask !== 'all' && subtask !== '' && subtask !== undefined) {
+    sourcePath = path.join(sourcePath, subtask);
+  }
+  sourcePath = path.join(sourcePath, 'submissions', 'accepted', file);
+  return sourcePath;
+};
+
+export const localJudgeSourcePath = (problemId: string, subtask: string, file: string): string => {
+  let sourcePath = path.join(process.env.CODA_ROOT, 'problem', problemId);
+  if (subtask !== 'all' && subtask !== '' && subtask !== undefined) {
+    sourcePath = path.join(sourcePath, subtask);
+  }
+  sourcePath = path.join(sourcePath, 'submissions', 'accepted', file);
+  return sourcePath;
+};
+
 export const runningProblemsetConfigPath = (runningProblemsetConfigId: string): string => {
   return path.join(process.env.CODA_ROOT, `${runningProblemsetConfigId}.json`);
 };
