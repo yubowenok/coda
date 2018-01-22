@@ -1,0 +1,35 @@
+\problemname{Critical Elements}
+%\illustration{.5}{filename}{Image by \href{url}{Author}}
+
+We have learned {\it Longest Increasing Subsequence} (LIS) in the course.
+Recall that LIS$(S)$ of a sequence $S$ is the longest {\it strictly} increasing sequence you can obtain from $S$ by removing some (possibly none) elements from $S$.
+
+We say an element of $S$ is {\it critical}, if removing it will cause the length of LIS$(S)$ to decrease.
+For example, in the sequence $S = [1, 3, 2, 4]$, LIS$(S)$ has length 3.
+The element $1$ is critical, because removing it gives the sequence $[3, 2, 4]$ and its LIS has length 2.
+The element $2$ is not critical, because removing it gives the sequence $[1, 3, 4]$ and its LIS is still of length 3.
+
+Given a sequence $S$ that is a permutation of integers from $1$ to $N$, find which of its elements are critical.
+\section*{Input}
+
+The first line of the input has an integer $T$, the number of test cases.\\
+Each case has an integer $N$ on the first line.\\
+The next line has $N$ integers, giving the permutation $S$.
+
+\section*{Output}
+For each sequence output its critical elements in ascending order, separated by single spaces. If none of the elements are critical, output ``{\tt -1}''.
+
+\section*{Constraints}
+\begin{itemize}
+\item $1 \leq T\leq 30$
+\item $1 \leq N \leq 2\,000$
+\item Each integer from $1$ to $N$ appears exactly once in the sequence ($S$ is a permutation of integers from $1$ to $N$).
+\item Time limit: 6s
+\end{itemize}
+
+\section*{Subtasks}
+\begin{itemize}
+  \item $N \leq 50$
+  \item Original constraints
+%\item (Large - 60 points): Original constraints $N \leq 10^5$
+\end{itemize}

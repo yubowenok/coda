@@ -6,6 +6,8 @@ import { CopyService } from '../copy.service';
 
 import { ProblemContent } from '../constants/problem';
 
+const LINE_HEIGHT = 14 * 1.5; // font-size * line-height
+
 @Component({
   selector: 'app-problem',
   templateUrl: './problem.component.html',
@@ -19,20 +21,36 @@ export class ProblemComponent implements OnInit {
     private copy: CopyService
   ) { }
 
-  private problem: ProblemContent;
+  problem: ProblemContent;
+
+  error: { msg: string } | undefined;
 
   ngOnInit() {
     this.route.params.subscribe((params: { problemsetId: string, problemNumber: string }) => {
-      this.problem = undefined;
-      this.getProblem(`${params.problemsetId}_${params.problemNumber}`);
+      this.api.changeProblemsetId(params.problemsetId);
+      this.getProblem();
     });
+
+    this.api.getCurrentProblemset()
+      .subscribe(problemset => {
+        this.getProblem();
+      });
   }
 
-  getProblem(id: string): void {
-    this.api.getProblem(id)
-      .subscribe(problem => {
-        this.problem = problem;
-      });
+  getProblem(): void {
+    const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
+    const problemNumber = this.route.snapshot.paramMap.get('problemNumber');
+    this.api.getProblem(problemsetId, problemNumber)
+      .subscribe(
+        (problem: ProblemContent) => {
+          this.problem = problem;
+          this.error = undefined;
+        },
+        err => {
+          this.api.loginErrorHandler(err);
+          this.error = err.error;
+        }
+      );
   }
 
   displaySubtaskOnlySample(sample: { id: string }): string {
@@ -40,8 +58,9 @@ export class ProblemComponent implements OnInit {
     let res = '';
     for (let i = 0; i < specialSamples.length; i++) {
       if (sample.id === specialSamples[i].sample) {
+        const multiple = specialSamples[i].subtasks.length > 1;
         res = `(${specialSamples[i].subtasks
-          .map((s) => new TitleCasePipe().transform(s)).join(', ')} subtasks)`;
+          .map((s) => new TitleCasePipe().transform(s)).join(', ')} subtask${multiple ? 's' : ''})`;
       }
     }
     return res;
@@ -49,6 +68,14 @@ export class ProblemComponent implements OnInit {
 
   copyText(text: string, successMessage: string): void {
     this.copy.copyText(text, successMessage);
+  }
+
+  getSampleHeight(sample: { in: string, out: string }): Object {
+    const inLines = sample.in.split(/\n/).length;
+    const outLines = sample.out.split(/\n/).length;
+    // minus one to remove empty string after last newline
+    const height = (Math.max(inLines, outLines) - 1) * LINE_HEIGHT;
+    return { height: `${height}px` };
   }
 
 }

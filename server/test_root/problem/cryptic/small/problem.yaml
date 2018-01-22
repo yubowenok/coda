@@ -1,0 +1,5 @@
+validation: custom
+
+limits:
+  time_multiplier: 2
+  time_safety_margin: 2

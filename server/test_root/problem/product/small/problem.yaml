@@ -1,0 +1,9 @@
+limits:
+  time_multiplier: 2
+  time_safety_margin: 1.5
+#  memory: 1024                   # MB
+#  output: 8                      # MB
+#  compilation_time: 60           # seconds
+#  validation_time: 60            # seconds
+#  validation_memory: 1024        # MB
+#  validation_output: 8           # MB

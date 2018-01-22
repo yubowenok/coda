@@ -1,5 +1,4 @@
 import {Component, OnInit, HostListener } from '@angular/core';
-import { Router, ActivationEnd } from '@angular/router';
 import { environment } from '../../environments/environment';
 import * as Cookies from 'cookies-js';
 import { ApiService } from '../api.service';
@@ -15,26 +14,17 @@ import { ProblemsetInfo } from '../constants/problemset';
 
 export class NavbarComponent implements OnInit {
 
-  logoUrl: string = !environment.production ? 'assets/logo.png' : 'logo.png';
+  logoUrl = 'assets/logo.png';
 
-  problemset: ProblemsetInfo | undefined = undefined;
+  problemset: ProblemsetInfo;
 
   public linksExpanded = true;
 
   constructor(
-    private api: ApiService,
-    private router: Router
+    public api: ApiService
   ) {
-    this.router.events.subscribe(data => {
-      if (data instanceof ActivationEnd) {
-        const problemsetId: string | undefined = data.snapshot.params.problemsetId;
-        if (problemsetId) {
-          this.getProblemset(problemsetId);
-        } else {
-          this.problemset = undefined;
-        }
-      }
-    });
+    this.api.getCurrentProblemset()
+      .subscribe(problemset => this.problemset = problemset);
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -54,12 +44,4 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  getProblemset(id: string): void {
-    this.api.getProblemset(id)
-      .subscribe(problemset => this.problemset = problemset);
-  }
-
-  getUser(): string {
-    return 'by123';
-  }
 }

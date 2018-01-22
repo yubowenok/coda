@@ -1,0 +1,75 @@
+\problemname{Red, Black Cards}
+%\illustration{.5}{filename}{Image by \href{url}{Author}}
+
+John is playing a fancy card game with Bowen.
+$N$ cards are laid on the table, facing down.
+The cards are numbered from $1$ to $N$.
+Each card has a color, and is either red or black.
+The colors of the cards are unknown to John.
+John's goal is to correctly identify the colors of all the cards without looking at any card.
+For that, he asks Bowen $Q$ questions.
+John's questions are numbered from $1$ to $Q$.
+Each question may ask about whether a pair of cards have the same color, or what color a particular card has.
+Bowen checks the colors of cards for John according to John's questions.
+John thus receives a sequence of $Q$ answers, each being one of the following:
+
+\begin{itemize}
+\item {\tt d x y} : Card $x$ and card $y$ have different colors.
+\item {\tt s x y} : Card $x$ and card $y$ have a same color.
+\item {\tt r x} : Card $x$ has red color.
+\item {\tt b x} : Card $x$ has black color.
+\end{itemize}
+
+
+However, since John asks so many questions, Bowen gets tired and sometimes made mistakes in answering the questions.
+Fortunately, being a clever player, John can immediately catch Bowen's mistake if there is a contradiction from Bowen's answers.
+When that happens, the current answer that results in a contradiction is void and the game proceeds.
+The game ends immediately as soon as John gets enough information to identify the colors of all the cards.
+The game also ends after $Q$ questions are all answered, even if John did not successfully identify the colors.
+
+In this task, you will go over the questions asked by John and the answers to those questions given by Bowen.
+You are to reproduce John's responses during the game.
+
+\section*{Input}
+The first line of the input has an integer $T$, the number of games played.\\
+Each case has two integer $N, Q$ on the first line.\\
+The next $Q$ lines describe John's questions and their answers.
+Each line is in one of the four forms given above.\\
+The first letter of each line is `{\tt d}', `{\tt s}', `{\tt r}' or `{\tt b}'.
+If the letter is `{\tt d}' or `{\tt s}', the question asks about whether a pair of cards have the same color, and has two following integers giving a pair of card numbers.
+If the letter is `{\tt r}' or `{\tt b}', the question asks about the color of a single card, and has one following integer giving the number of that card.\\
+Duplicate questions may be asked, but it is possible that Bowen gave different answers to a same question (which results in contradiction).
+\section*{Output}
+
+There are two types of outputs, {\it response} and {\it result}.\\
+
+If the answer to a question leads to a contradiction or John's success on the game, print a {\it response}:
+\begin{itemize}
+\item If it is a contradiction, output a single question mark ``{\tt ?}''.
+Note that this answer is then ignored and not used for identifying colors.
+\item If John can successfully identify the colors of all the cards, output ``{\tt I know}''.
+The game then ends immediately and all the following questions are ignored.
+\end{itemize}
+
+Print the question number before each {\it response}.
+Refer to the sample output for formatting details of question numbers.\\
+
+At the end of the game, print the {\it result} of the game on a new line:
+\begin{itemize}
+\item If the game ends with John's success, output a string with $N$ letters.
+The $i$-th letter is either `{\tt r}' or `{\tt b}' to describe the color of card $i$ being red or black.
+\item If John is not able to identify the colors after all the $Q$ questions, output ``{\tt I am not sure}''.
+\end{itemize}
+
+\section*{Constraints}
+\begin{itemize}
+\item $1 \leq T\leq 15$
+\item $1 \leq N \leq 10^5$
+\item $1 \leq Q \leq 10^5$
+\item $1\leq x, y \leq N, x \neq y$ for all the answers to John's questions.
+\end{itemize}
+
+\section*{Subtasks}
+\begin{itemize}
+\item Original constraints
+\end{itemize}

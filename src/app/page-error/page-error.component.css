@@ -1,0 +1,17 @@
+.page-error {
+  position: fixed;
+  left: 55%;
+  top: 40%;
+  pointer-events: none;
+}
+
+.page-error mat-icon {
+  font-size: 72px;
+}
+
+.page-error span {
+  width: 200px;
+  margin-left: -65px;
+  display: block;
+  text-align: center;
+}

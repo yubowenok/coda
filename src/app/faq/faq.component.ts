@@ -13,7 +13,7 @@ export class FaqComponent implements OnInit {
     private copy: CopyService
   ) { }
 
-  private cppTemplate = `#include <iostream>
+  cppTemplate = `#include <iostream>
 using namespace std;
 int main() {
   int a,b;
@@ -22,7 +22,7 @@ int main() {
   return 0;
 }`;
 
-  private cppFasterIOTemplate = `#include <iostream>
+  cppFasterIOTemplate = `#include <iostream>
 using namespace std;
 int main() {
   int a, b;
@@ -31,7 +31,7 @@ int main() {
   return 0;
 }`;
 
-  private javaTemplate = `import java.io.*;
+  javaTemplate = `import java.io.*;
 import java.util.*;
 public class Main
 {
@@ -43,7 +43,7 @@ public class Main
   }
 }`;
 
-  private javaFasterIOTemplate = `import java.io.*;
+  javaFasterIOTemplate = `import java.io.*;
 import java.util.*;
 public class Main
 {

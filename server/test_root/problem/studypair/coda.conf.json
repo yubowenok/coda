@@ -1,0 +1,6 @@
+{
+  "id": "studypair",
+  "title": "Study Pair",
+  "timeLimit": 3,
+  "subtasks": ["small", "large"]
+}

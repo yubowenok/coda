@@ -26,8 +26,13 @@ tt,
   font-family: monospace;
 }
 
+bf,
+.bf {
+  font-weight: bold;
+}
+
 form {
-  max-width: 400px;
+  max-width: 300px;
 }
 
 mat-spinner.mat-progress-spinner {
@@ -53,6 +58,11 @@ pre.CodeMirror-placeholder {
   box-shadow: none;
 }
 
+.ngx-datatable.material .empty-row {
+  text-align: center;
+  line-height: 3;
+}
+
 .bold,
 .bold div {
   font-weight: bold;
@@ -72,4 +82,16 @@ pre.CodeMirror-placeholder {
   cursor: pointer;
   margin-left: .5em;
   margin-right: .5em;
+}
+
+.panel-error {
+  color: #ff6161;
+}
+
+.margin-to-top {
+  margin-top: 30px;
+}
+
+.float-right {
+  float: right;
 }

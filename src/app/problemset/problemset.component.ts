@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Location } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import {Router, ActivatedRoute, NavigationStart, RouterEvent } from '@angular/router';
 
 import { ApiService } from '../api.service';
 
@@ -16,30 +15,55 @@ export class ProblemsetComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private api: ApiService,
-    private location: Location
+    private api: ApiService
   ) { }
 
   @Input() problemset: ProblemsetInfo;
 
+  error: { msg: string } | undefined;
+
   ngOnInit() {
     this.getProblemset();
+
+    this.api.getCurrentProblemset()
+      .subscribe(problemset => {
+        if (problemset === undefined) {
+          return;
+        }
+        this.loadProblemset(problemset);
+      });
   }
 
   getProblemset(): void {
     const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
     this.api.getProblemset(problemsetId)
-      .subscribe(problemset => {
-        this.problemset = problemset;
-        if (!problemset.started) {
-          return;
+      .subscribe(
+        problemset => {
+          this.api.setCurrentProblemset(problemset);
+          this.loadProblemset(problemset);
+        },
+        err => {
+          this.api.loginErrorHandler(err);
+          this.error = err.error;
         }
-        const problemNumber = this.route.snapshot.paramMap.get('problemNumber');
-        if (problemNumber == null) {
-          const firstProblemNumber = problemset.problems[0].number;
-          this.router.navigate([`/problemset/${problemsetId}/problem/${firstProblemNumber}`]);
-        }
+      );
+  }
+
+  loadProblemset(problemset: ProblemsetInfo): void {
+    this.problemset = problemset;
+    this.error = undefined;
+
+    if (!problemset.started) {
+      this.error = { msg: 'Problemset has not started' };
+      return;
+    }
+    const problemNumber = this.route.snapshot.paramMap.get('problemNumber');
+    if (problemNumber == null) {
+      const firstProblemNumber = problemset.problems[0].number;
+      this.router.navigate([`/problemset/${problemset.id}/problem/${firstProblemNumber}`], {
+        replaceUrl: true
       });
+    }
   }
 
 }

@@ -1,0 +1,32 @@
+[
+  {
+    "username": "by123",
+    "submissionNumber": 1,
+    "problemNumber": "A",
+    "subtask": "large",
+    "sourceFile": "by123_1_A_large.cpp",
+    "language": "CPP",
+    "problemsetTime": 300,
+    "submitTime": "Tue Jan 16 2018 10:05:00 GMT-0500"
+  },
+  {
+    "username": "by123",
+    "submissionNumber": 2,
+    "problemNumber": "A",
+    "subtask": "large",
+    "sourceFile": "by123_2_A_large.cpp",
+    "language": "CPP",
+    "problemsetTime": 600,
+    "submitTime": "Tue Jan 16 2018 10:10:00 GMT-0500"
+  },
+  {
+    "username": "by123",
+    "submissionNumber": 3,
+    "problemNumber": "A",
+    "subtask": "large",
+    "sourceFile": "by123_3_A_large.cpp",
+    "language": "CPP",
+    "problemsetTime": 900,
+    "submitTime": "Tue Jan 16 2018 10:15:00 GMT-0500"
+  }
+]

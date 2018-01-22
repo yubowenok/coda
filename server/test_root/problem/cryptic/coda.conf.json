@@ -1,0 +1,12 @@
+{
+  "id": "cryptic",
+  "title": "Cryptic City",
+  "timeLimit": 3,
+  "subtasks": ["small", "large"],
+  "subtaskOnlySamples": [
+    {
+      "sample": "sample-large",
+      "subtasks": ["large"]
+    }
+  ]
+}

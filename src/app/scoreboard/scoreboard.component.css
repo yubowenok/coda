@@ -6,10 +6,19 @@ ngx-datatable {
   cursor: pointer;
 }
 
-.margin-to-top {
-  margin-top: 30px;
-}
-
 mat-radio-button {
   margin-right: .5em;
 }
+
+.attempted {
+  cursor: pointer;
+}
+
+.attempted:hover {
+  font-size: 1.02em;
+}
+
+/deep/ .datatable-body-row.active .datatable-row-group {
+  background-color: #ddd !important;
+}
+

@@ -1,6 +1,7 @@
-<mat-spinner *ngIf="!this.submissionList" diameter="50"></mat-spinner>
-<ng-container *ngIf="this.submissionList">
-  <h2>{{this.getUsername()}}'s Submissions for {{this.problemset.title}}</h2>
+<app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
+<mat-spinner *ngIf="!submissionList && !error" diameter="50"></mat-spinner>
+<ng-container *ngIf="submissionList && problemset && !error">
+  <h2>{{api.getCurrentUser().username}}'s Submissions for {{problemset.title}}</h2>
   <div class="margin-to-top">
     <ngx-datatable
       class="material striped"
@@ -9,11 +10,13 @@
       [columnMode]="'force'"
       [rows]="rows"
       [columns]="columns"
+      [messages]="listMessages"
+      [sorts]="[{prop: 'submissionNumber', dir: 'desc'}]"
     >
     </ngx-datatable>
   </div>
 </ng-container>
 
 <ng-template #sourceLinkTmpl let-row="row" let-value="value">
-  <i [routerLink]="this.getSourceLink(value)" class="fa fa-file-text-o"></i>
+  <i [routerLink]="getSourceLink(value)" class="fa fa-file-text-o"></i>
 </ng-template>

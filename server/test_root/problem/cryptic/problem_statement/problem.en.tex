@@ -1,0 +1,40 @@
+\problemname{Cryptic City}
+%\illustration{.5}{filename}{Image by \href{url}{Author}}
+
+You entered a {\bf cryptic city} in your dream.
+The city is {\tt very large} and has a complicated road network.
+There are $N - 1$ intersections in the city, numbered from $2$ to $N$ (Strangely there is no intersection $1$).
+The roads in the city are constructed in a cryptic manner.
+Between each pair of intersections $x$ and $y$ ($x \neq y$), there exists a bidirectional road of length {\it GCD}$(x, y)$.
+You are now at intersection $A$ and want to go to intersection $B$.
+What is the shortest path you can take from $A$ to $B$?
+
+\section*{Input}
+
+The first line of the input has an integer $T$, the number of test cases.\\
+Each case has three integers $N, A, B$ on a single line.
+
+\section*{Output}
+
+For each case, output the shortest path your can take from $A$ to $B$. The shortest path is written as a sequence of visited intersections (including $A$ and $B$), separated by single spaces. If there are multiple possible shortest paths, you may output any of them.
+
+\section*{Constraints}
+\begin{itemize}
+\item $1 \leq T\leq 30$
+\item $3 \leq N \leq 10^6$
+\item $2 \leq A, B \leq N$
+\item $A \neq B$
+\end{itemize}
+
+\section*{Subtasks}
+\begin{itemize}
+  \item $N \leq 50$
+  \item Original constraints
+\end{itemize}
+
+\section*{Note}
+There are $O(N^2)$ roads in the city. In the {\it large} subtask, an algorithm that processes every road will be too slow, and you will not be able to store all the roads in memory.\\
+
+\noindent In the first sample case, the shortest path goes directly from intersection $4$ to intersection $6$. The road between them has length {\it GCD}$(4, 6) = 2$. Note that there exist multiple possible answers. You only need to find a path that minimizes the total distance travelled. You do {\it NOT} need to minimize the number of intersections visited. For the first sample case, ``{\tt 4 5 6}'' will also be accepted, as {\it GCD}$(4, 5)$ + {\it GCD}$(5, 6) = 1 + 1 = 2$.\\
+
+\noindent The last two sample cases will not appear in the {\it small} subtask.\\

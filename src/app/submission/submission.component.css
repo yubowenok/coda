@@ -12,10 +12,6 @@ table {
   table-layout: fixed;
 }
 
-.margin-to-top {
-  margin-top: 30px;
-}
-
 .case {
   display: inline-flex;
   width: 20px;
@@ -27,6 +23,24 @@ table {
   justify-content: center;
 }
 
+.pending * {
+  display: inline-block;
+  position: relative;
+}
+
+.pending span {
+  margin-left: .5em;
+  bottom: 5px;
+}
+
+.pending mat-spinner {
+  left: 0;
+}
+
+.status {
+  font-size: .8em;
+}
+
 /* Offset mysterious margin */
 .case.incorrect {
   margin-left: -3px;
@@ -35,4 +49,11 @@ table {
 
 .unknown {
   color: #ccc;
+}
+
+.compile-error {
+  border: 1px solid #eee;
+  padding: 10px;
+  max-height: 300px;
+  overflow-y: scroll;
 }

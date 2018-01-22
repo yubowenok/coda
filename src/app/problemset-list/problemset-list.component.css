@@ -1,26 +1,27 @@
-.problemset {
-  height: 100px;
-}
-
 label {
   font-weight: bold;
 }
 
 mat-list-item {
   cursor: pointer;
+  margin-bottom: 10px;
 }
 
-.time {
+.time span {
   display: inline-block;
-  min-width: 150px;
+  min-width: 120px;
 }
 
-.mode {
-  display: inline-block;
+.mat-line.problemset {
+  display: flex;
+  align-items: center;
+}
+
+mat-chip.mode {
+  cursor: pointer;
   text-align: center;
-  border: 1px solid #ccc;
-  padding: 3px;
-  color: #999;
+  display: inline-block;
+  line-height: .75;
 }
 
 .mode.run {
@@ -35,14 +36,15 @@ mat-list-item {
   width: 90px;
 }
 
-.float-right {
-  float: right;
-}
-
 mat-card {
   margin-top: 30px;
 }
 
 mat-card-title {
   font-size: 1.5em;
+}
+
+.mat-nav-list .mat-list-item .row.mat-line {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }

@@ -1,4 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ApiService } from '../api.service';
+import { Router } from '@angular/router';
+import { MessageService } from '../message.service';
+import { UserInfo } from '../constants/user';
+import {
+  passwordLengthValidator,
+  passwordMatchValidator,
+  usernameCharactersValidator,
+  usernameLengthValidator
+} from '../util';
 
 @Component({
   selector: 'app-signup',
@@ -7,9 +18,53 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SignupComponent implements OnInit {
 
-  constructor() { }
+  tooltip = {
+    INVITATION_CODE: `An invitation code is required for signup.
+    All enrolled students should have received an invitation code in your university mailbox.
+    If you have enrolled but not yet received the code, please contact the instructor.
+    If you are auditing the course, please contact the instructor to request a code.`,
+    EMAIL: `Please use your netID email address like "abc123@nyu.edu".
+    Do not use email alias like "albert.bobst.courant@nyu.edu"`
+  };
+
+  private form: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    public api: ApiService,
+    private router: Router,
+    private message: MessageService
+  ) { }
 
   ngOnInit() {
+    this.form = this.fb.group({
+      invitationCode: new FormControl('ABC', Validators.required),
+      email: new FormControl('by123@nyu.edu', [Validators.required, Validators.email]),
+      username: new FormControl('by123', [
+        Validators.required,
+        usernameCharactersValidator,
+        usernameLengthValidator
+      ]),
+      password: new FormControl('123456', [Validators.required, passwordLengthValidator]),
+      confirmPassword: new FormControl('123456', [Validators.required, passwordMatchValidator]),
+      fullName: new FormControl('Bowen', Validators.required)
+    });
+  }
+
+  signup() {
+    this.api.signup(this.form.value)
+      .subscribe(
+        (data: UserInfo | undefined) => {
+          if (data === undefined) { // failure handler
+            return;
+          }
+          this.message.info(`Welcome to coda, ${data.nickname}!`);
+          this.router.navigate(['/']);
+        },
+        err => {
+          this.message.error(err.error.msg);
+        }
+      );
   }
 
 }
