@@ -1,3 +1,5 @@
+import { WebIllustration } from './parse-tex';
+
 export interface ProblemConfig {
   id: string;
   title: string;
@@ -13,14 +15,16 @@ export interface ProblemConfig {
   } | false;
 }
 
-export interface ProblemContent {
+export interface WebProblem {
   title: string;
+  timeLimit: number;
   statement: string;
   illustration?: {
     width: number, // width percentage between [0, 1]
     filename: string,
     text: string, // HTML content with link
   };
+  isSingleTask: boolean;
   subtasks: {
     id: string,
     score: number,
@@ -35,6 +39,7 @@ export interface ProblemContent {
     sample: string,
     subtasks: string[]
   }[];
+  adminView?: boolean;
 }
 
 export interface ProblemEasierSubtasksDict {

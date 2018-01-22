@@ -33,8 +33,11 @@ export interface Submission {
   verdict: Verdict;
   language: string;
   executionTime: number; // seconds
-  // memory: number; // MB
-  problemsetTime: number; // seconds into the problemset
+
+  // seconds into the problemset
+  // if negative, then it is testing before the problemset starts
+  problemsetTime: number;
+
   submitTime: number; // date
   outsideProblemsetTime: boolean;
   failedCase?: number; // 0 if AC
@@ -44,6 +47,7 @@ export interface Submission {
 export interface SubmissionWithSource extends Submission {
   sourceCode: string;
   compileError?: string;
+  adminView?: boolean;
 }
 
 export const SubmissionColumnWidth = {

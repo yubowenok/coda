@@ -7,7 +7,7 @@ import { Submission, Verdict, SubmissionColumnWidth as ColumnWidth } from '../co
 import { LanguageDisplay } from '../constants/language';
 import { ProblemsetInfo } from '../constants/problemset';
 
-import { executionTimeDisplay } from '../util';
+import { executionTimeDisplay, problemsetTimeDisplay } from '../util';
 
 import {
   DateDisplayPipe,
@@ -36,10 +36,6 @@ export class SubmissionListComponent implements OnInit {
 
   private rows = [];
   private columns = [];
-
-  private listMessages = {
-    emptyMessage: 'User has no submissions'
-  };
 
   ngOnInit() {
     this.api.changeProblemsetId(this.route.snapshot.paramMap.get('problemsetId'));
@@ -86,7 +82,6 @@ export class SubmissionListComponent implements OnInit {
         name: 'Execution', prop: 'executionTimeDisplay', comparator: this.executionTimeSorter,
         ...ColumnWidth.EXECUTION_TIME
       },
-      // { name: 'Memory', prop: 'memoryDisplay', comparator: this.memorySorter },
       {
         name: 'Time', prop: 'problemsetTime', pipe: timeDisplayPipe,
         ...ColumnWidth.PROBLEMSET_TIME
@@ -101,11 +96,6 @@ export class SubmissionListComponent implements OnInit {
   executionTimeSorter(valueA: string, valueB: string, // values are display strings
                       rowA: { executionTime: number }, rowB: { executionTime: number }): number {
     return Math.sign(rowA.executionTime - rowB.executionTime);
-  }
-
-  memorySorter(valueA: string, valueB: string, // values are display strings
-               rowA: { memory: number }, rowB: { memory: number }): number {
-    return Math.sign(rowA.memory - rowB.memory);
   }
 
   getCorrectClass(cell: { row: { verdict: Verdict } }): string {
@@ -154,9 +144,8 @@ export class SubmissionListComponent implements OnInit {
         ...submission,
         subtask: submission.subtask === 'all' ? '-' : submission.subtask,
         executionTimeDisplay: executionTimeDisplay(submission),
-        // memoryDisplay: this.getMemoryDisplay(submission),
         problem: problemNames[submission.problemNumber],
-        problemsetTime: submission.outsideProblemsetTime ? -1 : submission.problemsetTime,
+        problemsetTime: problemsetTimeDisplay(submission),
         submitTime: submission.submitTime,
         language: LanguageDisplay[submission.language],
         sourceCode: submission.submissionNumber

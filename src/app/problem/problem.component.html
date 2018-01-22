@@ -1,6 +1,9 @@
 <app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
 <mat-spinner *ngIf="!problem && !error" diameter="50"></mat-spinner>
 <div *ngIf="problem" class="problem">
+  <div class="status" *ngIf="problem.adminView">
+    You are viewing this problem as admin.
+  </div>
   <div class="title">
     <h1>{{problem.title}}</h1>
     <button mat-raised-button color="primary" class="submit float-right" routerLink="submit">Submit</button>

@@ -11,13 +11,14 @@ import {
 import {
   WebProblemset
 } from '../constants';
+import { isAuthorizedUser } from '../util/users';
 
 /**
  * Creates a web format problemset.
  * Merges problem's subtasks info into the problemset config.
  */
 const toWebProblemset = (problemset: ProblemsetConfig): WebProblemset => {
-  const result: WebProblemset = {
+  return {
     id: problemset.id,
     title: problemset.title,
     started: checkProblemsetStarted(problemset),
@@ -25,23 +26,17 @@ const toWebProblemset = (problemset: ProblemsetConfig): WebProblemset => {
     judgeMode: problemset.judgeMode,
     scoreboardMode: problemset.scoreboardMode,
     penaltyMode: problemset.penaltyMode,
-    problems: [],
     startTime: new Date(problemset.startTime).getTime(),
-    endTime: new Date(problemset.endTime).getTime()
-  };
-
-  if (result.started) {
-    result.problems = problemset.problems.map((problemsetProblem: ProblemsetProblem) => {
+    endTime: new Date(problemset.endTime).getTime(),
+    problems: problemset.problems.map((problemsetProblem: ProblemsetProblem) => {
       const problem = getProblem(problemsetProblem.id);
       return {
         ...problemsetProblem,
         isSingleTask: !problem.subtasks || problem.subtasks.length <= 1,
         title: problem.title
       };
-    });
-  }
-
-  return result;
+    })
+  };
 };
 
 module.exports = function(app: Express) {
@@ -51,10 +46,21 @@ module.exports = function(app: Express) {
   app.get('/api/problemset/:problemsetId',
     isAuthenticated,
     isValidProblemsetId,
+    isAuthorizedUser,
     (req: Request, res: Response) => {
     const problemsetId = req.params.problemsetId;
     const problemsetDict = getProblemsetDict();
-    res.json(toWebProblemset(problemsetDict[problemsetId]));
+    const webProblemset = toWebProblemset(problemsetDict[problemsetId]);
+
+    if (!webProblemset.started) {
+      if (req.user.isAdmin) {
+        webProblemset.started = true;
+        webProblemset.adminView = true;
+      } else {
+        webProblemset.problems = []; // hide from web
+      }
+    }
+    res.json(webProblemset);
   });
 
   /**

@@ -9,8 +9,8 @@
     "email": "by789@nyu.edu",
     "invitationCode": "XYZ",
     "password": "$2a$12$FS1a2k49G7/jkMSMGOCELOxXRucAIlG2ueBpr1wDrtxK7lLg.GDVq",
-    "fullName": "Bowen2",
-    "nickname": "Bowen2",
+    "fullName": "by2",
+    "nickname": "by2",
     "anonymous": false
   },
   {
@@ -35,5 +35,14 @@
     "email": "jz000@nyu.edu",
     "invitationCode": "CCC",
     "password": ""
+  },
+  {
+    "username": "admin",
+    "email": "admin@coda",
+    "invitationCode": "ADMIN",
+    "password": "$2a$12$FS1a2k49G7/jkMSMGOCELOxXRucAIlG2ueBpr1wDrtxK7lLg.GDVq",
+    "fullName": "admin",
+    "nickname": "admin",
+    "groups": ["admin"]
   }
 ]

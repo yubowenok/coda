@@ -71,4 +71,5 @@ export interface WebProblemset {
   problems: ProblemsetProblem[];
   startTime: number;
   endTime: number;
+  adminView?: boolean;
 }

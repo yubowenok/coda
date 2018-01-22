@@ -35,11 +35,6 @@ export const executionTimeDisplay = (submission: Submission): string => {
   return `${submission.verdict === Verdict.TLE ? '> ' : ''}${submission.executionTime}s`;
 };
 
-/*
-export const memoryDisplay = (submission: Submission): string => {
-  if (submission.verdict === Verdict.PENDING || submission.verdict === Verdict.SKIPPED) {
-    return '-';
-  }
-  return `${submission.verdict === Verdict.MLE ? '> ' : ''}${submission.memory}MB`;
+export const problemsetTimeDisplay = (submission: Submission): number | string => {
+  return submission.outsideProblemsetTime ? '' : submission.problemsetTime;
 };
-*/

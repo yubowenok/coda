@@ -184,8 +184,8 @@ export class ScoreboardComponent implements OnInit {
   }
 
   gotoSubmissionLink(cell: { username: string, submissionNumber: string }): void {
-    if (!cell.submissionNumber || !problemsetEnded(this.problemset)) {
-      this.message.info('source code not available before problemset ends');
+    if (!cell.submissionNumber) {
+      this.message.info('source code not available');
     } else {
       this.router.navigate([
         `/problemset/${this.problemset.id}/submission/${cell.username}/${cell.submissionNumber}`

@@ -6,7 +6,7 @@ import { MappedError } from 'express-validator/shared-typings';
 import * as bcrypt from 'bcrypt';
 import * as _ from 'lodash';
 
-import { getUsers, writeUsers, isAuthenticated } from '../util';
+import { getUserList, writeUsers, isAuthenticated } from '../util';
 
 const SALT_ROUNDS = 12;
 
@@ -71,7 +71,7 @@ module.exports = function(app: Express) {
       return res.status(500).json({ msg: errors[0].msg });
     }
 
-    const users = getUsers();
+    const users = getUserList();
     if (users.map((user: User) => {
         return user.username;
       }).indexOf(req.body.username) !== -1) {
@@ -132,7 +132,7 @@ module.exports = function(app: Express) {
       return res.status(500).json({ msg: errors[0].msg });
     }
 
-    const users = getUsers();
+    const users = getUserList();
     let foundUser: User;
     for (let i = 0; i < users.length && !foundUser; i++) {
       if (users[i].email === req.user.email) {
@@ -160,7 +160,7 @@ module.exports = function(app: Express) {
       return res.status(500).json({ msg: errors[0].msg });
     }
 
-    const users = getUsers();
+    const users = getUserList();
     let found = false;
     for (let i = 0; i < users.length && !found; i++) {
       if (users[i].email === req.user.email) {

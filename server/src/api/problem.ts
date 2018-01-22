@@ -11,13 +11,15 @@ import {
   parseStatement,
   checkProblemsetStarted
 } from '../util';
-import { ProblemConfig, ProblemsetProblem } from '../constants';
+import { ProblemConfig, ProblemsetProblem, WebProblem } from '../constants';
+import { isAuthorizedUser } from '../util/users';
+import { Problem } from 'aws-sdk/clients/devicefarm';
 
 /**
  * Creates a web format problem.
  * Merges problemset config (subtask scores, etc.) into problem config.
  */
-const toWebProblem = (problemsetProblem: ProblemsetProblem, problem: ProblemConfig): Object => {
+const toWebProblem = (problemsetProblem: ProblemsetProblem, problem: ProblemConfig): WebProblem => {
   const statement = fs.readFileSync(paths.problemStatementPath(problem.id), 'utf8');
   const webStatement = parseStatement(statement);
   const subtasks = problemsetProblem.subtasks.map((subtask: { id: string, score: number }, index: number) => {
@@ -66,24 +68,28 @@ module.exports = function(app: Express) {
     isAuthenticated,
     isValidProblemsetId,
     isValidProblemNumber,
+    isAuthorizedUser,
     (req: Request, res: Response) => {
     const problemsetId = req.params.problemsetId;
     const problemNumber = req.params.problemNumber;
     const problemset = getProblemset(problemsetId);
+    const started = checkProblemsetStarted(problemset);
 
-    if (!checkProblemsetStarted(problemset)) {
+    if (!started && !req.user.isAdmin) {
       return res.status(401).json({ msg: 'Problemset has not started '});
     }
 
-    let found = false;
-    problemset.problems.forEach((prob: ProblemsetProblem) => {
-      if (prob.number === problemNumber) {
-        res.json(toWebProblem(prob, getProblem(prob.id)));
-        found = true;
-      }
-    });
-    if (!found) {
+    const problem = problemset.problems
+      .filter((prob: ProblemsetProblem) => prob.number === problemNumber)[0];
+    if (!problem) {
       res.status(500).json({ msg: 'critical server error' });
     }
+    const webProblem = toWebProblem(problem, getProblem(problem.id));
+
+    if (!started) {
+      webProblem.adminView = true;
+    }
+
+    res.json(webProblem);
   });
 };

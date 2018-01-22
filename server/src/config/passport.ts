@@ -2,14 +2,14 @@ import * as passport from 'passport';
 import * as bcrypt from 'bcrypt';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { User } from '../constants/user';
-import { getUsers } from '../util/users';
+import { getUserList } from '../util/users';
 
 passport.serializeUser((user: User, done) => {
   done(undefined, user.email);
 });
 
 passport.deserializeUser((email: string, done) => {
-  const users = getUsers();
+  const users = getUserList();
   for (let i = 0; i < users.length; i++) {
     if (email === users[i].email) {
       done(undefined, users[i]);
@@ -22,7 +22,7 @@ passport.deserializeUser((email: string, done) => {
  */
 passport.use(new LocalStrategy((username: string, password: string, done) => {
   const isEmail = username.match(/@/);
-  const users = getUsers();
+  const users = getUserList();
   for (let i = 0; i < users.length; i++) {
     const target = isEmail ? users[i].email : users[i].username;
     if (target === username) {

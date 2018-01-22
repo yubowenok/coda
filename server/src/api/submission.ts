@@ -13,7 +13,8 @@ import {
   getJudgedSubmission,
   getJudgedSubmissionWithSource,
   updateVerdictForBlindJudge,
-  updateVerdictsForBlindJudge
+  updateVerdictsForBlindJudge,
+  checkProblemsetEnded
 } from '../util';
 
 module.exports = function(app: Express) {
@@ -27,6 +28,7 @@ module.exports = function(app: Express) {
     isAuthorizedUser,
     (req: Request, res: Response) => {
     const problemsetId = req.params.problemsetId;
+    const problemset = getProblemset(problemsetId);
     const username = req.params.username;
     const submissionNumber = +req.params.submissionNumber;
     if (!checkSubmission(problemsetId, username, submissionNumber)) {
@@ -36,7 +38,14 @@ module.exports = function(app: Express) {
     const judgedSubmission = getJudgedSubmissionWithSource(problemsetId, submission,
       getVerdict(problemsetId, submission));
 
-    updateVerdictForBlindJudge(getProblemset(problemsetId), judgedSubmission);
+    if (!checkProblemsetEnded(problemset)) {
+      if (req.user.isAdmin) {
+        judgedSubmission.adminView = true;
+      } else {
+        updateVerdictForBlindJudge(getProblemset(problemsetId), judgedSubmission);
+      }
+    }
+
     res.json(judgedSubmission);
   });
 
@@ -50,6 +59,7 @@ module.exports = function(app: Express) {
     isAuthorizedUser,
     (req: Request, res: Response) => {
       const problemsetId = req.params.problemsetId;
+      const problemset = getProblemset(problemsetId);
       const username = req.params.username;
       const verdicts = getVerdictDict(problemsetId);
       const judgedSubmissions = getSubmissionList(problemsetId, username)
@@ -57,7 +67,11 @@ module.exports = function(app: Express) {
           verdicts && submission.username in verdicts ?
             verdicts[submission.username][submission.submissionNumber] : undefined));
 
-      updateVerdictsForBlindJudge(getProblemset(problemsetId), judgedSubmissions);
+      if (!checkProblemsetEnded(problemset)) {
+        if (!req.user.isAdmin) {
+          updateVerdictsForBlindJudge(problemset, judgedSubmissions);
+        }
+      }
       res.json(judgedSubmissions);
   });
 };

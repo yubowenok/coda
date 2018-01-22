@@ -11,6 +11,10 @@ export const usersPath = (): string => {
   return path.join(process.env.CODA_ROOT, 'users.json');
 };
 
+export const groupsPath = (): string => {
+  return path.join(process.env.CODA_ROOT, 'groups.json');
+};
+
 export const problemsetDir = (problemsetId?: string): string => {
   return problemsetId ? path.join(PROBLEMSET_DIR, problemsetId) : PROBLEMSET_DIR;
 };

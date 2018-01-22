@@ -37,10 +37,6 @@ table {
   left: 0;
 }
 
-.status {
-  font-size: .8em;
-}
-
 /* Offset mysterious margin */
 .case.incorrect {
   margin-left: -3px;

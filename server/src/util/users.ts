@@ -3,9 +3,14 @@ import * as fs from 'fs';
 import * as path from '../constants/path';
 import { User, UserDict } from '../constants/user';
 import { checkProblemsetEnded, getProblemset } from './problemset';
+import * as _ from 'lodash';
 
-export const getUsers = (): User[] => {
+const getUsers = (): User[] => {
   return JSON.parse(fs.readFileSync(path.usersPath(), 'utf8'));
+};
+
+export const getUserList = (): User[] => {
+  return getUsers();
 };
 
 export const checkUsername = (username: string): boolean => {
@@ -43,17 +48,30 @@ export const isValidUsername = (req: Request, res: Response, next: NextFunction)
 export const isAuthorizedUser = (req: Request, res: Response, next: NextFunction) => {
   const username = req.params.username;
   const problemsetId = req.params.problemsetId;
-  if (req.user.admin) {
-    return next();
-  }
   if (problemsetId) {
     const problemset = getProblemset(problemsetId);
+
+    const allowedUsers = problemset.allowUsers || [];
+    if (allowedUsers.indexOf(req.user.username) !== -1 || allowedUsers.indexOf(req.user.email) !== -1) {
+      return next();
+    }
+
+    const allowedGroups = (problemset.allowGroups || []).concat(['admin']);
+    const userGroups = req.user.groups || [];
+    const commonGroups = _.intersection(allowedGroups, userGroups);
+    if (commonGroups.length) {
+      if (commonGroups.indexOf('admin') !== -1) {
+        req.user.isAdmin = true;
+      }
+      return next();
+    }
+
     if (checkProblemsetEnded(problemset)) {
       return next();
     }
   }
   if (username !== req.user.username) {
-    return res.status(401).json({ msg: 'access denied' });
+    return res.status(401).json({ msg: 'currently unavailable' });
   }
   next();
 };

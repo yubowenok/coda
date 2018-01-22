@@ -12,7 +12,7 @@ import {
   ProblemsetConfig,
   JudgeMode
 } from '../constants';
-import { checkProblemsetEnded } from './problemset';
+import { checkProblemsetEnded, getProblemset } from './problemset';
 import { getProblemsetProblem } from './problem';
 
 /**
@@ -174,7 +174,6 @@ export const getJudgedSubmission = (problemsetId: string, submission: Submission
       verdict: VerdictType.PENDING,
       executionTime: 0,
       sourceFile: submission.sourceFile
-      // memory: 0
     };
   }
   const result: JudgedSubmission = {
@@ -189,15 +188,15 @@ export const getJudgedSubmission = (problemsetId: string, submission: Submission
     // from verdict
     verdict: verdict.verdict,
     executionTime: verdict.executionTime,
-    // memory: verdict.memory
     blindJudgeStatus: submission.blindJudgeStatus,
     failedCase: verdict.failedCase,
     totalCase: verdict.totalCase
   };
 
+  const problemset = getProblemset(problemsetId);
   if (result.verdict === VerdictType.TLE) {
     // Send time limit as execution time, so that web displays it as "> ${TL}s".
-    const timeLimit = getProblemsetProblem(problemsetId, submission.problemNumber).timeLimit;
+    const timeLimit = getProblemsetProblem(problemset, submission.problemNumber).timeLimit;
     if (result.executionTime > timeLimit) {
       result.executionTime = timeLimit;
     }

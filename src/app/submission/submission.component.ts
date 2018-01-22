@@ -13,7 +13,7 @@ import {
   ProblemsetInfo,
   SECOND_MS
 } from '../constants';
-import { executionTimeDisplay } from '../util';
+import { executionTimeDisplay, problemsetTimeDisplay } from '../util';
 
 import {
   TimeDisplayPipe,
@@ -175,7 +175,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       ...submission,
       subtask: submission.subtask === 'all' ? '-' : submission.subtask,
       executionTimeDisplay: executionTimeDisplay(submission),
-      // memoryDisplay: `${submission.verdict === Verdict.MLE ? '> ' : ''}${submission.memory}MB`,
+      problemsetTime: problemsetTimeDisplay(submission),
       problem: problemNames[submission.problemNumber],
       submitTime: moment(submission.submitTime),
       language: LanguageDisplay[submission.language]

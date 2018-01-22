@@ -1,6 +1,9 @@
 <app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
 <mat-spinner *ngIf="!submissionList && !error" diameter="50"></mat-spinner>
 <ng-container *ngIf="submissionList && problemset && !error">
+  <div class="status" *ngIf="problemset.adminView">
+    <span>You are viewing the submission list as admin.</span>
+  </div>
   <h2>{{api.getCurrentUser().username}}'s Submissions for {{problemset.title}}</h2>
   <div class="margin-to-top">
     <ngx-datatable
@@ -10,7 +13,7 @@
       [columnMode]="'force'"
       [rows]="rows"
       [columns]="columns"
-      [messages]="listMessages"
+      [messages]="{ emptyMessage: 'User has no submissions' }"
       [sorts]="[{prop: 'submissionNumber', dir: 'desc'}]"
     >
     </ngx-datatable>

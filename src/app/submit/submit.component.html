@@ -1,5 +1,8 @@
 <app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
 <ng-container *ngIf="problemset && !error">
+  <div class="status" *ngIf="problemset.adminView">
+    You are submitting as admin.
+  </div>
   <table>
     <tbody>
     <tr>

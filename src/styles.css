@@ -95,3 +95,8 @@ pre.CodeMirror-placeholder {
 .float-right {
   float: right;
 }
+
+.status {
+  font-size: .8em;
+}
+
