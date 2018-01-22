@@ -43,7 +43,9 @@ const toWebProblem = (problemsetProblem: ProblemsetProblem, problem: ProblemConf
   // Sort samples by id's. They are by default sorted by filename, so "sample-large.in" would incorrectly appear
   // before "sample.in".
   samples.sort((a: { id: string }, b: { id: string }) => {
-    if (a === b) return 0;
+    if (a === b) {
+      return 0;
+    }
     return a < b ? -1 : 1;
   });
 
