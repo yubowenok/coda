@@ -60,7 +60,7 @@ public class Main
   }
 }`;
 
-  private codaVersion: string;
+  codaVersion: string;
 
   ngOnInit() {
     this.codaVersion = codaVersion;

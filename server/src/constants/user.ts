@@ -8,14 +8,13 @@ export interface User {
   invitationCode: string;
   fullName: string;
   nickname: string;
-  anonymous: boolean;
 
   admin?: boolean;
 }
 
 export interface UserSettings {
+  fullName: string;
   nickname: string;
-  anonymous: boolean;
 }
 
 export interface UserDict {

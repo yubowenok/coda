@@ -9,7 +9,7 @@
       <mat-progress-bar mode="determinate" [value]="timePassedPercent" color="primary"></mat-progress-bar>
     </div>
   </div>
-  <div *ngIf="problemset.started">
+  <div *ngIf="hasProblemsetDisplay()">
     <button mat-button *ngFor="let problem of problemset.problems"
             routerLink="/problemset/{{problemset.id}}/problem/{{problem.number}}">
       <b>{{problem.number}}</b>

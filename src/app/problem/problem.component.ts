@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
+
 import { TitleCasePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../api.service';
@@ -13,7 +15,7 @@ const LINE_HEIGHT = 14 * 1.5; // font-size * line-height
   templateUrl: './problem.component.html',
   styleUrls: ['./problem.component.css']
 })
-export class ProblemComponent implements OnInit {
+export class ProblemComponent implements OnInit, OnDestroy {
 
   constructor(
     private api: ApiService,
@@ -25,16 +27,22 @@ export class ProblemComponent implements OnInit {
 
   error: { msg: string } | undefined;
 
+  private currentProblemsetSubscription: Subscription;
+
   ngOnInit() {
     this.route.params.subscribe((params: { problemsetId: string, problemNumber: string }) => {
       this.api.changeProblemsetId(params.problemsetId);
       this.getProblem();
     });
 
-    this.api.getCurrentProblemset()
+    this.currentProblemsetSubscription = this.api.getCurrentProblemset()
       .subscribe(problemset => {
         this.getProblem();
       });
+  }
+
+  ngOnDestroy() {
+    this.currentProblemsetSubscription.unsubscribe();
   }
 
   getProblem(): void {

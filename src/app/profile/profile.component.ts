@@ -27,13 +27,13 @@ export class ProfileComponent implements OnInit {
     this.getUserSettings();
 
     this.password = this.fb.group({
-      currentPassword: new FormControl('123456', Validators.required),
-      password: new FormControl('123456', [Validators.required, passwordLengthValidator]),
-      confirmPassword: new FormControl('123456', [Validators.required, passwordMatchValidator])
+      currentPassword: new FormControl('', Validators.required),
+      password: new FormControl('', [Validators.required, passwordLengthValidator]),
+      confirmPassword: new FormControl('', [Validators.required, passwordMatchValidator])
     });
     this.settings = this.fb.group({
-      nickname: new FormControl('by', Validators.required),
-      anonymous: new FormControl(false)
+      fullName: new FormControl('', Validators.required),
+      nickname: new FormControl('', Validators.required)
     });
   }
 

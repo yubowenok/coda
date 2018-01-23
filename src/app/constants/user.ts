@@ -18,6 +18,6 @@ export interface UserInfo {
 }
 
 export interface UserSettings {
+  fullName: string;
   nickname: string;
-  anonymous: boolean;
 }

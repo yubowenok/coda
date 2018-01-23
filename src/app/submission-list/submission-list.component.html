@@ -4,7 +4,7 @@
   <div class="status" *ngIf="problemset.adminView">
     <span>You are viewing the submission list as admin.</span>
   </div>
-  <h2>{{api.getCurrentUser().username}}'s Submissions for {{problemset.title}}</h2>
+  <h2>{{getRouteUsername()}}'s Submissions for {{problemset.title}}</h2>
   <div class="margin-to-top">
     <ngx-datatable
       class="material striped"

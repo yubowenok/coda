@@ -32,17 +32,26 @@
   <mat-tab label="Settings">
     <form [formGroup]="settings" class="margin-to-top">
       <mat-form-field>
+        <input matInput placeholder="Full Name"
+               formControlName="fullName" [formGroup]="settings">
+        <mat-error *ngIf="!settings.controls.fullName.hasError('required')">
+          Please enter full name
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
         <input matInput placeholder="Nickname"
                formControlName="nickname" [formGroup]="settings">
         <mat-error *ngIf="!settings.controls.nickname.hasError('required')">
           Please enter nickname
         </mat-error>
       </mat-form-field>
+      <!--
       <div>
         <mat-checkbox formControlName="anonymous" [formGroup]="settings" color="primary">
           Appear Anonymous on Scoreboard
         </mat-checkbox>
       </div>
+      -->
     </form>
     <button mat-raised-button color="primary" class="margin-to-top" [disabled]="settings.invalid"
       (click)="updateSettings()">

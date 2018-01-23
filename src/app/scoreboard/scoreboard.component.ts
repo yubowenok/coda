@@ -1,16 +1,22 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { ApiService } from '../api.service';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
+import { Subscription } from 'rxjs/Subscription';
 
-import { ProblemsetInfo } from '../constants/problemset';
-import { ParticipantScore, Scoreboard, ScoreboardColumnWidth as ColumnWidth } from '../constants/scoreboard';
-import { ProblemInfo, SubtaskInfo } from '../constants/problem';
+import { ApiService } from '../api.service';
+import { MessageService } from '../message.service';
+
+import {
+  ProblemsetInfo,
+  ParticipantScore,
+  ProblemInfo,
+  SubtaskInfo,
+  Scoreboard,
+  ScoreboardColumnWidth as ColumnWidth
+} from '../constants';
 
 import * as time from '../constants/time';
 import { TimeDisplayPipe } from '../pipe/time-display.pipe';
-import { MessageService } from '../message.service';
-import { problemsetEnded } from '../util';
 
 enum Mode {
   SCORE = 'score',
@@ -23,7 +29,7 @@ enum Mode {
   templateUrl: './scoreboard.component.html',
   styleUrls: ['./scoreboard.component.css']
 })
-export class ScoreboardComponent implements OnInit {
+export class ScoreboardComponent implements OnInit, OnDestroy {
 
   @ViewChild('headerTmpl') headerTmpl: TemplateRef<any>;
   @ViewChild('attemptsTmpl') attemptsTmpl: TemplateRef<any>;
@@ -47,17 +53,23 @@ export class ScoreboardComponent implements OnInit {
   private columns = [];
   private mode = Mode.SCORE;
 
+  private currentProblemSubscription: Subscription;
+
   ngOnInit() {
     this.api.changeProblemsetId(this.route.snapshot.paramMap.get('problemsetId'));
 
     this.problemset = this.api.latestProblemset;
-    this.api.getCurrentProblemset()
+    this.currentProblemSubscription = this.api.getCurrentProblemset()
       .subscribe(problemset => {
         this.problemset = problemset;
         this.updateTable();
       });
 
     this.getScoreboard();
+  }
+
+  ngOnDestroy() {
+    this.currentProblemSubscription.unsubscribe();
   }
 
   getScoreboard(): void {
@@ -183,8 +195,8 @@ export class ScoreboardComponent implements OnInit {
     this.selected = [this.selectedRow];
   }
 
-  gotoSubmissionLink(cell: { username: string, submissionNumber: string }): void {
-    if (!cell.submissionNumber) {
+  gotoSubmissionLink(cell: { username?: string, submissionNumber: string }): void {
+    if (!cell.submissionNumber || !cell.username) {
       this.message.info('source code not available');
     } else {
       this.router.navigate([

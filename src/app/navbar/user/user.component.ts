@@ -24,11 +24,6 @@ export class UserComponent {
 
   logout() {
     this.api.logout()
-      .subscribe(res => {
-        if (res === true) {
-          this.message.info('logged out');
-          this.router.navigate(['/problemsets']);
-        }
-      });
+      .subscribe();
   }
 }

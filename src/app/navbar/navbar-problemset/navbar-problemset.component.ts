@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import { ProblemsetInfo, RunMode } from '../../constants/problemset';
 import * as time from '../../constants/time';
 import { ApiService } from '../../api.service';
+import { shouldProblemsetDisplay } from '../../util';
 
 @Component({
   selector: 'app-navbar-problemset',
@@ -87,6 +88,10 @@ export class NavbarProblemsetComponent implements OnInit, OnDestroy {
 
   getSelftestTimeRemaining(): void {
     console.error('getSelftestTimeRemaining is not implemented');
+  }
+
+  hasProblemsetDisplay(): boolean {
+    return shouldProblemsetDisplay(this.problemset);
   }
 
   displayTime(t: number): string {

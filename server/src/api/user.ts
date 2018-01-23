@@ -96,8 +96,7 @@ module.exports = function(app: Express) {
           invitationCode: req.body.invitationCode,
           password: hash,
           fullName: req.body.fullName,
-          nickname: req.body.fullName,
-          anonymous: false
+          nickname: req.body.fullName
         };
 
         foundUser = users[i];
@@ -118,15 +117,16 @@ module.exports = function(app: Express) {
 
   app.get('/api/settings', isAuthenticated, (req: Request, res: Response) => {
     const settings: UserSettings = {
-      nickname: req.user.nickname,
-      anonymous: req.user.anonymous
+      fullName: req.user.fullName,
+      nickname: req.user.nickname
+      // anonymous: req.user.anonymous
     };
     res.json(settings);
   });
 
   app.post('/api/update-settings', isAuthenticated, (req: Request, res: Response) => {
+    req.check('fullName', 'fullName must not be empty').notEmpty();
     req.check('nickname', 'nickname must not be empty').notEmpty();
-    req.check('anonymous', 'anonymous must be boolean').isBoolean();
     const errors = req.validationErrors() as MappedError[];
     if (errors) {
       return res.status(500).json({ msg: errors[0].msg });
@@ -136,8 +136,8 @@ module.exports = function(app: Express) {
     let foundUser: User;
     for (let i = 0; i < users.length && !foundUser; i++) {
       if (users[i].email === req.user.email) {
+        users[i].fullName = req.body.fullName;
         users[i].nickname = req.body.nickname;
-        users[i].anonymous = req.body.anonymous;
         foundUser = users[i];
       }
     }
@@ -146,8 +146,8 @@ module.exports = function(app: Express) {
     }
     writeUsers(users);
     const settings: UserSettings = {
-      nickname: foundUser.nickname,
-      anonymous: foundUser.anonymous
+      fullName: foundUser.fullName,
+      nickname: foundUser.nickname
     };
     res.json(settings);
   });

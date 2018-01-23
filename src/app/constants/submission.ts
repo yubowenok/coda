@@ -50,18 +50,6 @@ export interface SubmissionWithSource extends Submission {
   adminView?: boolean;
 }
 
-export const SubmissionColumnWidth = {
-  SUBMISSION_NUMBER: { maxWidth: 40 },
-  PROBLEM: {},
-  SUBTASK: { maxWidth: 100 },
-  SOURCE_CODE: { maxWidth: 20 },
-  VERDICT: {}, // maxWidth: 185
-  LANGUAGE: { maxWidth: 75 },
-  EXECUTION_TIME: {}, // maxWidth: 80
-  PROBLEMSET_TIME: {}, //  maxWidth: 90
-  SUBMIT_TIME: { minWidth: 200 } // maxWidth: 220
-};
-
 export interface SubmitData {
   username: string;
   problemsetId: string;

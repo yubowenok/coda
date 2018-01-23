@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as fs from 'fs';
 import * as path from '../constants/path';
 import { User, UserDict } from '../constants/user';
+import { ScoreboardMode } from '../constants/problemset';
 import { checkProblemsetEnded, getProblemset } from './problemset';
 import * as _ from 'lodash';
 
@@ -66,12 +67,12 @@ export const isAuthorizedUser = (req: Request, res: Response, next: NextFunction
       return next();
     }
 
-    if (checkProblemsetEnded(problemset)) {
+    if (checkProblemsetEnded(problemset) && problemset.scoreboardMode === ScoreboardMode.ENABLED) {
       return next();
     }
   }
-  if (username !== req.user.username) {
-    return res.status(401).json({ msg: 'currently unavailable' });
+  if (username && username !== req.user.username) {
+    return res.status(401).json({ msg: 'not available' });
   }
   next();
 };

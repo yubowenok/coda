@@ -38,3 +38,7 @@ export const executionTimeDisplay = (submission: Submission): string => {
 export const problemsetTimeDisplay = (submission: Submission): number | string => {
   return submission.outsideProblemsetTime ? '' : submission.problemsetTime;
 };
+
+export const shouldProblemsetDisplay = (problemset: ProblemsetInfo): boolean => {
+  return problemset.started || problemset.adminView;
+};

@@ -1,27 +1,22 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { TitleCasePipe } from '@angular/common';
+import { Component, OnInit, ViewChild, TemplateRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
 
 import { ApiService } from '../api.service';
-import { Submission, Verdict, SubmissionColumnWidth as ColumnWidth } from '../constants/submission';
-import { LanguageDisplay } from '../constants/language';
-import { ProblemsetInfo } from '../constants/problemset';
-
-import { executionTimeDisplay, problemsetTimeDisplay } from '../util';
-
 import {
-  DateDisplayPipe,
-  TimeDisplayPipe,
-  VerdictDisplayPipe,
-  VerdictClassPipe
-} from '../pipe';
+  Submission,
+  SubmissionTableColumns,
+  LanguageDisplay,
+  ProblemsetInfo
+} from '../constants';
+import { executionTimeDisplay, problemsetTimeDisplay } from '../util';
 
 @Component({
   selector: 'app-submission-list',
   templateUrl: './submission-list.component.html',
   styleUrls: ['./submission-list.component.css']
 })
-export class SubmissionListComponent implements OnInit {
+export class SubmissionListComponent implements OnInit, OnDestroy {
 
   @ViewChild('sourceLinkTmpl') sourceLinkTmpl: TemplateRef<any>;
 
@@ -37,11 +32,13 @@ export class SubmissionListComponent implements OnInit {
   private rows = [];
   private columns = [];
 
+  private currentProblemSubscription: Subscription;
+
   ngOnInit() {
     this.api.changeProblemsetId(this.route.snapshot.paramMap.get('problemsetId'));
 
     this.problemset = this.api.latestProblemset;
-    this.api.getCurrentProblemset()
+    this.currentProblemSubscription = this.api.getCurrentProblemset()
       .subscribe(problemset => {
         this.problemset = problemset;
         this.updateTable();
@@ -49,60 +46,23 @@ export class SubmissionListComponent implements OnInit {
 
     this.getSubmissionList();
 
-    const timeDisplayPipe = new TimeDisplayPipe();
-    const dateDisplayPipe = new DateDisplayPipe();
-    const verdictDisplayPipe = new VerdictDisplayPipe();
-    const titleCasePipe = new TitleCasePipe();
-    this.columns = [
-      {
-        name: '#', prop: 'submissionNumber',
-        ...ColumnWidth.SUBMISSION_NUMBER
-      },
-      {
-        name: 'Problem', prop: 'problem',
-        ...ColumnWidth.PROBLEM
-      },
-      {
-        name: 'Subtask', prop: 'subtask', pipe: titleCasePipe,
-        ...ColumnWidth.SUBTASK
-      },
-      {
-        name: '', prop: 'sourceCode', cellTemplate: this.sourceLinkTmpl, cellClass: 'center', sortable: false,
-        ...ColumnWidth.SOURCE_CODE
-      },
-      {
-        name: 'Verdict', prop: 'verdict', pipe: verdictDisplayPipe, cellClass: this.getCorrectClass,
-        ...ColumnWidth.VERDICT
-      },
-      {
-        name: 'Lang', prop: 'language',
-        ...ColumnWidth.LANGUAGE
-      },
-      {
-        name: 'Execution', prop: 'executionTimeDisplay', comparator: this.executionTimeSorter,
-        ...ColumnWidth.EXECUTION_TIME
-      },
-      {
-        name: 'Time', prop: 'problemsetTime', pipe: timeDisplayPipe,
-        ...ColumnWidth.PROBLEMSET_TIME
-      },
-      {
-        name: 'Date', prop: 'submitTime', pipe: dateDisplayPipe,
-        ...ColumnWidth.SUBMIT_TIME
-      }
-    ];
+    const sourceCodeColumn = {
+      name: '',
+      prop: 'sourceCode',
+      cellTemplate: this.sourceLinkTmpl,
+      cellClass: 'center',
+      sortable: false,
+      maxWidth: 20
+    };
+    // insert sourceCodeColumn before the verdict column
+    const verdictIndex = SubmissionTableColumns.map(column => column.prop).indexOf('verdict');
+    const columns = SubmissionTableColumns.concat();
+    columns.splice(verdictIndex - 1, 0, sourceCodeColumn);
+    this.columns = columns;
   }
 
-  executionTimeSorter(valueA: string, valueB: string, // values are display strings
-                      rowA: { executionTime: number }, rowB: { executionTime: number }): number {
-    return Math.sign(rowA.executionTime - rowB.executionTime);
-  }
-
-  getCorrectClass(cell: { row: { verdict: Verdict } }): string {
-    // cell.value has been piped with VerdictDisplay, so we use original verdict value.
-    const verdict = cell.row.verdict;
-    // Add an empty space because cellClass function call does not.
-    return ' ' + new VerdictClassPipe().transform(verdict);
+  ngOnDestroy() {
+    this.currentProblemSubscription.unsubscribe();
   }
 
   getSubmissionList(): void {
@@ -152,6 +112,10 @@ export class SubmissionListComponent implements OnInit {
       });
     }
     this.rows = newRows;
+  }
+
+  getRouteUsername(): string {
+    return this.route.snapshot.params.username;
   }
 
   getSourceLink(submissionNumber: string): string {

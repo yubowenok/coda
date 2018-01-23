@@ -1,5 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
-import {Router, ActivatedRoute, NavigationStart, RouterEvent } from '@angular/router';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
 
 import { ApiService } from '../api.service';
 
@@ -10,7 +11,7 @@ import { ProblemsetInfo } from '../constants/problemset';
   templateUrl: './problemset.component.html',
   styleUrls: ['./problemset.component.css']
 })
-export class ProblemsetComponent implements OnInit {
+export class ProblemsetComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
@@ -22,16 +23,22 @@ export class ProblemsetComponent implements OnInit {
 
   error: { msg: string } | undefined;
 
+  private currentProblemSubscription: Subscription;
+
   ngOnInit() {
     this.getProblemset();
 
-    this.api.getCurrentProblemset()
+    this.currentProblemSubscription = this.api.getCurrentProblemset()
       .subscribe(problemset => {
         if (problemset === undefined) {
           return;
         }
         this.loadProblemset(problemset);
       });
+  }
+
+  ngOnDestroy() {
+    this.currentProblemSubscription.unsubscribe();
   }
 
   getProblemset(): void {
