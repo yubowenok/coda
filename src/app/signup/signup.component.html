@@ -3,7 +3,9 @@
   <mat-form-field>
     <i class="info fa fa-lg fa-info-circle" matTooltip="{{tooltip.INVITATION_CODE}}"></i>
     <input matInput placeholder="Invitation Code"
-           formControlName="invitationCode" [formGroup]="form">
+           formControlName="invitationCode"
+           [formGroup]="form"
+    >
     <mat-error *ngIf="form.controls.invitationCode.hasError('required')">
       Please enter your invitation code
     </mat-error>

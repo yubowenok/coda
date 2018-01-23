@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiService } from '../api.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from '../message.service';
 import { UserInfo } from '../constants/user';
 import {
@@ -32,22 +32,28 @@ export class SignupComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public api: ApiService,
+    private route: ActivatedRoute,
     private router: Router,
     private message: MessageService
   ) { }
 
   ngOnInit() {
+    const prefilledInvitationCode = this.route.snapshot.paramMap.get('invitationCode');
+
     this.form = this.fb.group({
-      invitationCode: new FormControl('ABC', Validators.required),
-      email: new FormControl('by123@nyu.edu', [Validators.required, Validators.email]),
-      username: new FormControl('by123', [
+      invitationCode: new FormControl({
+        value: prefilledInvitationCode || '',
+        disabled: prefilledInvitationCode
+      }, Validators.required),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      username: new FormControl('', [
         Validators.required,
         usernameCharactersValidator,
         usernameLengthValidator
       ]),
-      password: new FormControl('123456', [Validators.required, passwordLengthValidator]),
-      confirmPassword: new FormControl('123456', [Validators.required, passwordMatchValidator]),
-      fullName: new FormControl('Bowen', Validators.required)
+      password: new FormControl('', [Validators.required, passwordLengthValidator]),
+      confirmPassword: new FormControl('', [Validators.required, passwordMatchValidator]),
+      fullName: new FormControl('', Validators.required)
     });
   }
 

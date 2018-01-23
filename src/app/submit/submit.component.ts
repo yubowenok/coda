@@ -107,6 +107,10 @@ export class SubmitComponent implements OnInit {
   }
 
   submit() {
+    if (this.language === Language.JAVA && !this.javaCheck(this.latestCode)) {
+      return; // java code does meet format requirement
+    }
+
     const data: SubmitData = {
       username: this.api.getCurrentUser().username,
       problemsetId: this.problemset.id,
@@ -115,6 +119,7 @@ export class SubmitComponent implements OnInit {
       language: this.language,
       sourceCode: this.latestCode
     };
+
     this.api.submit(data)
       .subscribe(
         (submissionNumber: number) => {
@@ -126,6 +131,18 @@ export class SubmitComponent implements OnInit {
           this.message.error(err.error.msg);
         }
       );
+  }
+
+  javaCheck(sourceCode: string): boolean {
+    if (sourceCode.match(/package\s+\S+;/)) {
+      this.message.error('please remove "package" from source code');
+      return false;
+    }
+    if (!sourceCode.match(/public\s+class\s+\S+/)) {
+      this.message.error('please make sure your class is public');
+      return false;
+    }
+    return true;
   }
 
   copyText(text: string): void {

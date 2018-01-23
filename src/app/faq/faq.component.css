@@ -2,7 +2,11 @@ mat-card {
   padding: 5px;
 }
 
-h2 {
+div.section {
   margin-top: 60px;
   margin-bottom: 30px;
+}
+
+li {
+  line-height: 1.5;
 }

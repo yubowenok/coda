@@ -95,11 +95,6 @@ export const judgeProblemPath = (problemId: string): string => {
   return path.join(JUDGE_PROBLEM_DIR, problemId);
 };
 
-export const judgeSubmissionSourcePath = (problemsetId: string, submission: Submission): string => {
-  return path.join(JUDGE_PROBLEMSET_DIR, problemsetId,
-    'source', submission.username, submission.sourceFile);
-};
-
 export const dockerJudgeSourcePath = (problemId: string, subtask: string, file: string): string => {
   let sourcePath = path.join(process.env.DOCKER_ROOT, 'problem', problemId);
   if (subtask !== 'all' && subtask !== '' && subtask !== undefined) {
@@ -119,5 +114,5 @@ export const localJudgeSourcePath = (problemId: string, subtask: string, file: s
 };
 
 export const runningProblemsetConfigPath = (runningProblemsetConfigId: string): string => {
-  return path.join(process.env.CODA_ROOT, `${runningProblemsetConfigId}.json`);
+  return path.join(process.env.CODA_ROOT, runningProblemsetConfigId);
 };

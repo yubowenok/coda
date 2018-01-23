@@ -24,8 +24,8 @@ export class LoginComponent {
     private message: MessageService
   ) {
     this.form = fb.group({
-      username: new FormControl('admin', [Validators.required, usernameLengthValidator]),
-      password: new FormControl('123456', [Validators.required, passwordLengthValidator])
+      username: new FormControl('', [Validators.required, usernameLengthValidator]),
+      password: new FormControl('', [Validators.required, passwordLengthValidator])
     });
   }
 

@@ -1,4 +1,4 @@
-<div>
+<div class="section">
   <h2>How to Solve a Problem</h2>
   <h3><a href="#inout" id="inout"></a>Input and Output</h3>
   Your solutions programs are always checked by a judge machine instead of a human.
@@ -50,40 +50,108 @@
     <div [appCodeMirror]="javaFasterIOTemplate" language="JAVA" readOnly="true"></div>
   </mat-card>
 </div>
-<div>
+
+<div class="section">
   <h2>Problemset Modes</h2>
+
   <h3><a href="#standard" id="standard"></a>Standard Problemset</h3>
   <p>
-    You can submit anytime before the problemset ends.
+    The problemset has fixed starting time and ending time.
+    You can submit after it starts and before it ends.
   </p>
+
   <h3><a href="#selftest" id="selftest"></a>Selftest Problemset</h3>
   <p>
-    The problemset has a fixed duration. You can start your session at any time.
-    But once your session is started you cannot pause it.
-    Only start your session when you have enough time as long as the problemset's duration.
+    The problemset has a fixed duration.
+    Each participant has his/her own session of that duration to complete the problemset.
+    You can start you session at any time between the problemset's starting time and ending time.
+    But once you start your session, you cannot pause it, and must complete it within the duration.
+    Only start the session when you have enough time to work on it.
   </p>
+  <p>
+    For example, consider a selftest problemset that starts at Jan 23 3:00pm, ends at Jan 30 3:00pm,
+    and has a duration of 3 hours.
+    Suppose you start your session at Jan 25 3:00pm, then you must complete the problemset by Jan 25 6:00pm.
+  </p>
+  <p>
+    Your session cannot extend beyond the problemset's ending time.
+    Do not start the session at the last minute.
+    If you start your session at Jan 30 2:59pm, then you have to complete it in one minute.
+  </p>
+
   <h3><a href="#open" id="open"></a>Open Judge</h3>
   <p>
-    Submission results are available right after the submissions.
+    Submissions are immediately queued to be judged during the problemset.
+    Verdicts are released as soon as the submissions are processed.
   </p>
+
   <h3><a href="#blind" id="blind"></a>Blind Judge</h3>
   <p>
-    Submission results will be available after the problemset ends.
-    Scoreboard will show your maximum possible score before the problemset ends (i.e. assuming all your submissions
-    are correct).
+    Submissions are judged after the problemset ends.
+    Only the last submission to each subtask will count and be judged.
+    You can submit as many times as you like, and there is no penalty for resubmitting.
   </p>
+  <p>
+    Scoreboard shows your maximum possible score before the problemset ends, assuming all your final submissions are
+    correct.
+  </p>
+  <p>
+    Be careful about resubmission.
+    If you submit one solution that is correct, and then you submit another one that is wrong,
+    the earlier correct submission will be ignored and you will not receive points.
+  </p>
+
   <h3><a href="#score-penalty" id="score-penalty"></a>Score Penalty</h3>
   <p>
     Each incorrect submission results in 10% loss of a subtask's score.
     You will get a minimum of 30% score if you solve the subtask in the end.
   </p>
+
   <h3><a href="#time-penalty" id="time-penalty"></a>Time Penalty</h3>
   <p>
     Each incorrect submission results in 4 minutes extra time added to the problemset finish time.
   </p>
+
   <h3><a href="#freebies" id="freebies"></a>Freebies</h3>
   <p>
     This is the number of incorrect submissions that are exempted from penalty.
     Each problem subtask has its own freebies.
   </p>
+</div>
+
+<div class="section">
+  <h2>Judge Verdicts</h2>
+
+  Meanings of the verdicts are shown below:
+  <ul>
+    <li>
+      <b>Accepted:</b>
+      Your solution is correct. Hooray!
+    </li>
+    <li>
+      <b>Wrong Answer:</b>
+      Your solution did not produce the expected output.
+      You may have a bug in your code, or your algorithm is incorrect (e.g. not getting optimal answer).
+    </li>
+    <li>
+      <b>Time Limit Exceeded:</b>
+      Your solution did not finish in the time limit.
+      You may have an endless loop, or your algorithm is not efficient enought.
+    </li>
+    <li>
+      <b>Run Time Error:</b>
+      Your solution aborted abnormally.
+      There are many possible causes of run time error, such accessing array index out of bound, dividing by zero,
+      using excessive memory, etc.
+    </li>
+    <li>
+      <b>Compile Error:</b>
+      You code did not compile.
+      Please refer to the compiler message on the submission page for more details.
+    </li>
+  </ul>
+</div>
+
+<div class="section">
+  <b>Coda Version:</b> {{codaVersion}}
 </div>

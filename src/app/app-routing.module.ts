@@ -17,6 +17,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 const routes: Routes = [
   { path: 'problemsets', component: ProblemsetListComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'signup/:invitationCode', component: SignupComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'faq', component: FaqComponent },

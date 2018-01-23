@@ -18,7 +18,7 @@ import {
   getProblemset,
   getSubmissionList,
   getProblemsetList,
-  getVerdictsList
+  getVerdictList
 } from '../util';
 
 const containerName = process.env.CONTAINER_NAME;
@@ -82,7 +82,8 @@ function judgeProblemSet(problemsetId: string) {
   const problemset: ProblemsetConfig = getProblemset(problemsetId);
   const problems: ProblemsetProblem[] = problemset.problems;
   const submissions: Submission[] = getSubmissionList(problemsetId);
-  const verdicts: Verdict[] = getVerdictsList(problemsetId);
+  const verdicts: Verdict[] = getVerdictList(problemsetId);
+
   const map: { [name: string]: string } = {};
 
   for (let i = 0; i < problems.length; i++) {
@@ -117,13 +118,13 @@ function judgeProblemSet(problemsetId: string) {
       // change java class name
       content = changeJavaClass(content, judgeFileName);
     }
-    const subproblemPath = paths.problemDir(problemId);
     const tmpFileName = judgeFileName + path.extname(sourceFile);
     const dockerSource = paths.dockerJudgeSourcePath(problemId, subtask, tmpFileName);
     const copyFilePath = paths.localJudgeSourcePath(problemId, subtask, tmpFileName);
 
     fs.writeFileSync(copyFilePath, content);
 
+    console.log(`problemset: ${problemsetId}`);
     const result: DockerVerdict = judgeSubmission(
       problemId,
       subtask,
@@ -166,18 +167,19 @@ function judgeProblemSet(problemsetId: string) {
   fs.writeFileSync(paths.problemsetVerdictsPath(problemsetId), JSON.stringify(verdicts, undefined, 2));
 }
 
+let judgeRound = 0;
 function judgeAll(runningProblemsetConfigId: string) {
   let problemsetIds: string[];
-
+  let logProblemsetIds: string;
   if (runningProblemsetConfigId === undefined) {
     problemsetIds = getProblemsetList().map(problemset => problemset.id);
-    console.log('start judging all the problemset ******** ');
+    logProblemsetIds = 'all';
   } else {
-    console.log(`start judgeing problemsets from ${runningProblemsetConfigId}`);
     problemsetIds = JSON.parse(fs.readFileSync(paths.runningProblemsetConfigPath(runningProblemsetConfigId),
       'utf8'));
+    logProblemsetIds = problemsetIds.join(',');
   }
-
+  console.log(`Judging round ${++judgeRound}: ${logProblemsetIds}`);
   problemsetIds.forEach(problemsetId => judgeProblemSet(problemsetId));
 }
 
