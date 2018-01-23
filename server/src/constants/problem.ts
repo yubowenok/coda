@@ -19,11 +19,7 @@ export interface WebProblem {
   title: string;
   timeLimit: number;
   statement: string;
-  illustration?: {
-    width: number, // width percentage between [0, 1]
-    filename: string,
-    text: string, // HTML content with link
-  };
+  illustration?: WebIllustration;
   isSingleTask: boolean;
   subtasks: {
     id: string,

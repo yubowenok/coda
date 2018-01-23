@@ -1,5 +1,5 @@
 import { Response, Request, Express } from 'express';
-import { ProblemsetConfig, ProblemsetProblem } from '../constants/problemset';
+import { ProblemsetConfig, ProblemScoring } from '../constants/problemset';
 import {
   getProblemsetDict,
   getProblemsetList,
@@ -28,10 +28,12 @@ const toWebProblemset = (problemset: ProblemsetConfig): WebProblemset => {
     penaltyMode: problemset.penaltyMode,
     startTime: new Date(problemset.startTime).getTime(),
     endTime: new Date(problemset.endTime).getTime(),
-    problems: problemset.problems.map((problemsetProblem: ProblemsetProblem) => {
-      const problem = getProblem(problemsetProblem.id);
+    problems: problemset.problems.map((scoring: ProblemScoring) => {
+      const problem = getProblem(scoring.id);
       return {
-        ...problemsetProblem,
+        id: scoring.id,
+        number: scoring.number,
+        subtasks: scoring.subtasks,
         isSingleTask: !problem.subtasks || problem.subtasks.length <= 1,
         title: problem.title
       };

@@ -4,25 +4,24 @@ import * as fs from 'fs';
 import * as paths from '../constants/path';
 import {
   getProblemset,
-  getProblem,
+  getProblemsetProblem,
   isValidProblemsetId,
   isValidProblemNumber,
   isAuthenticated,
   parseStatement,
-  checkProblemsetStarted
+  checkProblemsetStarted,
+  isAuthorizedUser
 } from '../util';
-import { ProblemConfig, ProblemsetProblem, WebProblem } from '../constants';
-import { isAuthorizedUser } from '../util/users';
-import { Problem } from 'aws-sdk/clients/devicefarm';
+import { ProblemConfig, ProblemScoring, WebProblem } from '../constants';
 
 /**
  * Creates a web format problem.
  * Merges problemset config (subtask scores, etc.) into problem config.
  */
-const toWebProblem = (problemsetProblem: ProblemsetProblem, problem: ProblemConfig): WebProblem => {
+const toWebProblem = (scoring: ProblemScoring, problem: ProblemConfig): WebProblem => {
   const statement = fs.readFileSync(paths.problemStatementPath(problem.id), 'utf8');
   const webStatement = parseStatement(statement);
-  const subtasks = problemsetProblem.subtasks.map((subtask: { id: string, score: number }, index: number) => {
+  const subtasks = scoring.subtasks.map((subtask: { id: string, score: number }, index: number) => {
     return {
       ...subtask,
       text: webStatement.subtasks[index]
@@ -79,17 +78,33 @@ module.exports = function(app: Express) {
       return res.status(401).json({ msg: 'Problemset has not started '});
     }
 
-    const problem = problemset.problems
-      .filter((prob: ProblemsetProblem) => prob.number === problemNumber)[0];
-    if (!problem) {
-      res.status(500).json({ msg: 'critical server error' });
-    }
-    const webProblem = toWebProblem(problem, getProblem(problem.id));
-
+    const problem = getProblemsetProblem(problemset, problemNumber);
+    const scoring = problemset.problems.filter(prob => prob.number === problemNumber)[0];
+    const webProblem = toWebProblem(scoring, problem);
     if (!started) {
       webProblem.adminView = true;
     }
 
     res.json(webProblem);
   });
+
+  app.get('/api/image/:problemsetId/:problemNumber/:filename',
+    isAuthenticated,
+    isValidProblemsetId,
+    isValidProblemNumber,
+    isAuthorizedUser,
+    (req: Request, res: Response) => {
+      const problemsetId = req.params.problemsetId;
+      const problemNumber = req.params.problemNumber;
+      const filename = req.params.filename;
+
+      const problemset = getProblemset(problemsetId);
+      const problem = getProblemsetProblem(problemset, problemNumber);
+      const filePath = paths.problemImagePath(problem.id, filename);
+      if (!filePath) {
+        return res.status(404).json({ msg: 'image not found' });
+      }
+      res.sendFile(filePath);
+  });
+
 };

@@ -86,4 +86,15 @@ export class ProblemComponent implements OnInit, OnDestroy {
     return { height: `${height}px` };
   }
 
+  getImagePath(): string {
+    const problemsetId = this.route.snapshot.paramMap.get('problemsetId');
+    const problemNumber = this.route.snapshot.paramMap.get('problemNumber');
+    return this.api.imageUrl(problemsetId, problemNumber, this.problem.illustration.filename);
+  }
+
+  getImageWidth(): { width: string } {
+    const width = this.problem.illustration.width;
+    return { width: width * 100 + '%' };
+  }
+
 }

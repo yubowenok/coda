@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as fs from 'fs';
 import { Language, LanguageSuffix, Submission } from './submission';
 
 const PROBLEMSET_DIR = path.join(process.env.CODA_ROOT, 'problemset');
@@ -53,6 +54,18 @@ export const problemConfigPath = (problemId: string): string => {
 
 export const problemStatementPath = (problemId: string): string => {
   return path.join(PROBLEM_DIR, problemId, 'problem_statement/problem.en.tex');
+};
+
+export const problemImagePath = (problemId: string, filename: string): string => {
+  const suffix = !filename.match(/\.(jpg|png)$/) ? ['.jpg', '.png'] : [''];
+  for (let i = 0; i < suffix.length; i++) {
+    const filePath = path.join(PROBLEM_DIR, problemId, 'problem_statement', filename + suffix[i]);
+    if (fs.existsSync(filePath)) {
+      return filePath;
+    }
+  }
+  console.error(`cannot find image "${filename}" for problem ${problemId}`);
+  return '';
 };
 
 export const problemSamplesPath = (problemId: string): string => {

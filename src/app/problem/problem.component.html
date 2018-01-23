@@ -11,6 +11,10 @@
   <div class="time-limit">
     <h3>Time Limit: <span>{{problem.timeLimit}} {{'second' + (problem.timeLimit > 1 ? 's' : '')}}</span></h3>
   </div>
+  <div class="image float-right" *ngIf="problem.illustration" [ngStyle]="getImageWidth()">
+    <img src="{{getImagePath()}}">
+    <div class="citation" [appHtml]="problem.illustration.text"></div>
+  </div>
   <div [appMathJax]="problem.statement"></div>
   <div class="section">
     <h3>Subtasks</h3>

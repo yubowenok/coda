@@ -261,6 +261,10 @@ export class ApiService {
       );
   }
 
+  imageUrl(problemsetId: string, problemNumber: string, filename: string): string {
+    return `${API_URL}/image/${problemsetId}/${problemNumber}/${filename}`;
+  }
+
   getCurrentUser(): UserInfo | undefined {
     return this.user ? this.user : undefined;
   }
