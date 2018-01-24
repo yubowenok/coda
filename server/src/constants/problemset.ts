@@ -68,6 +68,8 @@ export interface WebProblemset {
   judgeMode: JudgeMode;
   penaltyMode: PenaltyMode;
   scoreboardMode: ScoreboardMode;
+  freebies?: number;
+  duration?: number;
   problems: ProblemScoring[];
   startTime: number;
   endTime: number;

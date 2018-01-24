@@ -28,6 +28,7 @@ const toWebProblemset = (problemset: ProblemsetConfig): WebProblemset => {
     penaltyMode: problemset.penaltyMode,
     startTime: new Date(problemset.startTime).getTime(),
     endTime: new Date(problemset.endTime).getTime(),
+    freebies: problemset.freebies,
     problems: problemset.problems.map((scoring: ProblemScoring) => {
       const problem = getProblem(scoring.id);
       return {
