@@ -72,7 +72,7 @@ module.exports = function(app: Express) {
     const problemsetId = req.params.problemsetId;
     const problemNumber = req.params.problemNumber;
     const problemset = getProblemset(problemsetId);
-    const started = checkProblemsetStarted(problemset);
+    const started = checkProblemsetStarted(problemset, req.user.username);
 
     if (!started && !req.user.isAdmin) {
       return res.status(401).json({ msg: 'Problemset has not started '});

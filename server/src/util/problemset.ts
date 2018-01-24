@@ -6,9 +6,11 @@ import {
   ProblemsetDict,
   ProblemsetScoreDict,
   ProblemsetEasierSubtasksDict,
-  RunMode
+  RunMode,
+  UserSession
 } from '../constants';
 import { getProblemEasierSubtasksDict } from './problem';
+import { getUserSession } from './users';
 
 const checkProblemsetId = (id: string): boolean => {
   return fs.existsSync(paths.problemsetDir(id));
@@ -73,8 +75,12 @@ export const getProblemsetList = (): ProblemsetConfig[] => {
  * @returns Number of seconds since problemset starts till now.
  */
 export const getProblemsetTime = (problemset: ProblemsetConfig): number => {
-  // TODO: this does not handle user session in Selftest!
-  return Math.floor((new Date().getTime() - new Date(problemset.startTime).getTime()) / 1000);
+  if (problemset.runMode === RunMode.STANDARD) {
+    return Math.floor((new Date().getTime() - new Date(problemset.startTime).getTime()) / 1000);
+  } else {
+    // TODO: this does not handle user session in Selftest!
+    console.error('getProblemsetTime not implemented for SELFTEST');
+  }
 };
 
 export const getProblemsetScoreDict = (problemsetId: string): ProblemsetScoreDict => {
@@ -91,21 +97,27 @@ export const getProblemsetScoreDict = (problemsetId: string): ProblemsetScoreDic
   return dict;
 };
 
-export const checkProblemsetStarted = (problemset: ProblemsetConfig): boolean => {
+export const checkProblemsetStarted = (problemset: ProblemsetConfig, username?: string): boolean => {
   if (problemset.runMode === RunMode.STANDARD) {
     return new Date(problemset.startTime).getTime() <= new Date().getTime();
   } else if (problemset.runMode === RunMode.SELFTEST) {
-    console.error('isProblemsetStarted not implemented for SELFTEST');
-    return false;
+    const session = getUserSession(problemset.id, username);
+    if (session === undefined) {
+      return false;
+    }
+    return new Date(session.startTime).getTime() <= new Date().getTime();
   }
 };
 
-export const checkProblemsetEnded = (problemset: ProblemsetConfig): boolean => {
+export const checkProblemsetEnded = (problemset: ProblemsetConfig, username?: string): boolean => {
   if (problemset.runMode === RunMode.STANDARD) {
     return new Date(problemset.endTime).getTime() <= new Date().getTime();
   } else if (problemset.runMode === RunMode.SELFTEST) {
-    console.error('isProblemsetEnded not implemented for SELFTEST');
-    return false;
+    const session = getUserSession(problemset.id, username);
+    if (session === undefined) {
+      return false;
+    }
+    return new Date(session.endTime).getTime() <= new Date().getTime();
   }
 };
 

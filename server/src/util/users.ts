@@ -1,13 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
 import * as fs from 'fs';
-import * as path from '../constants/path';
-import { User, UserDict } from '../constants/user';
+import * as paths from '../constants/path';
+import { User, UserDict, UserSession } from '../constants/user';
 import { ScoreboardMode } from '../constants/problemset';
 import { checkProblemsetEnded, getProblemset } from './problemset';
 import * as _ from 'lodash';
 
 const getUsers = (): User[] => {
-  return JSON.parse(fs.readFileSync(path.usersPath(), 'utf8'));
+  return JSON.parse(fs.readFileSync(paths.usersPath(), 'utf8'));
+};
+
+const getUserSessions = (problemsetId: string): UserSession[] => {
+  const sessionFile = paths.problemsetSessionsPath(problemsetId);
+  const json = (fs.existsSync(sessionFile) && fs.readFileSync(sessionFile, 'utf8')) || '';
+  return json ? JSON.parse(json) : [];
 };
 
 export const getUserList = (): User[] => {
@@ -22,7 +28,7 @@ export const checkUsername = (username: string): boolean => {
 };
 
 export const writeUsers = (newUsers: User[]) => {
-  fs.writeFileSync(path.usersPath(), JSON.stringify(newUsers, undefined, 2), 'utf8');
+  fs.writeFileSync(paths.usersPath(), JSON.stringify(newUsers, undefined, 2), 'utf8');
 };
 
 export const getUserDict = (): UserDict => {
@@ -34,6 +40,10 @@ export const getUserDict = (): UserDict => {
     dict[user.username] = user;
   });
   return dict;
+};
+
+export const getUserSession = (problemsetId: string, username: string): UserSession | undefined => {
+  return getUserSessions(problemsetId).filter(session => session.username === username)[0];
 };
 
 /*** Router middleware utils ***/

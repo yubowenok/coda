@@ -20,3 +20,9 @@ export interface UserSettings {
 export interface UserDict {
   [username: string]: User;
 }
+
+export interface UserSession {
+  username: string;
+  startTime: string;
+  endTime: string;
+}

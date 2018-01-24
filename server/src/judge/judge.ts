@@ -7,7 +7,7 @@ import * as yargs from 'yargs';
 import {
   ProblemConfig,
   ProblemsetConfig,
-  ProblemsetProblem,
+  ProblemScoring,
   Submission,
   Verdict,
   DockerVerdict,
@@ -80,7 +80,7 @@ function judgeProblemSet(problemsetId: string) {
   // console.log(`judging problemsetId ${problemsetId}`);
 
   const problemset: ProblemsetConfig = getProblemset(problemsetId);
-  const problems: ProblemsetProblem[] = problemset.problems;
+  const problems: ProblemScoring[] = problemset.problems;
   const submissions: Submission[] = getSubmissionList(problemsetId);
   const verdicts: Verdict[] = getVerdictList(problemsetId);
 
