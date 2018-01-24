@@ -9,7 +9,8 @@ export interface User {
   fullName: string;
   nickname: string;
 
-  admin?: boolean;
+  groups?: string[];
+  invited?: boolean;
 }
 
 export interface UserSettings {

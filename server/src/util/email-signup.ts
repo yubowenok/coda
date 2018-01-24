@@ -1,6 +1,6 @@
 import '../config/env';
 import * as nodemailer from 'nodemailer';
-import { getUserList } from './users';
+import { getUserList, writeUsers } from './users';
 import { User } from '../constants/user';
 import * as path from 'path';
 
@@ -22,9 +22,13 @@ if (!codaDomain) {
 
 const users = getUserList();
 
+let pendingEmails = 0;
 users.forEach((user: User) => {
   if (user.password) {
     return; // ignore users who have signed up
+  }
+  if (user.invited) {
+    return; // ignore users to whom emails have sent
   }
   const transporter = nodemailer.createTransport({
     host: emailSmtp,
@@ -49,11 +53,20 @@ users.forEach((user: User) => {
 <p>${note}</p>`
   };
 
+  pendingEmails++;
   transporter.sendMail(mailOptions, (err, info) => {
+    pendingEmails--;
+    if (!err) {
+      user.invited = true;
+    }
+    if (pendingEmails === 0) {
+      writeUsers(users);
+    }
     if (err) {
       console.log(err);
       return err;
     }
-    console.log('message sent: %s', info.messageId);
+    console.log('message %s sent to %s', info.messageId, user.email);
   });
 });
+
