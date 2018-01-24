@@ -77,7 +77,7 @@ export const getProblemsetList = (): ProblemsetConfig[] => {
 export const getProblemsetTime = (problemset: ProblemsetConfig): number => {
   if (problemset.runMode === RunMode.STANDARD) {
     return Math.floor((new Date().getTime() - new Date(problemset.startTime).getTime()) / 1000);
-  } else {
+  } else if (problemset.runMode === RunMode.SELFTEST) {
     // TODO: this does not handle user session in Selftest!
     console.error('getProblemsetTime not implemented for SELFTEST');
   }

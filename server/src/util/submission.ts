@@ -48,13 +48,10 @@ const submissionSorter = (a: Submission, b: Submission): number => {
 };
 
 /**
- * @returns List of submissions (for the username) inside a problemset, sorted by submission order.
+ * @returns List of submissions inside a problemset, sorted by submission order.
  */
-export const getSubmissionList = (problemsetId: string, username?: string): Submission[] => {
-  let submissions = getSubmissions(problemsetId);
-  if (username) {
-    submissions = submissions.filter(submission => submission.username === username);
-  }
+export const getSubmissionList = (problemsetId: string): Submission[] => {
+  const submissions = getSubmissions(problemsetId);
   submissions.sort(submissionSorter);
   return submissions;
 };

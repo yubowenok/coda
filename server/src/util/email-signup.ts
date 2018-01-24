@@ -69,4 +69,3 @@ users.forEach((user: User) => {
     console.log('message %s sent to %s', info.messageId, user.email);
   });
 });
-

@@ -18,7 +18,10 @@
   <div [appMathJax]="problem.statement"></div>
   <div class="section">
     <h3>Subtasks</h3>
-    <p *ngIf="problem.isSingleTask">This problem does not have subtasks.</p>
+    <p *ngIf="problem.isSingleTask">
+      <span>{{'(' + problem.subtasks[0].score + ' points): '}}</span>
+      This problem does not have subtasks.
+    </p>
     <ul class="subtask-list" *ngIf="!problem.isSingleTask">
       <li *ngFor="let subtask of problem.subtasks">
         <span class="subtask-id">
