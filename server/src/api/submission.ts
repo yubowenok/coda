@@ -6,7 +6,7 @@ import {
   isAuthorizedUser,
   getSubmission,
   checkSubmission,
-  getSubmissionList,
+  getUserSubmissionList,
   getProblemset,
   getVerdict,
   getVerdictDict,
@@ -62,7 +62,7 @@ module.exports = function(app: Express) {
       const problemset = getProblemset(problemsetId);
       const username = req.params.username;
       const verdicts = getVerdictDict(problemsetId);
-      const judgedSubmissions = getSubmissionList(problemsetId, username)
+      const judgedSubmissions = getUserSubmissionList(problemsetId, username)
         .map(submission => getJudgedSubmission(problemsetId, submission,
           verdicts && submission.username in verdicts ?
             verdicts[submission.username][submission.submissionNumber] : undefined));

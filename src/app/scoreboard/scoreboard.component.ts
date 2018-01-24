@@ -156,8 +156,14 @@ export class ScoreboardComponent implements OnInit, OnDestroy {
     const newRows = [];
     for (let i = 0; i < this.scoreboard.participants.length; i++) {
       const participant: ParticipantScore = this.scoreboard.participants[i];
+      let rank = 1;
+      if (i) {
+        const previousParticipant = this.scoreboard.participants[i - 1];
+        rank = participant.score === previousParticipant.score &&
+          participant.finishTime === previousParticipant.finishTime ? newRows[i - 1].rank : i + 1;
+      }
       const row = {
-        rank: i + 1,
+        rank: rank,
         name: participant.name,
         username: participant.username,
         score: participant.score,

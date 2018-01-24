@@ -8,6 +8,7 @@ import {
   isValidProblemNumber,
   isValidSubtask,
   getSubmissionList,
+  getUserSubmissionList,
   getProblemset,
   getProblemsetTime,
   checkProblemsetEnded,
@@ -44,8 +45,9 @@ module.exports = function(app: Express) {
     const previousSubmissionCount = submissions.length;
 
     // Computes the new submission number.
-    const submissionNumber = submissions.length ?
-      submissions[submissions.length - 1].submissionNumber + 1 : 1;
+    const userSubmissions = getUserSubmissionList(problemsetId, username);
+    const submissionNumber = userSubmissions.length ?
+      userSubmissions[userSubmissions.length - 1].submissionNumber + 1 : 1;
 
     const sourceName = paths.submissionFileName(username, submissionNumber, problemNumber, subtask, language);
     try {

@@ -78,6 +78,14 @@ export const getSubmissionDict = (problemsetId: string): SubmissionDict => {
 };
 
 /**
+ * @returns List of submissions inside a problemset for a single user.
+ */
+export const getUserSubmissionList = (problemsetId: string, username: string): Submission[] => {
+  return getSubmissionList(problemsetId)
+    .filter(submission => submission.username === username);
+};
+
+/**
  * Checks if the (username, submission number) pair is valid.
  */
 export const checkSubmission = (problemsetId: string, username: string, submissionNumber: number): boolean => {

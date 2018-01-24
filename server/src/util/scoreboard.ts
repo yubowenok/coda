@@ -105,9 +105,12 @@ export const getParticipantScores = (problemset: ProblemsetConfig, submissionDic
 
   for (const username in submissionDict) {
     const user: User = users[username];
+    // in case we have some discrepancy between submission records and registered users (in dev test)
+    const nickname = user ? user.nickname : 'unknown user';
+
     const participant: ParticipantScore = {
-      name: user.nickname,
-      username: user.username,
+      name: nickname,
+      username: username,
       score: 0,
       finishTime: 0,
       problems: {}
