@@ -14,7 +14,7 @@ export const passwordMatchValidator = (confirmPasswordControl: FormControl): Val
 };
 
 export const usernameCharactersValidator = (usernameControl: FormControl): ValidationErrors | null => {
-  return !usernameControl.value.match(/^[a-z][a-z0-9_]*/) ? { characters: true } : null;
+  return !usernameControl.value.match(/^[a-z][a-z0-9_]*$/) ? { characters: true } : null;
 };
 
 export const usernameLengthValidator = (usernameControl: FormControl): ValidationErrors | null => {

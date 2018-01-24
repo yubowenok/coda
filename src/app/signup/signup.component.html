@@ -1,7 +1,7 @@
 <div *ngIf="api.getCurrentUser()">You have already signed up.</div>
 <form [formGroup]="form" *ngIf="!api.getCurrentUser()">
   <mat-form-field>
-    <i class="info fa fa-lg fa-info-circle" matTooltip="{{tooltip.INVITATION_CODE}}"></i>
+    <i class="input-info fa fa-lg fa-info-circle" matTooltip="{{tooltip.INVITATION_CODE}}"></i>
     <input matInput placeholder="Invitation Code"
            formControlName="invitationCode"
            [formGroup]="form"
@@ -12,7 +12,7 @@
   </mat-form-field>
 
   <mat-form-field>
-    <i class="info fa fa-lg fa-info-circle" matTooltip="{{tooltip.EMAIL}}"></i>
+    <i class="input-info fa fa-lg fa-info-circle" matTooltip="{{tooltip.EMAIL}}"></i>
     <input matInput placeholder="Email"
            formControlName="email" [formGroup]="form">
     <mat-error *ngIf="form.controls.email.hasError('email') || form.controls.email.hasError('required')">

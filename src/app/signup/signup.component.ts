@@ -28,6 +28,7 @@ export class SignupComponent implements OnInit {
   };
 
   private form: FormGroup;
+  private prefilledInvitationCode: string;
 
   constructor(
     private fb: FormBuilder,
@@ -38,12 +39,12 @@ export class SignupComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const prefilledInvitationCode = this.route.snapshot.paramMap.get('invitationCode');
+    this.prefilledInvitationCode = this.route.snapshot.paramMap.get('invitationCode');
 
     this.form = this.fb.group({
       invitationCode: new FormControl({
-        value: prefilledInvitationCode || '',
-        disabled: prefilledInvitationCode
+        value: this.prefilledInvitationCode || '',
+        disabled: this.prefilledInvitationCode
       }, Validators.required),
       email: new FormControl('', [Validators.required, Validators.email]),
       username: new FormControl('', [
@@ -58,7 +59,10 @@ export class SignupComponent implements OnInit {
   }
 
   signup() {
-    this.api.signup(this.form.value)
+    const formValues = Object.assign({}, this.form.value,
+      this.prefilledInvitationCode ? { invitationCode: this.prefilledInvitationCode } : {});
+    console.log(formValues);
+    this.api.signup(formValues)
       .subscribe(
         (data: UserInfo | undefined) => {
           if (data === undefined) { // failure handler

@@ -13,6 +13,10 @@ import { UserSettings } from '../constants/user';
 })
 export class ProfileComponent implements OnInit {
 
+  tooltip = {
+    NICKNAME: 'Your name that appears on the scoreboard'
+  };
+
   password: FormGroup;
   settings: FormGroup;
 

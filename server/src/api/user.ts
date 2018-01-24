@@ -61,7 +61,7 @@ module.exports = function(app: Express) {
 
   app.post('/api/signup', (req: Request, res: Response, next: NextFunction) => {
     req.check('email', 'email must be valid').isEmail();
-    req.check('username', 'username must be valid').matches(/^[a-z][a-z0-9_]*/).isLength({ min: MIN_USERNAME_LENGTH });
+    req.check('username', 'username must be valid').matches(/^[a-z][a-z0-9_]*$/).isLength({ min: MIN_USERNAME_LENGTH });
     req.check('password', 'password must contain at least 6 characters').isLength({ min: MIN_PASSWORD_LENGTH });
     req.check('confirmPassword', 'passwords must match').equals(req.body.password);
     req.check('fullName', 'full name must not be empty').notEmpty();

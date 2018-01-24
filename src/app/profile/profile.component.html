@@ -39,6 +39,7 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field>
+        <i class="input-info fa fa-lg fa-info-circle" matTooltip="{{tooltip.NICKNAME}}"></i>
         <input matInput placeholder="Nickname"
                formControlName="nickname" [formGroup]="settings">
         <mat-error *ngIf="!settings.controls.nickname.hasError('required')">
