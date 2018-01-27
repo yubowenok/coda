@@ -38,7 +38,8 @@ const toWebProblemset = (problemset: ProblemsetConfig): WebProblemset => {
         isSingleTask: !problem.subtasks || problem.subtasks.length <= 1,
         title: problem.title
       };
-    })
+    }),
+    private: problemset.private
   };
 };
 
@@ -68,10 +69,14 @@ module.exports = function(app: Express) {
   /**
    * Problemset list
    */
-  app.get('/api/problemsets', (req: Request, res: Response) => {
-    const problemsetList = getProblemsetList().map((problemset: ProblemsetConfig) => {
-      return toWebProblemset(problemset);
-    });
+  app.get('/api/problemsets',
+    isAuthorizedUser,
+    (req: Request, res: Response) => {
+    // ignore private problemsets if not admin
+    const problemsetList = getProblemsetList(req.user && req.user.isAdmin ? false : true)
+      .map((problemset: ProblemsetConfig) => {
+        return toWebProblemset(problemset);
+      });
     res.json(problemsetList);
   });
 };

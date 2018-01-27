@@ -18,7 +18,7 @@ describe('user signup', () => {
         username: 'bytest',
         password: '123456',
         confirmPassword: '123456',
-        fullName: 'by'
+        fullName: 'byu'
       })
       .expect(500)
       .expect(res => expect(res.body.msg).toMatch(/invitation code/))
@@ -33,7 +33,7 @@ describe('user signup', () => {
         password: '123456',
         confirmPassword: '654321',
         invitationCode: '',
-        fullName: 'by'
+        fullName: 'byu'
       })
       .expect(500)
       .expect(res => expect(res.body.msg).toMatch(/match/))
@@ -93,14 +93,14 @@ describe('user signup', () => {
         password: '123456',
         confirmPassword: '123456',
         invitationCode: 'XYZ',
-        fullName: 'by'
+        fullName: 'byu'
       })
       .expect(200)
       .expect(res => expect(res.body).toMatchObject({
         email: 'bytest@nyu.edu',
         username: 'bytest',
-        fullName: 'by',
-        nickname: 'by'
+        fullName: 'byu',
+        nickname: 'byu'
       }))
       .end(done);
   });
@@ -113,7 +113,7 @@ describe('user signup', () => {
         password: '123456',
         confirmPassword: '123456',
         invitationCode: 'XYZ',
-        fullName: 'by'
+        fullName: 'byu'
       })
       .expect(500)
       .expect(res => expect(res.body.msg).toMatch(/email has already signed up/))
@@ -128,7 +128,7 @@ describe('user signup', () => {
         password: '123456',
         confirmPassword: '123456',
         invitationCode: 'CCC',
-        fullName: 'jz'
+        fullName: 'jz000'
       })
       .expect(500)
       .expect(res => expect(res.body.msg).toMatch(/username exists/))
@@ -184,13 +184,35 @@ describe('update password/settings', () => {
       .set('cookie', cookie)
       .send({
         nickname: 'BY123',
-        fullName: 'BY'
+        fullName: 'BYU'
       })
       .expect(200)
       .expect(res => expect(res.body).toEqual({
         nickname: 'BY123',
-        fullName: 'BY'
+        fullName: 'BYU'
       }))
+      .end(done);
+  });
+
+  it('should not allow nickname with excessive length', (done) => {
+    agent.post('/api/update-settings')
+      .set('cookie', cookie)
+      .send({
+        nickname: 'abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij',
+        fullName: 'BYU'
+      })
+      .expect(500)
+      .end(done);
+  });
+
+  it('should not allow full name with excessive length', (done) => {
+    agent.post('/api/update-settings')
+      .set('cookie', cookie)
+      .send({
+        nickname: 'BYU',
+        fullName: 'abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij'
+      })
+      .expect(500)
       .end(done);
   });
 

@@ -36,4 +36,5 @@ export interface ProblemsetInfo {
   showCaseNumber?: boolean;
   problems: ProblemInfo[];
   adminView?: boolean;
+  private?: boolean;
 }

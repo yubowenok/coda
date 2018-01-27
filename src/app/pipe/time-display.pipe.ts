@@ -23,8 +23,11 @@ export class TimeDisplayPipe implements PipeTransform {
     if (seconds < 10) {
       seconds = '0' + seconds;
     }
-    const inDay = hours ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
-    return days ? `${days}d ${inDay}` : inDay;
+    if (days) {
+      return `${days}d ${hours}:${minutes}:${seconds}`;
+    } else {
+      return hours ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
+    }
   }
 
 }

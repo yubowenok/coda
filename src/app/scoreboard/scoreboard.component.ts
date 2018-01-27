@@ -115,6 +115,9 @@ export class ScoreboardComponent implements OnInit, OnDestroy {
   sortParticipants(): void {
     this.scoreboard.participants.sort(function(a: ParticipantScore, b: ParticipantScore): number {
       if (a.score === b.score) {
+        if (a.finishTime === b.finishTime) {
+          return a.name === b.name ? 0 : (a.name < b.name ? -1 : 1);
+        }
         return a.finishTime - b.finishTime;
       }
       return b.score - a.score;
@@ -148,7 +151,8 @@ export class ScoreboardComponent implements OnInit, OnDestroy {
           headerClass: 'header center',
           headerTemplate: this.headerTmpl,
           cellClass: 'center',
-          cellTemplate: subtaskTemplate
+          cellTemplate: subtaskTemplate,
+          sortable: false
         });
       }
     }

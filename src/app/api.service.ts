@@ -136,7 +136,7 @@ export class ApiService {
   }
 
   getProblemsetList(): Observable<ProblemsetInfo[]> {
-    return this.http.get<ProblemsetInfo[]>(ApiUrl.problemsetList())
+    return this.http.get<ProblemsetInfo[]>(ApiUrl.problemsetList(), httpOptions)
       .pipe(
         catchError(this.handleError('getProblemsetList', []))
       );

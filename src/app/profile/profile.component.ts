@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { passwordLengthValidator, passwordMatchValidator } from '../util';
+import { passwordLengthValidator, passwordMatchValidator, nameLengthValidator } from '../util';
 import { ApiService } from '../api.service';
 import { MessageService } from '../message.service';
 import { UserSettings } from '../constants/user';
@@ -36,8 +36,8 @@ export class ProfileComponent implements OnInit {
       confirmPassword: new FormControl('', [Validators.required, passwordMatchValidator])
     });
     this.settings = this.fb.group({
-      fullName: new FormControl('', Validators.required),
-      nickname: new FormControl('', Validators.required)
+      fullName: new FormControl('', [Validators.required, nameLengthValidator]),
+      nickname: new FormControl('', [Validators.required, nameLengthValidator])
     });
   }
 

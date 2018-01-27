@@ -1,8 +1,9 @@
 import { FormControl, ValidationErrors } from '@angular/forms';
 import { ProblemsetInfo, Submission, Verdict } from './constants';
 
-export const passwordLengthValidator = (passwordControl: FormControl): ValidationErrors | null => {
-  return passwordControl.value.length < 6 ? { length: true } : null;
+export const passwordLengthValidator = (control: FormControl): ValidationErrors | null => {
+  // max length 128 is checked by server
+  return control.value.length < 6 ? { length: true } : null;
 };
 
 export const passwordMatchValidator = (confirmPasswordControl: FormControl): ValidationErrors | null => {
@@ -13,16 +14,13 @@ export const passwordMatchValidator = (confirmPasswordControl: FormControl): Val
   return passwordControl.value !== confirmPasswordControl.value ? { mismatch: true } : null;
 };
 
-export const usernameCharactersValidator = (usernameControl: FormControl): ValidationErrors | null => {
-  return !usernameControl.value.match(/^[a-z][a-z0-9_]*$/) ? { characters: true } : null;
+export const usernameCharactersValidator = (control: FormControl): ValidationErrors | null => {
+  return !control.value.match(/^[a-z][a-z0-9_]*$/) ? { characters: true } : null;
 };
 
-export const usernameLengthValidator = (usernameControl: FormControl): ValidationErrors | null => {
-  return usernameControl.value.length < 3 ? { length: true } : null;
-};
-
-export const problemsetEnded = (problemset: ProblemsetInfo): boolean => {
-  return problemset.endTime <= new Date().getTime();
+export const nameLengthValidator = (control: FormControl): ValidationErrors | null => {
+  // max length 64 is checked by server
+  return control.value.length < 3 ? { length: true } : null;
 };
 
 export const executionTimeDisplay = (submission: Submission): string => {

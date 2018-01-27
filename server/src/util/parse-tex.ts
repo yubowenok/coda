@@ -4,7 +4,9 @@ import { WebStatement, WebIllustration } from '../constants/parse-tex';
  * Removes %...\n.
  */
 const removeComments = (input: string): string => {
-  return input.replace(/%.*\n/, '');
+  return input.replace(/\\%/g, '<percent>')
+    .replace(/%.*\n/g, '')
+    .replace(/<percent>/g, '%');
 };
 
 /**
@@ -38,9 +40,9 @@ const parseCenter = (input: string): string => {
  */
 const parseFontStyle = (input: string): string => {
   ['it', 'tt', 'bf'].forEach((tag: string) => {
-    (input.match(RegExp(`{\\\\${tag}([^}]*)}`, 'g')) || [])
+    (input.match(RegExp(`{\\\\${tag}\\s+([^}]*)}`, 'g')) || [])
       .forEach((matched: string) => {
-        const content = matched.match(RegExp(`^{\\\\${tag}(.*)}$`))[1];
+        const content = matched.match(RegExp(`^{\\\\${tag}\\s+(.*)}$`))[1];
         input = input.replace(matched, `<${tag}>${content}</${tag}>`);
       });
   });

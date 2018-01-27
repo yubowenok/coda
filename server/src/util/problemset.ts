@@ -62,9 +62,11 @@ export const getProblemsetDict = (): ProblemsetDict => {
 /**
  * @returns A list of problemset configurations, sorted by startTime.
  */
-export const getProblemsetList = (): ProblemsetConfig[] => {
-  const list: ProblemsetConfig[] = getAllProblemsets()
-    .filter(problemset => !problemset.private);
+export const getProblemsetList = (ignorePrivate: boolean = false): ProblemsetConfig[] => {
+  let list: ProblemsetConfig[] = getAllProblemsets();
+  if (ignorePrivate) {
+    list = list.filter(problemset => !problemset.private);
+  }
   list.sort((a: ProblemsetConfig, b: ProblemsetConfig) => {
     return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
   });

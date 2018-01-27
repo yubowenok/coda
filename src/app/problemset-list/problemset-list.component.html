@@ -6,6 +6,7 @@
     <mat-nav-list>
       <mat-list-item *ngFor="let problemset of group.problemsetList" routerLink="/problemset/{{problemset.id}}">
         <mat-icon mat-list-icon>assignment</mat-icon>
+        <span *ngIf="problemset.private" matTooltip="private problemset"><i class="fa fa-eye-slash fa-lg"></i></span>
         <h3 mat-line class="row">{{problemset.title}}</h3>
         <div mat-line class="problemset row">
           <div class="time">

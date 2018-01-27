@@ -59,6 +59,11 @@ export const isValidUsername = (req: Request, res: Response, next: NextFunction)
 export const isAuthorizedUser = (req: Request, res: Response, next: NextFunction) => {
   const username = req.params.username;
   const problemsetId = req.params.problemsetId;
+  const userGroups = req.user && req.user.groups || [];
+  if (userGroups.indexOf('admin') !== -1) {
+    req.user.isAdmin = true;
+  }
+
   if (problemsetId) {
     const problemset = getProblemset(problemsetId);
 
@@ -68,12 +73,8 @@ export const isAuthorizedUser = (req: Request, res: Response, next: NextFunction
     }
 
     const allowedGroups = (problemset.allowGroups || []).concat(['admin']);
-    const userGroups = req.user.groups || [];
     const commonGroups = _.intersection(allowedGroups, userGroups);
     if (commonGroups.length) {
-      if (commonGroups.indexOf('admin') !== -1) {
-        req.user.isAdmin = true;
-      }
       return next();
     }
 

@@ -26,8 +26,8 @@
     <mat-error *ngIf="form.controls.username.hasError('characters')">
       Username must start with a letter and contain only lowercase letters, digits, or underscores
     </mat-error>
-    <mat-error *ngIf="form.controls.username.hasError('length')">
-      Username must be at least 3 characters long
+    <mat-error *ngIf="form.controls.username.hasError('minLength')">
+      Username length must be at least 3
     </mat-error>
   </mat-form-field>
 
@@ -35,7 +35,7 @@
     <input matInput placeholder="Password" value="" type="password"
            formControlName="password" [formGroup]="form">
     <mat-error *ngIf="form.controls.password.hasError('length')">
-      Password must be at least 6 characters long
+      Password length must be at least 6
     </mat-error>
   </mat-form-field>
 
@@ -52,6 +52,9 @@
            formControlName="fullName" [formGroup]="form">
     <mat-error *ngIf="form.controls.fullName.hasError('required')">
       Full name is required
+    </mat-error>
+    <mat-error *ngIf="form.controls.fullName.hasError('length')">
+      Full name length must be at least 3
     </mat-error>
   </mat-form-field>
 

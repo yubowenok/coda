@@ -8,7 +8,7 @@ import {
   passwordLengthValidator,
   passwordMatchValidator,
   usernameCharactersValidator,
-  usernameLengthValidator
+  nameLengthValidator
 } from '../util';
 
 @Component({
@@ -50,11 +50,14 @@ export class SignupComponent implements OnInit {
       username: new FormControl('', [
         Validators.required,
         usernameCharactersValidator,
-        usernameLengthValidator
+        nameLengthValidator
       ]),
       password: new FormControl('', [Validators.required, passwordLengthValidator]),
       confirmPassword: new FormControl('', [Validators.required, passwordMatchValidator]),
-      fullName: new FormControl('', Validators.required)
+      fullName: new FormControl('', [
+        Validators.required,
+        nameLengthValidator
+      ])
     });
   }
 

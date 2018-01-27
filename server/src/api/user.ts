@@ -1,7 +1,14 @@
 import { Response, Request, NextFunction, Express } from 'express';
 import * as passport from 'passport';
 import { IVerifyOptions } from 'passport-local';
-import { User, UserSettings, MIN_PASSWORD_LENGTH, MIN_USERNAME_LENGTH } from '../constants/user';
+import {
+  User,
+  UserSettings,
+  MIN_PASSWORD_LENGTH,
+  MAX_PASSWORD_LENGTH,
+  MIN_NAME_LENGTH,
+  MAX_NAME_LENGTH
+} from '../constants/user';
 import { MappedError } from 'express-validator/shared-typings';
 import * as bcrypt from 'bcrypt';
 import * as _ from 'lodash';
@@ -24,7 +31,8 @@ module.exports = function(app: Express) {
       req.check('username', 'email must be valid').isEmail();
       req.sanitize('username').normalizeEmail();
     } else {
-      req.check('username', 'username must not be empty').notEmpty();
+      req.check('username', 'username must not be empty').notEmpty()
+        .isLength({ min: MIN_NAME_LENGTH, max: MAX_NAME_LENGTH });
     }
     const errors = req.validationErrors() as MappedError[];
     if (errors) {
@@ -61,10 +69,14 @@ module.exports = function(app: Express) {
 
   app.post('/api/signup', (req: Request, res: Response, next: NextFunction) => {
     req.check('email', 'email must be valid').isEmail();
-    req.check('username', 'username must be valid').matches(/^[a-z][a-z0-9_]*$/).isLength({ min: MIN_USERNAME_LENGTH });
-    req.check('password', 'password must contain at least 6 characters').isLength({ min: MIN_PASSWORD_LENGTH });
+    req.check('username', 'username must be valid')
+      .matches(/^[a-z][a-z0-9_]*$/)
+      .isLength({ min: MIN_NAME_LENGTH, max: MAX_NAME_LENGTH });
+    req.check('password', 'invalid password length')
+      .isLength({ min: MIN_PASSWORD_LENGTH, max: MAX_PASSWORD_LENGTH });
     req.check('confirmPassword', 'passwords must match').equals(req.body.password);
-    req.check('fullName', 'full name must not be empty').notEmpty();
+    req.check('fullName', 'full name must be valid')
+      .isLength({ min: MIN_NAME_LENGTH, max: MAX_NAME_LENGTH });
     req.sanitize('email').normalizeEmail();
     const errors = req.validationErrors() as MappedError[];
     if (errors) {
@@ -125,8 +137,11 @@ module.exports = function(app: Express) {
   });
 
   app.post('/api/update-settings', isAuthenticated, (req: Request, res: Response) => {
-    req.check('fullName', 'fullName must not be empty').notEmpty();
-    req.check('nickname', 'nickname must not be empty').notEmpty();
+    req.check('fullName', 'fullName must not be empty').notEmpty()
+      .isLength({ min: MIN_NAME_LENGTH, max: MAX_NAME_LENGTH });
+    req.check('nickname', 'nickname must not be empty').notEmpty()
+      .isLength({ min: MIN_NAME_LENGTH, max: MAX_NAME_LENGTH });
+
     const errors = req.validationErrors() as MappedError[];
     if (errors) {
       return res.status(500).json({ msg: errors[0].msg });
@@ -153,7 +168,8 @@ module.exports = function(app: Express) {
   });
 
   app.post('/api/update-password', isAuthenticated, (req: Request, res: Response) => {
-    req.check('password', 'password must contain at least 6 characters').isLength({ min: MIN_PASSWORD_LENGTH });
+    req.check('password', 'password must contain at least 6 characters')
+      .isLength({ min: MIN_PASSWORD_LENGTH, max: MAX_PASSWORD_LENGTH });
     req.check('confirmPassword', 'passwords must match').equals(req.body.password);
     const errors = req.validationErrors() as MappedError[];
     if (errors) {
