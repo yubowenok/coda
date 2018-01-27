@@ -13,7 +13,7 @@
   </div>
   <div class="image float-right" *ngIf="problem.illustration" [ngStyle]="getImageWidth()">
     <img src="{{getImagePath()}}">
-    <div class="citation" [appHtml]="problem.illustration.text"></div>
+    <div class="citation" [appHtml]="problem.illustration.text" *ngIf="problem.illustration.text"></div>
   </div>
   <div [appMathJax]="problem.statement"></div>
   <div class="section">

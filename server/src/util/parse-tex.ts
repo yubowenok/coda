@@ -76,40 +76,24 @@ const parseParagraphs = (input: string): string => {
  * Reads \illustration macro.
  */
 const parseIllustration = (input: string): { illustration?: WebIllustration, input: string } => {
-  const PROBLEM_ILLUSTRATION_PATTERN = 'illustration{';
-  const FIGURE_SOURCE_PATTEN = '\\href{';
-  const patternStart = input.indexOf(PROBLEM_ILLUSTRATION_PATTERN);
-  let width, filename, text;
-  if (patternStart === -1) {
+  const matched = input.match(/^\s*\\illustration{([^}]*)}{([^}]*)}({(.*)})?\s*\n/);
+  if (!matched) {
     return { input };
   }
-
-  let href = '', credit = '';
-  const sizeStart = patternStart + PROBLEM_ILLUSTRATION_PATTERN.length;
-  const sizeEnd = input.indexOf('}', sizeStart);
-  const sourceStart = sizeEnd + 2;
-  const sourceEnd = input.indexOf('}', sourceStart);
-
-  let illustrationCloseBrace = sourceEnd; // illustration end should be the last '}'
-
-  width = Number(input.substring(sizeStart, sizeEnd));
-  filename = input.substring(sourceStart, sourceEnd);
-
-  if (input.charAt(sourceEnd + 1) === '{') {
-    const hrefStart = input.indexOf(FIGURE_SOURCE_PATTEN);
-    const hrefEnd = input.indexOf('}', hrefStart);
-    href = input.substring(hrefStart + FIGURE_SOURCE_PATTEN.length, hrefEnd);
-
-    const creditStart = hrefEnd + 2;
-    const creditEnd = input.indexOf('}', creditStart);
-    credit = input.substring(creditStart, creditEnd);
-    illustrationCloseBrace = creditEnd + 1;
+  const width = +matched[1];
+  const filename = matched[2];
+  const credit = matched[3];
+  let text = '';
+  if (credit) {
+    const creditMatched = credit.match(/{([^\\]*)(?:\\href{([^}]*)}{([^}]*)})?}/);
+    const creditText = creditMatched[1];
+    const hrefUrl = creditMatched[2];
+    const hrefText = creditMatched[3] || '';
+    text = hrefUrl ? `${creditText}<a href="${hrefUrl}">${hrefText}</a>` : creditText;
   }
-  input = input.substring(illustrationCloseBrace + 1);
-  text = `Image by <a href="${href}">${credit}</a>`;
   return {
     illustration: { width, filename, text },
-    input: input
+    input: input.replace(matched[0], '')
   };
 };
 
