@@ -12,7 +12,7 @@ import {
   ProblemsetConfig,
   JudgeMode
 } from '../constants';
-import { checkProblemsetEnded } from './problemset';
+import { checkProblemsetEnded, getProblemset } from './problemset';
 import { getProblemsetProblem } from './problem';
 
 /**
@@ -29,11 +29,11 @@ const getSubmissions = (problemsetId: string): Submission[] => {
  */
 const getVerdicts = (problemsetId: string): Verdict[] => {
   const verdictsPath = paths.problemsetVerdictsPath(problemsetId);
-  const json = fs.existsSync(verdictsPath) && fs.readFileSync(verdictsPath, 'utf8');
+  const json = (fs.existsSync(verdictsPath) && fs.readFileSync(verdictsPath, 'utf8')) || '';
   return json ? JSON.parse(json) : [];
 };
 
-export const getVerdictsList = (problemsetId: string): Verdict[] => {
+export const getVerdictList = (problemsetId: string): Verdict[] => {
   return getVerdicts(problemsetId);
 };
 
@@ -48,13 +48,10 @@ const submissionSorter = (a: Submission, b: Submission): number => {
 };
 
 /**
- * @returns List of submissions (for the username) inside a problemset, sorted by submission order.
+ * @returns List of submissions inside a problemset, sorted by submission order.
  */
-export const getSubmissionList = (problemsetId: string, username?: string): Submission[] => {
-  let submissions = getSubmissions(problemsetId);
-  if (username) {
-    submissions = submissions.filter(submission => submission.username === username);
-  }
+export const getSubmissionList = (problemsetId: string): Submission[] => {
+  const submissions = getSubmissions(problemsetId);
   submissions.sort(submissionSorter);
   return submissions;
 };
@@ -78,6 +75,14 @@ export const getSubmissionDict = (problemsetId: string): SubmissionDict => {
     dict[username].sort(submissionSorter);
   }
   return dict;
+};
+
+/**
+ * @returns List of submissions inside a problemset for a single user.
+ */
+export const getUserSubmissionList = (problemsetId: string, username: string): Submission[] => {
+  return getSubmissionList(problemsetId)
+    .filter(submission => submission.username === username);
 };
 
 /**
@@ -174,7 +179,6 @@ export const getJudgedSubmission = (problemsetId: string, submission: Submission
       verdict: VerdictType.PENDING,
       executionTime: 0,
       sourceFile: submission.sourceFile
-      // memory: 0
     };
   }
   const result: JudgedSubmission = {
@@ -189,15 +193,15 @@ export const getJudgedSubmission = (problemsetId: string, submission: Submission
     // from verdict
     verdict: verdict.verdict,
     executionTime: verdict.executionTime,
-    // memory: verdict.memory
     blindJudgeStatus: submission.blindJudgeStatus,
     failedCase: verdict.failedCase,
     totalCase: verdict.totalCase
   };
 
+  const problemset = getProblemset(problemsetId);
   if (result.verdict === VerdictType.TLE) {
     // Send time limit as execution time, so that web displays it as "> ${TL}s".
-    const timeLimit = getProblemsetProblem(problemsetId, submission.problemNumber).timeLimit;
+    const timeLimit = getProblemsetProblem(problemset, submission.problemNumber).timeLimit;
     if (result.executionTime > timeLimit) {
       result.executionTime = timeLimit;
     }

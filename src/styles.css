@@ -95,3 +95,15 @@ pre.CodeMirror-placeholder {
 .float-right {
   float: right;
 }
+
+.status {
+  font-size: .8em;
+}
+
+.input-info {
+  cursor: pointer;
+  float: right;
+  margin-bottom: -1em;
+  margin-right: -1.1em;
+  color: #555;
+}

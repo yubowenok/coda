@@ -6,6 +6,7 @@ import {
   getProblemset,
   getParticipantScores,
   filterSubmissionDictForBlindJudge,
+  filterTestPracticeSubmissions,
   checkProblemsetEnded,
   updateScoreboardForBlindJudge,
   updateTimePenalty
@@ -28,9 +29,9 @@ module.exports = function(app: Express) {
     if (problemset.scoreboardMode === ScoreboardMode.DISABLED) {
       return res.status(404).json({ msg: 'scoreboard disabled' });
     }
-    let submissionDict: SubmissionDict = getSubmissionDict(problemsetId);
+    let submissionDict: SubmissionDict = filterTestPracticeSubmissions(getSubmissionDict(problemsetId));
     if (problemset.judgeMode === JudgeMode.BLIND) {
-      submissionDict = filterSubmissionDictForBlindJudge(problemset, submissionDict);
+      submissionDict = filterSubmissionDictForBlindJudge(submissionDict);
     }
 
     const participants = getParticipantScores(problemset, submissionDict);
@@ -44,6 +45,9 @@ module.exports = function(app: Express) {
     if (problemset.penaltyMode === PenaltyMode.TIME) {
       updateTimePenalty(participants);
     }
+
+    // TODO(anonymous)
+    // updateAnonymousScoreboard(participants);
 
     res.json({
       id: problemsetId,

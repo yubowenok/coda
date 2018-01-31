@@ -8,6 +8,7 @@ import {
   isValidProblemNumber,
   isValidSubtask,
   getSubmissionList,
+  getUserSubmissionList,
   getProblemset,
   getProblemsetTime,
   checkProblemsetEnded,
@@ -17,7 +18,8 @@ import {
 } from '../util';
 import {
   Submission,
-  LanguageList
+  LanguageList,
+  JudgeMode
 } from '../constants';
 
 module.exports = function(app: Express) {
@@ -33,24 +35,25 @@ module.exports = function(app: Express) {
       return res.status(500).json({ msg: errors[0].msg });
     }
 
-    // TODO: mark skipped submissions for blind judge
     const problemsetId = req.params.problemsetId;
     const problemNumber = req.params.problemNumber;
     const subtask = req.params.subtask;
     const language = req.body.language;
     const username = req.user.username;
     const problemset = getProblemset(problemsetId);
-    const submissions = getSubmissionList(problemsetId, username);
+    const submissions = getSubmissionList(problemsetId);
+    const previousSubmissionCount = submissions.length;
 
     // Computes the new submission number.
-    const submissionNumber = submissions.length ?
-      submissions[submissions.length - 1].submissionNumber + 1 : 1;
+    const userSubmissions = getUserSubmissionList(problemsetId, username);
+    const submissionNumber = userSubmissions.length ?
+      userSubmissions[userSubmissions.length - 1].submissionNumber + 1 : 1;
 
     const sourceName = paths.submissionFileName(username, submissionNumber, problemNumber, subtask, language);
     try {
       writeSubmission(problemsetId, username, sourceName, req.body.sourceCode);
     } catch (err) {
-      return res.status(500).json({ msg: 'cannot save source file' });
+      return res.status(500).json({ msg: 'FATAL: cannot save source file' });
     }
 
     const newSubmission: Submission = {
@@ -67,11 +70,23 @@ module.exports = function(app: Express) {
       newSubmission.outsideProblemsetTime = true;
     }
 
-    // find all submissions to a same subtask before and mark them skipped
-    updateStatusForBlindJudge(submissions, newSubmission);
+    if (problemset.judgeMode === JudgeMode.BLIND) {
+      // find all submissions to a same subtask before and mark them skipped
+      updateStatusForBlindJudge(submissions, newSubmission);
+    }
 
     // write to submissions.json
-    writeSubmissions(problemsetId, submissions.concat(newSubmission));
+    const newSubmissions = submissions.concat(newSubmission);
+
+    if (newSubmissions.length !== previousSubmissionCount + 1) {
+      return res.status(500).json({ msg: 'FATAL: submission count fails safety check' });
+    }
+
+    try {
+      writeSubmissions(problemsetId, newSubmissions);
+    } catch (Err) {
+      return res.status(500).json({ msg: 'FATAL: cannot save submissions' });
+    }
 
     return res.json(submissionNumber);
   });

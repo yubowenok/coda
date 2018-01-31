@@ -6,11 +6,13 @@ import * as time from '../constants/time';
 })
 export class TimeDisplayPipe implements PipeTransform {
 
-  transform(t: number, args?: any): string {
-    if (t < 0) {
-      return 'practice'; // After the problemset ends
+  transform(tm: number | string, args?: any): string {
+    if (tm < 0) {
+      return 'test'; // Before problemset starts
+    } else if (tm === '') {
+      return 'practice'; // outsideProblemsetTime
     }
-    t *= time.SECOND_MS;
+    const t = (tm as number) * time.SECOND_MS;
     const days = Math.floor(t / time.DAY_MS);
     const hours = Math.floor(t % time.DAY_MS / time.HOUR_MS);
     let minutes: number | string = Math.floor(t % time.HOUR_MS / time.MINUTE_MS);
@@ -21,8 +23,11 @@ export class TimeDisplayPipe implements PipeTransform {
     if (seconds < 10) {
       seconds = '0' + seconds;
     }
-    const inDay = hours ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
-    return days ? `${days}d ${inDay}` : inDay;
+    if (days) {
+      return `${days}d ${hours}:${minutes}:${seconds}`;
+    } else {
+      return hours ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
+    }
   }
 
 }

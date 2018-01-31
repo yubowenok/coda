@@ -119,6 +119,14 @@ export class ApiService {
     }
   } = {};
 
+  clearCache(): void {
+    this.problemsetCache = {};
+    this.problemCache = {};
+    this.scoreboardCache = {};
+    this.submissionCache = {};
+    this.submissionListCache = {};
+  }
+
   getCache(id: string, cache: { [id: string]: { data: any, lastFetched: number }},
            refetchInterval: number): Observable<any> | null {
     if (id in cache && (new Date().getTime() - cache[id].lastFetched) <= refetchInterval) {
@@ -128,7 +136,7 @@ export class ApiService {
   }
 
   getProblemsetList(): Observable<ProblemsetInfo[]> {
-    return this.http.get<ProblemsetInfo[]>(ApiUrl.problemsetList())
+    return this.http.get<ProblemsetInfo[]>(ApiUrl.problemsetList(), httpOptions)
       .pipe(
         catchError(this.handleError('getProblemsetList', []))
       );
@@ -244,10 +252,17 @@ export class ApiService {
         tap(res => {
           if (res === true) {
             this.user = undefined;
+            this.clearCache();
+            this.router.navigate(['/problemsets']);
+            this.message.info('logged out');
           }
         }),
         catchError(this.handleError<boolean>('logout'))
       );
+  }
+
+  imageUrl(problemsetId: string, problemNumber: string, filename: string): string {
+    return `${API_URL}/image/${problemsetId}/${problemNumber}/${filename}`;
   }
 
   getCurrentUser(): UserInfo | undefined {

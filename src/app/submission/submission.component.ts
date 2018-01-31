@@ -1,26 +1,19 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TitleCasePipe } from '@angular/common';
+import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 
 import { ApiService } from '../api.service';
 import { CopyService } from '../copy.service';
 import {
   Verdict,
-  SubmissionColumnWidth as ColumnWidth,
+  SubmissionTableColumns,
   LanguageDisplay,
   SubmissionWithSource,
   ProblemsetInfo,
   SECOND_MS
 } from '../constants';
-import { executionTimeDisplay } from '../util';
-
-import {
-  TimeDisplayPipe,
-  DateDisplayPipe,
-  VerdictDisplayPipe,
-  VerdictClassPipe
-} from '../pipe';
+import { executionTimeDisplay, problemsetTimeDisplay } from '../util';
 
 const PENDING_RECHECK_INTERVAL = 10 * SECOND_MS;
 
@@ -46,71 +39,29 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   private columns = [];
   private recheckHandler: NodeJS.Timer | undefined;
 
+  private currentProblemSubscription: Subscription;
+
   ngOnInit() {
     this.api.changeProblemsetId(this.route.snapshot.paramMap.get('problemsetId'));
 
     this.problemset = this.api.latestProblemset;
-    this.api.getCurrentProblemset()
+    this.currentProblemSubscription = this.api.getCurrentProblemset()
       .subscribe(problemset => {
         this.problemset = problemset;
       });
 
     this.getSubmission();
 
-    const timeDisplayPipe = new TimeDisplayPipe();
-    const dateDisplayPipe = new DateDisplayPipe();
-    const verdictDisplayPipe = new VerdictDisplayPipe();
-    const titleCasePipe = new TitleCasePipe();
-    const columns = [
-      {
-        name: '#', prop: 'submissionNumber', sortable: false,
-        ...ColumnWidth.SUBMISSION_NUMBER
-      },
-      {
-        name: 'Problem', prop: 'problem', sortable: false,
-        ...ColumnWidth.PROBLEM
-      },
-      {
-        name: 'Subtask', prop: 'subtask', pipe: titleCasePipe, sortable: false,
-        ...ColumnWidth.SUBTASK
-      },
-      {
-        name: 'Lang', prop: 'language', sortable: false,
-        ...ColumnWidth.LANGUAGE
-      },
-      {
-        name: 'Verdict', prop: 'verdict', pipe: verdictDisplayPipe, sortable: false,
-        cellClass: this.getCorrectClass,
-        ...ColumnWidth.VERDICT
-      },
-      {
-        name: 'Execution', prop: 'executionTimeDisplay', sortable: false,
-        ...ColumnWidth.EXECUTION_TIME
-      },
-      // { name: 'Memory', prop: 'memoryDisplay', sortable: false },
-      {
-        name: 'Time', prop: 'problemsetTime', pipe: timeDisplayPipe, sortable: false,
-        ...ColumnWidth.PROBLEMSET_TIME
-      },
-      {
-        name: 'Date', prop: 'submitTime', pipe: dateDisplayPipe, sortable: false,
-        ...ColumnWidth.SUBMIT_TIME
-      }
-    ];
-    this.columns = columns;
+    this.columns = SubmissionTableColumns.filter(column => {
+      return column.prop !== 'source';
+    });
   }
 
   ngOnDestroy() {
     if (this.recheckHandler !== undefined) {
       clearInterval(this.recheckHandler);
     }
-  }
-
-  getCorrectClass(cell: { row: { verdict: Verdict } }): string {
-    // cell.value has been piped with VerdictDisplay, so we use original verdict value.
-    const verdict = cell.row.verdict;
-    // Add an empty space because cellClass function call does not.
-    return ' ' + new VerdictClassPipe().transform(verdict);
+    this.currentProblemSubscription.unsubscribe();
   }
 
   getSubmission(): void {
@@ -175,7 +126,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       ...submission,
       subtask: submission.subtask === 'all' ? '-' : submission.subtask,
       executionTimeDisplay: executionTimeDisplay(submission),
-      // memoryDisplay: `${submission.verdict === Verdict.MLE ? '> ' : ''}${submission.memory}MB`,
+      problemsetTime: problemsetTimeDisplay(submission),
       problem: problemNames[submission.problemNumber],
       submitTime: moment(submission.submitTime),
       language: LanguageDisplay[submission.language]

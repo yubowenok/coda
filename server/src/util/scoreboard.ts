@@ -56,19 +56,40 @@ const getTimePenalty = (participant: ParticipantScore): number => {
 /**
  * Removes all submissions that do not count for blind judge.
  */
-export const filterSubmissionDictForBlindJudge = (problemset: ProblemsetConfig,
-                                                  dict: SubmissionDict): SubmissionDict => {
+export const filterSubmissionDictForBlindJudge = (dict: SubmissionDict): SubmissionDict => {
   const newDict: SubmissionDict = {};
   for (const username in dict) {
-    newDict[username] = dict[username].filter(submission => !submission.outsideProblemsetTime);
-    if (newDict[username].length <= 1) {
-      delete newDict[username];
-      continue;
+    const filteredSubmissions = dict[username].filter((sub, index) => {
+      for (let i = 0; i < index; i++) {
+        if (dict[username][i].problemNumber === sub.problemNumber &&
+          dict[username][i].subtask === sub.subtask) {
+          return false; // discard if a previous submission is made on the same subtask
+        }
+      }
+      return true;
+    });
+    if (filteredSubmissions.length) {
+      newDict[username] = filteredSubmissions;
     }
-    const count = newDict[username].length;
-    newDict[username] = [newDict[username][count - 1]]; // only preserve the last submission
   }
   return dict;
+};
+
+/**
+ * Removes testing submission (problemsetTime < 0) so that they don't appear on scoreboard.
+ */
+export const filterTestPracticeSubmissions = (dict: SubmissionDict): SubmissionDict => {
+  const newDict: SubmissionDict = {};
+  for (const username in dict) {
+    const filteredSubmissions = dict[username]
+      .filter(submission => {
+        return !submission.outsideProblemsetTime && submission.problemsetTime >= 0;
+      });
+    if (filteredSubmissions.length) {
+      newDict[username] = filteredSubmissions;
+    }
+  }
+  return newDict;
 };
 
 /**
@@ -84,9 +105,12 @@ export const getParticipantScores = (problemset: ProblemsetConfig, submissionDic
 
   for (const username in submissionDict) {
     const user: User = users[username];
+    // in case we have some discrepancy between submission records and registered users (in dev test)
+    const nickname = user ? user.nickname : 'unknown user';
+
     const participant: ParticipantScore = {
-      name: user.nickname, // TODO: implement anonymous scoreboard
-      username: user.username,
+      name: nickname,
+      username: username,
       score: 0,
       finishTime: 0,
       problems: {}

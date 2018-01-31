@@ -95,3 +95,26 @@ pm2 start dist/judge/judge.js -- --interval 5
 ```
 Then use ``pm2 startup`` to manage your startup script in case the machine reboots.
 
+
+### User signup
+
+You can prepare a json file that contains a list of emails, e.g.
+
+```json
+[
+  "user1@some.domain",
+  "user2@some.domain"
+]
+```
+
+Then use the gen-users script to create a users.json. 
+Place the users.json under the CODA_ROOT.
+Set EMAIL_* environment variables (see .env.example).
+Finally use the email-signup script to send each user an email with an invitation code for signup.
+
+```bash
+# at /server
+npm run gen-users -- --emails emails.json
+cp users.json $CODA_ROOT/users.json
+npm run email-signup
+```

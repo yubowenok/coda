@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { passwordLengthValidator, passwordMatchValidator } from '../util';
+import { passwordLengthValidator, passwordMatchValidator, nameLengthValidator } from '../util';
 import { ApiService } from '../api.service';
 import { MessageService } from '../message.service';
 import { UserSettings } from '../constants/user';
@@ -12,6 +12,10 @@ import { UserSettings } from '../constants/user';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
+
+  tooltip = {
+    NICKNAME: 'Your name that appears on the scoreboard'
+  };
 
   password: FormGroup;
   settings: FormGroup;
@@ -27,13 +31,13 @@ export class ProfileComponent implements OnInit {
     this.getUserSettings();
 
     this.password = this.fb.group({
-      currentPassword: new FormControl('123456', Validators.required),
-      password: new FormControl('123456', [Validators.required, passwordLengthValidator]),
-      confirmPassword: new FormControl('123456', [Validators.required, passwordMatchValidator])
+      currentPassword: new FormControl('', Validators.required),
+      password: new FormControl('', [Validators.required, passwordLengthValidator]),
+      confirmPassword: new FormControl('', [Validators.required, passwordMatchValidator])
     });
     this.settings = this.fb.group({
-      nickname: new FormControl('by', Validators.required),
-      anonymous: new FormControl(false)
+      fullName: new FormControl('', [Validators.required, nameLengthValidator]),
+      nickname: new FormControl('', [Validators.required, nameLengthValidator])
     });
   }
 

@@ -5,14 +5,14 @@
         <input matInput placeholder="Current Password" type="password"
                formControlName="currentPassword" [formGroup]="password">
         <mat-error *ngIf="!password.controls.currentPassword.hasError('tooShort')">
-          Password must be at least 6 characters long
+          Password length must be at least 6
         </mat-error>
       </mat-form-field>
       <mat-form-field>
         <input matInput placeholder="New Password" type="password"
                formControlName="password" [formGroup]="password">
         <mat-error *ngIf="!password.controls.password.hasError('tooShort')">
-          Password must be at least 6 characters long
+          Password length must be at least 6
         </mat-error>
       </mat-form-field>
       <mat-form-field>
@@ -32,17 +32,26 @@
   <mat-tab label="Settings">
     <form [formGroup]="settings" class="margin-to-top">
       <mat-form-field>
+        <input matInput placeholder="Full Name"
+               formControlName="fullName" [formGroup]="settings">
+        <mat-error *ngIf="!settings.controls.fullName.hasError('required')">
+          Please enter full name
+        </mat-error>
+        <mat-error *ngIf="!settings.controls.fullName.hasError('length')">
+          Full name length must be at least 3
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <i class="input-info fa fa-lg fa-info-circle" matTooltip="{{tooltip.NICKNAME}}"></i>
         <input matInput placeholder="Nickname"
                formControlName="nickname" [formGroup]="settings">
         <mat-error *ngIf="!settings.controls.nickname.hasError('required')">
           Please enter nickname
         </mat-error>
+        <mat-error *ngIf="!settings.controls.nickname.hasError('length')">
+          Nickname length must be at least 3
+        </mat-error>
       </mat-form-field>
-      <div>
-        <mat-checkbox formControlName="anonymous" [formGroup]="settings" color="primary">
-          Appear Anonymous on Scoreboard
-        </mat-checkbox>
-      </div>
     </form>
     <button mat-raised-button color="primary" class="margin-to-top" [disabled]="settings.invalid"
       (click)="updateSettings()">

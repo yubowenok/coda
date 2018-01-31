@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import { ProblemConfig, ProblemEasierSubtasksDict } from '../constants/problem';
 import { getProblemset } from './problemset';
 import { Request, Response, NextFunction } from 'express';
+import { ProblemsetConfig } from '../constants/problemset';
 
 const checkProblemId = (id: string): boolean => {
   return fs.existsSync(paths.problemDir(id));
@@ -18,8 +19,8 @@ export const getProblem = (problemId: string): ProblemConfig => {
   return problemConf;
 };
 
-export const getProblemsetProblem = (problemsetId: string, problemNumber: string): ProblemConfig => {
-  const problemId = getProblemset(problemsetId).problems
+export const getProblemsetProblem = (problemset: ProblemsetConfig, problemNumber: string): ProblemConfig => {
+  const problemId = problemset.problems
     .filter(problem => problem.number === problemNumber)[0].id;
   return getProblem(problemId);
 };

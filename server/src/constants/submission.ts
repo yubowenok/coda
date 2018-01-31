@@ -55,7 +55,6 @@ export interface Verdict {
   sourceFile: string; // path to source file
   verdict: VerdictType;
   executionTime: number;
-  // memory: number;
   failedCase: number;
   totalCase: number;
 }
@@ -91,4 +90,5 @@ export interface JudgedSubmission {
 export interface JudgedSubmissionWithSource extends JudgedSubmission {
   sourceCode: string;
   compileError?: string;
+  adminView?: boolean;
 }

@@ -1,6 +1,9 @@
 <app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
 <mat-spinner *ngIf="(!submission || !problemset) && !error" diameter="50"></mat-spinner>
 <ng-container *ngIf="submission && problemset && !error">
+  <div class="status" *ngIf="submission.adminView">
+    <span>You are viewing this source as admin.</span>
+  </div>
   <h3>{{getUsername()}}'s Submission #{{submission.submissionNumber}}</h3>
   <div class="pending status" *ngIf="submission.verdict === 'PENDING'">
     <mat-spinner diameter="20"></mat-spinner>

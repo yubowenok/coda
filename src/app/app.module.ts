@@ -44,6 +44,7 @@ import {
 } from './pipe';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { PageErrorComponent } from './page-error/page-error.component';
+import { HtmlDirective } from './html.directive';
 
 @NgModule({
   imports: [
@@ -82,7 +83,8 @@ import { PageErrorComponent } from './page-error/page-error.component';
     RepeatPipe,
     NotFoundComponent,
     MessageDialogComponent,
-    PageErrorComponent
+    PageErrorComponent,
+    HtmlDirective
   ],
   entryComponents: [
     MessageDialogComponent
