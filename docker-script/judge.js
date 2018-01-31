@@ -27,6 +27,8 @@ const time = ARGS.time;
 const sub = ARGS.subtask;
 const help = ARGS.help;
 
+const judgeProblemPath = sub ? problemPath + '/' + sub : problemPath;
+
 function hsaSubstring(str, sub) {
   return str.indexOf(sub) > -1;
 }
@@ -87,9 +89,9 @@ function getCompilerErrorMsg(tmpSubmission) {
 }
 
 function toJsonResult(str, source, fileName) {
-  var dataPath = problemPath + '/data';
+  var dataPath = judgeProblemPath + '/data';
   var fileList = getFiles(dataPath, '');
-
+  
   // Compile error
   if (hsaSubstring(str, 'Compile error')) {
     return JSON.stringify({
@@ -105,7 +107,7 @@ function toJsonResult(str, source, fileName) {
 
   var pos = str.indexOf('[');
   var nxt = str.indexOf(']');
-  pos -= 5; // TODO(bowen): add comment about what is this constant
+  pos -= 5; // 5 = max length of (AC, TLE, RE...) + a safty margin
   str = str.substr(pos, nxt - pos + 1);
 
   var res = {
@@ -152,7 +154,6 @@ if (help) {
 } else if (!problemPath) {
   console.log('--problem {problem_package_path} is required');
 } else {
-  const judgeProblemPath = sub ? problemPath + '/' + sub : problemPath;
   const pos = source.lastIndexOf('/');
   const fileName = source.substr(pos + 1);
   const cmdLine = 'verifyproblem ' + judgeProblemPath + ' -s ' + 'accepted/' + fileName + ' -p submissions' +
