@@ -29,7 +29,7 @@ module.exports = function(app: Express) {
   app.post('/api/login', (req: Request, res: Response, next: NextFunction) => {
     if (req.body.username.match(/@/)) {
       req.check('username', 'email must be valid').isEmail();
-      req.sanitize('username').normalizeEmail();
+      req.sanitize('username').normalizeEmail({ gmail_remove_dots: false });
     } else {
       req.check('username', 'username must not be empty').notEmpty()
         .isLength({ min: MIN_NAME_LENGTH, max: MAX_NAME_LENGTH });
@@ -77,7 +77,7 @@ module.exports = function(app: Express) {
     req.check('confirmPassword', 'passwords must match').equals(req.body.password);
     req.check('fullName', 'full name must be valid')
       .isLength({ min: MIN_NAME_LENGTH, max: MAX_NAME_LENGTH });
-    req.sanitize('email').normalizeEmail();
+    req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
     const errors = req.validationErrors() as MappedError[];
     if (errors) {
       return res.status(500).json({ msg: errors[0].msg });
