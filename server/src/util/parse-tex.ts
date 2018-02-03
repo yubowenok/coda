@@ -56,7 +56,7 @@ const parseFontStyle = (input: string): string => {
 const parseQuotes = (input: string): string => {
   // parse double and single quotes
   input = input.replace(/``/g, '\"');
-  input = input.replace(/''/, '\"');
+  input = input.replace(/''/g, '\"');
   input = input.replace(/`/g, '\'');
   return input;
 };
