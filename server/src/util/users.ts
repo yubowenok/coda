@@ -46,6 +46,10 @@ export const getUserSession = (problemsetId: string, username: string): UserSess
   return getUserSessions(problemsetId).filter(session => session.username === username)[0];
 };
 
+export const isAdminUser = (user: User): boolean => {
+  return user.groups && user.groups.indexOf('admin') !== -1;
+};
+
 /*** Router middleware utils ***/
 
 export const isValidUsername = (req: Request, res: Response, next: NextFunction) => {
@@ -60,8 +64,8 @@ export const isAuthorizedUser = (req: Request, res: Response, next: NextFunction
   const username = req.params.username;
   const problemsetId = req.params.problemsetId;
   const userGroups = req.user && req.user.groups || [];
-  if (userGroups.indexOf('admin') !== -1) {
-    req.user.isAdmin = true;
+  if (userGroups.length) {
+    req.user.isAdmin = isAdminUser(req.user);
   }
 
   if (problemsetId) {
@@ -76,6 +80,10 @@ export const isAuthorizedUser = (req: Request, res: Response, next: NextFunction
     const commonGroups = _.intersection(allowedGroups, userGroups);
     if (commonGroups.length) {
       return next();
+    }
+
+    if (problemset.allowUsers || problemset.allowGroups) {
+      return res.status(401).json({ msg: 'access denied' });
     }
 
     if (checkProblemsetEnded(problemset) && problemset.scoreboardMode === ScoreboardMode.ENABLED) {

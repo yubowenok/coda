@@ -60,7 +60,7 @@ module.exports = function(app: Express) {
       if (req.user.isAdmin) {
         webProblemset.adminView = true;
       } else {
-        webProblemset.problems = []; // hide from web
+        webProblemset.problems = []; // hide from web if problemset has not started
       }
     }
     res.json(webProblemset);

@@ -39,13 +39,13 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   private columns = [];
   private recheckHandler: NodeJS.Timer | undefined;
 
-  private currentProblemSubscription: Subscription;
+  private currentProblemsetSubscription: Subscription;
 
   ngOnInit() {
     this.api.changeProblemsetId(this.route.snapshot.paramMap.get('problemsetId'));
 
     this.problemset = this.api.latestProblemset;
-    this.currentProblemSubscription = this.api.getCurrentProblemset()
+    this.currentProblemsetSubscription = this.api.getCurrentProblemset()
       .subscribe(problemset => {
         this.problemset = problemset;
       });
@@ -61,7 +61,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
     if (this.recheckHandler !== undefined) {
       clearInterval(this.recheckHandler);
     }
-    this.currentProblemSubscription.unsubscribe();
+    this.currentProblemsetSubscription.unsubscribe();
   }
 
   getSubmission(): void {

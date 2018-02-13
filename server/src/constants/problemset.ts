@@ -43,7 +43,8 @@ export interface ProblemsetConfig {
   allowUsers: string[];
   allowGroups: string[];
   fullFeedback?: boolean;
-  private?: boolean;
+  private?: boolean; // private problemset is not listed in problemsets/
+  noOnlineStatement?: boolean;
 }
 
 export interface ProblemsetDict {

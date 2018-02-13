@@ -16,6 +16,7 @@ import {
   updateVerdictsForBlindJudge,
   checkProblemsetEnded
 } from '../util';
+import { ScoreboardMode } from '../constants/problemset';
 
 module.exports = function(app: Express) {
   /**
@@ -37,6 +38,15 @@ module.exports = function(app: Express) {
     const submission = getSubmission(problemsetId, username, submissionNumber);
     const judgedSubmission = getJudgedSubmissionWithSource(problemsetId, submission,
       getVerdict(problemsetId, submission));
+
+    if (problemset.scoreboardMode !== ScoreboardMode.ENABLED) {
+      if (req.user.isAdmin) {
+        judgedSubmission.adminView = true;
+      } else {
+        // cannot view submission if scoreboard is not ENABLED
+        return res.status(401).json({ msg: 'access denied' });
+      }
+    }
 
     if (!checkProblemsetEnded(problemset)) {
       if (req.user.isAdmin) {
@@ -67,11 +77,19 @@ module.exports = function(app: Express) {
           verdicts && submission.username in verdicts ?
             verdicts[submission.username][submission.submissionNumber] : undefined));
 
+      if (problemset.scoreboardMode !== ScoreboardMode.ENABLED && req.user.username !== username) {
+        if (!req.user.isAdmin) {
+          // cannot view submission if scoreboard is not ENABLED
+          return res.status(401).json({ msg: 'access denied' });
+        }
+      }
+
       if (!checkProblemsetEnded(problemset)) {
         if (!req.user.isAdmin) {
           updateVerdictsForBlindJudge(problemset, judgedSubmissions);
         }
       }
+
       res.json(judgedSubmissions);
   });
 };

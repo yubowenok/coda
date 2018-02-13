@@ -14,6 +14,8 @@ import {
 } from '../util';
 import { ProblemConfig, ProblemScoring, WebProblem } from '../constants';
 
+const MESSAGE_NO_ONLINE_STATEMENT = '(online statement not available)';
+
 /**
  * Creates a web format problem.
  * Merges problemset config (subtask scores, etc.) into problem config.
@@ -81,8 +83,12 @@ module.exports = function(app: Express) {
     const problem = getProblemsetProblem(problemset, problemNumber);
     const scoring = problemset.problems.filter(prob => prob.number === problemNumber)[0];
     const webProblem = toWebProblem(scoring, problem);
-    if (!started) {
+    if (!started || (problemset.noOnlineStatement && req.user.isAdmin)) {
       webProblem.adminView = true;
+    }
+    if (!req.user.isAdmin && problemset.noOnlineStatement) {
+      webProblem.statement = MESSAGE_NO_ONLINE_STATEMENT;
+      webProblem.subtasks.forEach(subtask => subtask.text = MESSAGE_NO_ONLINE_STATEMENT );
     }
 
     res.json(webProblem);

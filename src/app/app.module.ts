@@ -45,6 +45,7 @@ import {
 import { NotFoundComponent } from './not-found/not-found.component';
 import { PageErrorComponent } from './page-error/page-error.component';
 import { HtmlDirective } from './html.directive';
+import { QueueComponent } from './queue/queue.component';
 
 @NgModule({
   imports: [
@@ -84,7 +85,8 @@ import { HtmlDirective } from './html.directive';
     NotFoundComponent,
     MessageDialogComponent,
     PageErrorComponent,
-    HtmlDirective
+    HtmlDirective,
+    QueueComponent
   ],
   entryComponents: [
     MessageDialogComponent

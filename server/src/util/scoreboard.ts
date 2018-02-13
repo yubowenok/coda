@@ -115,6 +115,7 @@ export const getParticipantScores = (problemset: ProblemsetConfig, submissionDic
       finishTime: 0,
       problems: {}
     };
+
     const problems = participant.problems;
 
     submissionDict[username].forEach((sub: Submission) => {
@@ -217,5 +218,17 @@ export const updateScoreboardForBlindJudge = (participants: ParticipantScore[]):
 export const updateTimePenalty = (participants: ParticipantScore[]): void => {
   participants.forEach(participant => {
     participant.finishTime += getTimePenalty(participant);
+  });
+};
+
+/**
+ * Anonymizes the scoreboard, except for the login user.
+ */
+export const anonymizeScoreboard = (participants: ParticipantScore[], username?: string): void => {
+  participants.forEach(participant => {
+    if (participant.username !== username) {
+      participant.username = undefined;
+      participant.name = '***';
+    }
   });
 };

@@ -72,6 +72,7 @@ export interface VerdictDict {
 }
 
 export interface JudgedSubmission {
+  username?: string; // for judge queue username is visible
   submissionNumber: number; // typically numbered 1, 2, ... for (problemset, username) pair
   problemNumber: string;
   subtask: string;

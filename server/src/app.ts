@@ -50,6 +50,7 @@ require('./api/problem')(app);
 require('./api/submission')(app);
 require('./api/submit')(app);
 require('./api/scoreboard')(app);
+require('./api/queue')(app);
 require('./api/user')(app);
 
 // Serve the web content

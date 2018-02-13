@@ -58,6 +58,8 @@ class ApiUrl {
     `${ApiUrl.problemset(problemsetId)}/submissions/${username}`
   static scoreboard = (problemsetId: string) =>
     `${ApiUrl.problemset(problemsetId)}/scoreboard`
+  static queue = (problemsetId: string) =>
+    `${ApiUrl.problemset(problemsetId)}/queue`
   static submit = (problemsetId: string, problemNumber: string, subtask: string) =>
     `${ApiUrl.problem(problemsetId, problemNumber)}/submit/${subtask}`
 
@@ -215,6 +217,13 @@ export class ApiService {
     return this.http.get<Submission[]>(ApiUrl.submissionList(problemsetId, username), httpOptions)
       .pipe(
         catchError(this.handleError<Submission[]>(`getSubmissions ${problemsetId}`))
+      );
+  }
+
+  getQueue(problemsetId: string): Observable<Submission[]> {
+    return this.http.get<Submission[]>(ApiUrl.queue(problemsetId), httpOptions)
+      .pipe(
+        catchError(this.handleError<Submission[]>(`getQueue ${problemsetId}`))
       );
   }
 

@@ -10,7 +10,8 @@
   {
     "email": "bytest@nyu.edu",
     "invitationCode": "XYZ",
-    "password": ""
+    "password": "",
+    "groups": ["aps"]
   },
   {
     "username": "jz123",

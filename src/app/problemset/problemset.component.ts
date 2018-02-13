@@ -23,12 +23,12 @@ export class ProblemsetComponent implements OnInit, OnDestroy {
 
   error: { msg: string } | undefined;
 
-  private currentProblemSubscription: Subscription;
+  private currentProblemsetSubscription: Subscription;
 
   ngOnInit() {
     this.getProblemset();
 
-    this.currentProblemSubscription = this.api.getCurrentProblemset()
+    this.currentProblemsetSubscription = this.api.getCurrentProblemset()
       .subscribe(problemset => {
         if (problemset === undefined) {
           return;
@@ -38,7 +38,7 @@ export class ProblemsetComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.currentProblemSubscription.unsubscribe();
+    this.currentProblemsetSubscription.unsubscribe();
   }
 
   getProblemset(): void {

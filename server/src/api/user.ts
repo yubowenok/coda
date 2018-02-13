@@ -13,7 +13,7 @@ import { MappedError } from 'express-validator/shared-typings';
 import * as bcrypt from 'bcrypt';
 import * as _ from 'lodash';
 
-import { getUserList, writeUsers, isAuthenticated } from '../util';
+import { getUserList, writeUsers, isAuthenticated, isAuthorizedUser, isAdminUser } from '../util';
 
 const SALT_ROUNDS = 12;
 
@@ -21,7 +21,10 @@ const SALT_ROUNDS = 12;
  * Creates a web format user info object
  */
 const toWebUser = (user: User): Object => {
-  return _.omit(user, ['password', 'invitationCode']);
+  return {
+    ..._.omit(user, ['password', 'invitationCode']),
+    isAdmin: isAdminUser(user)
+  };
 };
 
 module.exports = function(app: Express) {
@@ -55,7 +58,9 @@ module.exports = function(app: Express) {
     })(req, res, next);
   });
 
-  app.post('/api/check-login', (req: Request, res: Response) => {
+  app.post('/api/check-login',
+    isAuthorizedUser,
+    (req: Request, res: Response) => {
     if (req.user) {
       return res.json(toWebUser(req.user));
     }
@@ -101,6 +106,8 @@ module.exports = function(app: Express) {
           return res.status(500).json({ msg: 'email has already signed up' });
         }
 
+        const groups = users[i].groups; // preserve group settings
+
         const hash = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(SALT_ROUNDS));
         users[i] = {
           username: req.body.username,
@@ -110,6 +117,10 @@ module.exports = function(app: Express) {
           fullName: req.body.fullName,
           nickname: req.body.fullName
         };
+
+        if (groups) {
+          users[i].groups = groups;
+        }
 
         foundUser = users[i];
       }
