@@ -6,6 +6,8 @@ import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 import { of } from 'rxjs/observable/of';
 import { Subject } from 'rxjs/Subject';
 import { catchError, tap } from 'rxjs/operators';
+import * as Cookies from 'cookies-js';
+
 import { MessageService } from './message.service';
 import {
   API_URL,
@@ -42,6 +44,7 @@ class ApiUrl {
   private static base = (url: string): string => `${API_URL}${url}`;
 
   static login = () => ApiUrl.base('/login');
+  static loginSwitch = () => ApiUrl.base('/login-switch');
   static checkLogin = () => ApiUrl.base('/check-login');
   static logout = () => ApiUrl.base('/logout');
   static signup = () => ApiUrl.base('/signup');
@@ -239,6 +242,7 @@ export class ApiService {
     return this.http.post<UserInfo>(ApiUrl.signup(), info, httpOptions)
       .pipe(
         tap((userInfo: UserInfo) => {
+          Cookies.set('lastUser', JSON.stringify(userInfo));
           this.user = userInfo;
         }),
         catchError(this.handleError<UserInfo>('signup'))
@@ -249,10 +253,15 @@ export class ApiService {
     return this.http.post<UserInfo>(ApiUrl.login(), info, httpOptions)
       .pipe(
         tap((userInfo: UserInfo) => {
+          Cookies.set('lastUser', JSON.stringify(userInfo));
           this.user = userInfo;
         }),
         catchError(this.handleError<UserInfo>('login'))
       );
+  }
+
+  loginSwitch(username: string, lastUsername: string): Observable<boolean> {
+    return this.http.post<boolean>(ApiUrl.loginSwitch(), { username, lastUsername }, httpOptions);
   }
 
   logout(): Observable<boolean> {

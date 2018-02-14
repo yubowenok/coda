@@ -12,6 +12,7 @@ import {
 import { MappedError } from 'express-validator/shared-typings';
 import * as bcrypt from 'bcrypt';
 import * as _ from 'lodash';
+import { logger } from '../logger';
 
 import { getUserList, writeUsers, isAuthenticated, isAuthorizedUser, isAdminUser } from '../util';
 
@@ -22,7 +23,7 @@ const SALT_ROUNDS = 12;
  */
 const toWebUser = (user: User): Object => {
   return {
-    ..._.omit(user, ['password', 'invitationCode']),
+    ..._.omit(user, ['password', 'invitationCode', 'groups']),
     isAdmin: isAdminUser(user)
   };
 };
@@ -65,6 +66,11 @@ module.exports = function(app: Express) {
       return res.json(toWebUser(req.user));
     }
     res.json(false);
+  });
+
+  app.post('/api/login-switch', (req: Request, res: Response) => {
+    logger.warn('account switch', `"${req.body.lastUsername}" -> "${req.body.username}"`);
+    res.json(true);
   });
 
   app.post('/api/logout', (req: Request, res: Response) => {

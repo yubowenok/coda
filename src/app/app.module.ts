@@ -30,7 +30,7 @@ import { MessageService } from './message.service';
 import { SubmitComponent } from './submit/submit.component';
 import { CopyService } from './copy.service';
 import { CodeMirrorDirective } from './code-mirror.directive';
-import { MessageDialogComponent } from './message.service';
+import { MessageDialogComponent, ConfirmDialogComponent } from './message.service';
 
 import {
   TimeDisplayPipe,
@@ -84,12 +84,14 @@ import { QueueComponent } from './queue/queue.component';
     RepeatPipe,
     NotFoundComponent,
     MessageDialogComponent,
+    ConfirmDialogComponent,
     PageErrorComponent,
     HtmlDirective,
     QueueComponent
   ],
   entryComponents: [
-    MessageDialogComponent
+    MessageDialogComponent,
+    ConfirmDialogComponent
   ],
   providers: [
     ApiService,
