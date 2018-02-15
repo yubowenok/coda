@@ -39,7 +39,7 @@ module.exports = function(app: Express) {
     const judgedSubmission = getJudgedSubmissionWithSource(problemsetId, submission,
       getVerdict(problemsetId, submission));
 
-    if (problemset.scoreboardMode !== ScoreboardMode.ENABLED) {
+    if (problemset.scoreboardMode !== ScoreboardMode.ENABLED && req.user.username !== username) {
       if (req.user.isAdmin) {
         judgedSubmission.adminView = true;
       } else {
