@@ -93,6 +93,23 @@ export const filterTestPracticeSubmissions = (dict: SubmissionDict): SubmissionD
 };
 
 /**
+ * Removes replay submissions with problemsetTime smaller than the current problemsetTime.
+ */
+export const filterReplaySubmissions = (dict: SubmissionDict, currentTime: number): SubmissionDict => {
+  const newDict: SubmissionDict = {};
+  for (const username in dict) {
+    const filteredSubmissions = dict[username]
+      .filter(submission => {
+        return submission.problemsetTime < currentTime;
+      });
+    if (filteredSubmissions.length) {
+      newDict[username] = filteredSubmissions;
+    }
+  }
+  return newDict;
+};
+
+/**
  * Gets the scores of participants, regardless of problemset runMode.
  */
 export const getParticipantScores = (problemset: ProblemsetConfig, submissionDict: SubmissionDict):

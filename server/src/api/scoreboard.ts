@@ -7,6 +7,7 @@ import {
   getParticipantScores,
   filterSubmissionDictForBlindJudge,
   filterTestPracticeSubmissions,
+  filterReplaySubmissions,
   checkProblemsetEnded,
   updateScoreboardForBlindJudge,
   updateTimePenalty,
@@ -16,7 +17,8 @@ import {
   ScoreboardMode,
   JudgeMode,
   PenaltyMode,
-  SubmissionDict
+  SubmissionDict,
+  SECOND_MS
 } from '../constants';
 import { isAuthorizedUser } from '../util/users';
 
@@ -33,6 +35,9 @@ module.exports = function(app: Express) {
       return res.status(404).json({ msg: 'scoreboard disabled' });
     }
     let submissionDict: SubmissionDict = filterTestPracticeSubmissions(getSubmissionDict(problemsetId));
+    const currentTime = (new Date().getTime() - new Date(problemset.startTime).getTime()) / SECOND_MS;
+    submissionDict = filterReplaySubmissions(submissionDict, currentTime);
+
     if (problemset.judgeMode === JudgeMode.BLIND) {
       submissionDict = filterSubmissionDictForBlindJudge(submissionDict);
     }
