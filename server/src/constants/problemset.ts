@@ -40,8 +40,10 @@ export interface ProblemsetConfig {
   freebies?: number;
   showCaseNumber?: boolean;
   problems: ProblemScoring[];
-  allowUsers: string[];
-  allowGroups: string[];
+  allowUsers?: string[];
+  allowGroups?: string[];
+  denyUsers?: string[];
+  denyGroups?: string[];
   fullFeedback?: boolean;
   private?: boolean; // private problemset is not listed in problemsets/
   noOnlineStatement?: boolean;

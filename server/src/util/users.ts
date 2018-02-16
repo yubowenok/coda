@@ -77,12 +77,21 @@ export const isAuthorizedUser = (req: Request, res: Response, next: NextFunction
     }
 
     const allowedGroups = (problemset.allowGroups || []).concat(['admin']);
-    const commonGroups = _.intersection(allowedGroups, userGroups);
-    if (commonGroups.length) {
+    if (_.intersection(allowedGroups, userGroups).length) {
       return next();
     }
 
+    // If allowUsers or allowGroups is set but the user is not in the list, then deny.
     if (problemset.allowUsers || problemset.allowGroups) {
+      return res.status(401).json({ msg: 'access denied' });
+    }
+
+    // Check explicit deny
+    const deniedUsers = (problemset.denyUsers || []);
+    const deniedGroups = (problemset.denyGroups || []);
+    if (deniedUsers.indexOf(req.user.username) !== -1 ||
+      deniedUsers.indexOf(req.user.email) !== -1 ||
+      _.intersection(deniedGroups, userGroups).length) {
       return res.status(401).json({ msg: 'access denied' });
     }
 
