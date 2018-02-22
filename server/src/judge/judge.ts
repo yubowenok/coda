@@ -95,7 +95,7 @@ function judgeProblemSet(problemsetId: string) {
   for (let i = 0; i < verdicts.length; i++) {
     set.add(verdicts[i].sourceFile);
   }
-
+  let writeBackCnt = 0;
   for (let i = 0; i < submissions.length; i++) {
     const sourceFile: string = submissions[i].sourceFile;
 
@@ -160,11 +160,17 @@ function judgeProblemSet(problemsetId: string) {
 
     console.log(verdict);
     verdicts.push(verdict);
-
     fs.unlinkSync(copyFilePath);
-
+    writeBackCnt++;
+    // write back every 5 verdicts
+    if (writeBackCnt >= 5) {
+      fs.writeFileSync(paths.problemsetVerdictsPath(problemsetId), JSON.stringify(verdicts, undefined, 2));
+      writeBackCnt = 0;
+    }
   }
-  fs.writeFileSync(paths.problemsetVerdictsPath(problemsetId), JSON.stringify(verdicts, undefined, 2));
+  if (writeBackCnt > 0) {
+    fs.writeFileSync(paths.problemsetVerdictsPath(problemsetId), JSON.stringify(verdicts, undefined, 2));
+  }
 }
 
 let judgeRound = 0;
