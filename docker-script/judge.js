@@ -29,7 +29,7 @@ const help = ARGS.help;
 
 const judgeProblemPath = sub ? problemPath + '/' + sub : problemPath;
 
-function hsaSubstring(str, sub) {
+function hasSubstring(str, sub) {
   return str.indexOf(sub) > -1;
 }
 
@@ -91,9 +91,9 @@ function getCompilerErrorMsg(tmpSubmission) {
 function toJsonResult(str, source, fileName) {
   var dataPath = judgeProblemPath + '/data';
   var fileList = getFiles(dataPath, '');
-  
+
   // Compile error
-  if (hsaSubstring(str, 'Compile error')) {
+  if (hasSubstring(str, 'Compile error')) {
     return JSON.stringify({
       verdict: 'CE',
       failedCase: {
@@ -105,33 +105,46 @@ function toJsonResult(str, source, fileName) {
     });
   }
 
-  var pos = str.indexOf('[');
-  var nxt = str.indexOf(']');
-  pos -= 5; // 5 = max length of (AC, TLE, RE...) + a safty margin
-  str = str.substr(pos, nxt - pos + 1);
+  /**
+   * The judge output has those possible lines:
+   *
+   * 1) AC submission Solution.java (Java) OK: AC [CPU: 3.32s @ test case secret/005-randomLarge-1]
+   * 2) ERROR in submissions: AC submission Sol.java (Java) got TLE [test case: test case secret/005-randomLarge-1,
+   *   CPU: 3.32s @ test case secret/005-randomLarge-1]
+   * 3) WARNING in submissions: AC submission Solution.java (Java) sensitive to time limit: limit of 2 secs -> TLE,
+   *   limit of 4 secs -> AC
+   *   AC submission Solution.java (Java) OK with extra time: AC [CPU: 3.06s @ test case secret/009-closeQueriesLarge-2]
+   *
+   * Capture the content in the square brackets to retrieve CPU time.
+   */
+  var matched = str.match(/([A-Z]+) \[(.*)\]/);
+  if (matched === null) {
+    console.error('cannot find verdict line');
+  }
+  var verdict = matched[1];
+  var bracketContent = matched[2];
+
+  if (verdict === 'RTE') {
+    verdict = 'RE';
+  }
+
+  // Fix case 3). The verdict before the bracket is AC, but it is actually TLE.
+  if (hasSubstring(str, 'sensitive to time limit')) {
+    verdict = 'TLE';
+  }
 
   var res = {
-    verdict: ['AC', 'TLE', 'RTE', 'WA']
-      .filter(function(verdict) {
-        return hsaSubstring(str, verdict);
-      })[0],
+    verdict: verdict,
     failedCase: {
       number: 0,
       name: ''
     },
-    time: getTime(str),
+    time: getTime(bracketContent),
     totalCases: fileList.length
   };
 
-  if (!res.verdict) {
-    console.error('verdict not found');
-  }
-
   if (res.verdict !== 'AC') {
-    var pos = str.indexOf('test case ') + 10;
-    const tmpStr = str.substr(pos);
-    pos = tmpStr.indexOf(',');
-    var caseName = tmpStr.substr(0, pos);
+    var caseName = bracketContent.match(/test case ([^,]+)/)[1];
     res.failedCase = {
       number: fileList.indexOf(caseName) + 1,
       name: caseName
