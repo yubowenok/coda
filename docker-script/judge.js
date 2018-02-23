@@ -70,13 +70,13 @@ function getCompilerErrorMsg(tmpSubmission) {
   var cmdLine;
   switch (extension) {
     case '.java':
-      cmdLine = 'javac ' + tmpSubmission + ' 2>' + errPath;
+      cmdLine = 'javac -encoding UTF-8 ' + tmpSubmission + ' 2>' + errPath;
       break;
     case '.c':
-      cmdLine = 'gcc ' + tmpSubmission + ' 2>' + errPath;
+      cmdLine = 'gcc -g -O2 -std=gnu99 -static ' + tmpSubmission + ' -lm 2>' + errPath;
       break;
     case '.cpp':
-      cmdLine = 'g++ ' + tmpSubmission + ' 2>' + errPath;
+      cmdLine = 'g++ -g -O2 -static -std=gnu++11 ' + tmpSubmission + ' 2>' + errPath;
       break;
     case '.py':
       cmdLine = 'python ' + tmpSubmission + ' 2>' + errPath;
