@@ -62,18 +62,9 @@ function judgeSubmission(problemId: string, subtask: string, source: string): Do
 }
 
 function changeJavaClass(contents: string, name: string) {
-  contents = '' + contents.replace(/ +(?= )/g, '');
-  let pos = contents.indexOf('public class ');
-
-  if (pos > -1) {
-    pos += 'public class '.length;
-    const nxt = contents.indexOf('{', pos);
-    if (nxt > -1) {
-      contents = contents.substr(0, pos) + name + contents.substr(nxt);
-    }
-  }
-
-  return contents;
+  const matched = contents.match(/public\s+class\s+([^{\s]+)/);
+  return contents.substr(0, matched.index) +
+    contents.substr(matched.index).replace(matched[1], name);
 }
 
 function judgeProblemSet(problemsetId: string) {
