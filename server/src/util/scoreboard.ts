@@ -8,11 +8,14 @@ import {
   User,
   UserDict,
   VerdictType,
-  PenaltyMode
+  JudgeMode,
+  PenaltyMode,
+  SECOND_MS
 } from '../constants';
 import {
   getUserDict,
   getProblemsetScoreDict,
+  getSubmissionDict,
   getJudgedSubmission,
   getVerdict,
   checkIgnoredSubmission,
@@ -95,7 +98,7 @@ export const filterTestPracticeSubmissions = (dict: SubmissionDict): SubmissionD
 /**
  * Removes replay submissions with problemsetTime smaller than the current problemsetTime.
  */
-export const filterReplaySubmissions = (dict: SubmissionDict, currentTime: number): SubmissionDict => {
+const filterReplaySubmissions = (dict: SubmissionDict, currentTime: number): SubmissionDict => {
   const newDict: SubmissionDict = {};
   for (const username in dict) {
     const filteredSubmissions = dict[username]
@@ -107,6 +110,20 @@ export const filterReplaySubmissions = (dict: SubmissionDict, currentTime: numbe
     }
   }
   return newDict;
+};
+
+/**
+ * Gets a submission dictionary that contains only effective submissions counted for scoreboard.
+ */
+export const getEffectiveSubmissionDict = (problemset: ProblemsetConfig): SubmissionDict => {
+  let submissionDict: SubmissionDict = filterTestPracticeSubmissions(getSubmissionDict(problemset.id));
+  const currentTime = (new Date().getTime() - new Date(problemset.startTime).getTime()) / SECOND_MS;
+  submissionDict = filterReplaySubmissions(submissionDict, currentTime);
+
+  if (problemset.judgeMode === JudgeMode.BLIND) {
+    submissionDict = filterSubmissionDictForBlindJudge(submissionDict);
+  }
+  return submissionDict;
 };
 
 /**

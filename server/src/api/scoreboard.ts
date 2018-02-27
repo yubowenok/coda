@@ -2,23 +2,18 @@ import { Response, Request, Express } from 'express';
 import {
   isValidProblemsetId,
   isAuthenticated,
-  getSubmissionDict,
   getProblemset,
   getParticipantScores,
-  filterSubmissionDictForBlindJudge,
-  filterTestPracticeSubmissions,
-  filterReplaySubmissions,
   checkProblemsetEnded,
   updateScoreboardForBlindJudge,
   updateTimePenalty,
-  anonymizeScoreboard
+  anonymizeScoreboard,
+  getEffectiveSubmissionDict
 } from '../util';
 import {
   ScoreboardMode,
   JudgeMode,
-  PenaltyMode,
-  SubmissionDict,
-  SECOND_MS
+  PenaltyMode
 } from '../constants';
 import { isAuthorizedUser } from '../util/users';
 
@@ -34,13 +29,8 @@ module.exports = function(app: Express) {
     if (problemset.scoreboardMode === ScoreboardMode.DISABLED && !req.user.isAdmin) {
       return res.status(404).json({ msg: 'scoreboard disabled' });
     }
-    let submissionDict: SubmissionDict = filterTestPracticeSubmissions(getSubmissionDict(problemsetId));
-    const currentTime = (new Date().getTime() - new Date(problemset.startTime).getTime()) / SECOND_MS;
-    submissionDict = filterReplaySubmissions(submissionDict, currentTime);
 
-    if (problemset.judgeMode === JudgeMode.BLIND) {
-      submissionDict = filterSubmissionDictForBlindJudge(submissionDict);
-    }
+    const submissionDict = getEffectiveSubmissionDict(problemset);
 
     const participants = getParticipantScores(problemset, submissionDict);
 
@@ -58,9 +48,6 @@ module.exports = function(app: Express) {
     if (problemset.penaltyMode === PenaltyMode.TIME) {
       updateTimePenalty(participants);
     }
-
-    // TODO(anonymous)
-    // updateAnonymousScoreboard(participants);
 
     res.json({
       id: problemsetId,
