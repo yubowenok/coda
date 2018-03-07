@@ -6,6 +6,8 @@ import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 import { of } from 'rxjs/observable/of';
 import { Subject } from 'rxjs/Subject';
 import { catchError, tap } from 'rxjs/operators';
+import * as Cookies from 'cookies-js';
+
 import { MessageService } from './message.service';
 import {
   API_URL,
@@ -42,6 +44,7 @@ class ApiUrl {
   private static base = (url: string): string => `${API_URL}${url}`;
 
   static login = () => ApiUrl.base('/login');
+  static loginSwitch = () => ApiUrl.base('/login-switch');
   static checkLogin = () => ApiUrl.base('/check-login');
   static logout = () => ApiUrl.base('/logout');
   static signup = () => ApiUrl.base('/signup');
@@ -58,6 +61,8 @@ class ApiUrl {
     `${ApiUrl.problemset(problemsetId)}/submissions/${username}`
   static scoreboard = (problemsetId: string) =>
     `${ApiUrl.problemset(problemsetId)}/scoreboard`
+  static queue = (problemsetId: string) =>
+    `${ApiUrl.problemset(problemsetId)}/queue`
   static submit = (problemsetId: string, problemNumber: string, subtask: string) =>
     `${ApiUrl.problem(problemsetId, problemNumber)}/submit/${subtask}`
 
@@ -218,6 +223,13 @@ export class ApiService {
       );
   }
 
+  getQueue(problemsetId: string): Observable<Submission[]> {
+    return this.http.get<Submission[]>(ApiUrl.queue(problemsetId), httpOptions)
+      .pipe(
+        catchError(this.handleError<Submission[]>(`getQueue ${problemsetId}`))
+      );
+  }
+
   submit(data: SubmitData): Observable<number> {
     return this.http.post<number>(ApiUrl.submit(data.problemsetId, data.problemNumber, data.subtask), data,
       httpOptions)
@@ -230,6 +242,7 @@ export class ApiService {
     return this.http.post<UserInfo>(ApiUrl.signup(), info, httpOptions)
       .pipe(
         tap((userInfo: UserInfo) => {
+          Cookies.set('lastUser', JSON.stringify(userInfo));
           this.user = userInfo;
         }),
         catchError(this.handleError<UserInfo>('signup'))
@@ -240,10 +253,15 @@ export class ApiService {
     return this.http.post<UserInfo>(ApiUrl.login(), info, httpOptions)
       .pipe(
         tap((userInfo: UserInfo) => {
+          Cookies.set('lastUser', JSON.stringify(userInfo));
           this.user = userInfo;
         }),
         catchError(this.handleError<UserInfo>('login'))
       );
+  }
+
+  loginSwitch(username: string, lastUsername: string): Observable<boolean> {
+    return this.http.post<boolean>(ApiUrl.loginSwitch(), { username, lastUsername }, httpOptions);
   }
 
   logout(): Observable<boolean> {

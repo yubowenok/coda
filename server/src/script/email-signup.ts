@@ -1,6 +1,6 @@
 import '../config/env';
 import * as nodemailer from 'nodemailer';
-import { getUserList, writeUsers } from './users';
+import { getUserList, writeUsers } from '../util/users';
 import { User } from '../constants/user';
 import * as path from 'path';
 

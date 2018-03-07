@@ -50,7 +50,7 @@ export class SubmitComponent implements OnInit {
     return this.subtasks.length > 1;
   }
 
-  onProblemChange(problemNumber: string) {
+  onProblemChange() {
     this.getSubtasks();
     this.selectedSubtask = '';
   }

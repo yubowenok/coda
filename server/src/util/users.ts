@@ -46,6 +46,10 @@ export const getUserSession = (problemsetId: string, username: string): UserSess
   return getUserSessions(problemsetId).filter(session => session.username === username)[0];
 };
 
+export const isAdminUser = (user: User): boolean => {
+  return user.groups && user.groups.indexOf('admin') !== -1;
+};
+
 /*** Router middleware utils ***/
 
 export const isValidUsername = (req: Request, res: Response, next: NextFunction) => {
@@ -60,8 +64,8 @@ export const isAuthorizedUser = (req: Request, res: Response, next: NextFunction
   const username = req.params.username;
   const problemsetId = req.params.problemsetId;
   const userGroups = req.user && req.user.groups || [];
-  if (userGroups.indexOf('admin') !== -1) {
-    req.user.isAdmin = true;
+  if (userGroups.length) {
+    req.user.isAdmin = isAdminUser(req.user);
   }
 
   if (problemsetId) {
@@ -73,9 +77,22 @@ export const isAuthorizedUser = (req: Request, res: Response, next: NextFunction
     }
 
     const allowedGroups = (problemset.allowGroups || []).concat(['admin']);
-    const commonGroups = _.intersection(allowedGroups, userGroups);
-    if (commonGroups.length) {
+    if (_.intersection(allowedGroups, userGroups).length) {
       return next();
+    }
+
+    // If allowUsers or allowGroups is set but the user is not in the list, then deny.
+    if (problemset.allowUsers || problemset.allowGroups) {
+      return res.status(401).json({ msg: 'access denied' });
+    }
+
+    // Check explicit deny
+    const deniedUsers = (problemset.denyUsers || []);
+    const deniedGroups = (problemset.denyGroups || []);
+    if (deniedUsers.indexOf(req.user.username) !== -1 ||
+      deniedUsers.indexOf(req.user.email) !== -1 ||
+      _.intersection(deniedGroups, userGroups).length) {
+      return res.status(401).json({ msg: 'access denied' });
     }
 
     if (checkProblemsetEnded(problemset) && problemset.scoreboardMode === ScoreboardMode.ENABLED) {

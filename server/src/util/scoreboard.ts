@@ -8,11 +8,14 @@ import {
   User,
   UserDict,
   VerdictType,
-  PenaltyMode
+  JudgeMode,
+  PenaltyMode,
+  SECOND_MS
 } from '../constants';
 import {
   getUserDict,
   getProblemsetScoreDict,
+  getSubmissionDict,
   getJudgedSubmission,
   getVerdict,
   checkIgnoredSubmission,
@@ -93,6 +96,37 @@ export const filterTestPracticeSubmissions = (dict: SubmissionDict): SubmissionD
 };
 
 /**
+ * Removes replay submissions with problemsetTime smaller than the current problemsetTime.
+ */
+const filterReplaySubmissions = (dict: SubmissionDict, currentTime: number): SubmissionDict => {
+  const newDict: SubmissionDict = {};
+  for (const username in dict) {
+    const filteredSubmissions = dict[username]
+      .filter(submission => {
+        return submission.problemsetTime < currentTime;
+      });
+    if (filteredSubmissions.length) {
+      newDict[username] = filteredSubmissions;
+    }
+  }
+  return newDict;
+};
+
+/**
+ * Gets a submission dictionary that contains only effective submissions counted for scoreboard.
+ */
+export const getEffectiveSubmissionDict = (problemset: ProblemsetConfig): SubmissionDict => {
+  let submissionDict: SubmissionDict = filterTestPracticeSubmissions(getSubmissionDict(problemset.id));
+  const currentTime = (new Date().getTime() - new Date(problemset.startTime).getTime()) / SECOND_MS;
+  submissionDict = filterReplaySubmissions(submissionDict, currentTime);
+
+  if (problemset.judgeMode === JudgeMode.BLIND) {
+    submissionDict = filterSubmissionDictForBlindJudge(submissionDict);
+  }
+  return submissionDict;
+};
+
+/**
  * Gets the scores of participants, regardless of problemset runMode.
  */
 export const getParticipantScores = (problemset: ProblemsetConfig, submissionDict: SubmissionDict):
@@ -115,6 +149,7 @@ export const getParticipantScores = (problemset: ProblemsetConfig, submissionDic
       finishTime: 0,
       problems: {}
     };
+
     const problems = participant.problems;
 
     submissionDict[username].forEach((sub: Submission) => {
@@ -217,5 +252,17 @@ export const updateScoreboardForBlindJudge = (participants: ParticipantScore[]):
 export const updateTimePenalty = (participants: ParticipantScore[]): void => {
   participants.forEach(participant => {
     participant.finishTime += getTimePenalty(participant);
+  });
+};
+
+/**
+ * Anonymizes the scoreboard, except for the login user.
+ */
+export const anonymizeScoreboard = (participants: ParticipantScore[], username?: string): void => {
+  participants.forEach(participant => {
+    if (participant.username !== username) {
+      participant.username = undefined;
+      participant.name = '***';
+    }
   });
 };

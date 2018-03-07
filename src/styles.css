@@ -92,6 +92,10 @@ pre.CodeMirror-placeholder {
   margin-top: 30px;
 }
 
+.margin-to-left {
+  margin-left: 30px;
+}
+
 .float-right {
   float: right;
 }

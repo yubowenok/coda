@@ -1,0 +1,56 @@
+<app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
+<mat-spinner *ngIf="!queue && !error" diameter="50"></mat-spinner>
+<ng-container *ngIf="queue && problemset && !error">
+  <h2>Judge Queue of {{problemset.title}}</h2>
+  <div class="margin-to-top">
+    <mat-form-field>
+      <input matInput placeholder="Filter by username"
+             [(ngModel)]="filter"
+             (keyup)="onUsernameFilterChange($event)">
+    </mat-form-field>
+    <mat-form-field class="margin-to-left">
+      <mat-select placeholder="Filter by problem"
+                  [(ngModel)]="selectedProblem"
+                  (ngModelChange)="onProblemChange($event)"
+      >
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let problem of problemset.problems" [value]="problem.number">
+          {{problem.number}} - {{problem.title}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="margin-to-left" *ngIf="selectedProblemHasSubtask()">
+      <mat-select placeholder="Filter by subtask" [(ngModel)]="selectedSubtask"
+        (ngModelChange)="onSubtaskChange($event)">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let subtask of subtasks" [value]="subtask.id">
+          {{subtask.id | titlecase}} ({{subtask.score}} pts)
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-checkbox class="margin-to-left" color="primary"
+             [(ngModel)]="excludeTestAndPractice"
+             (change)="onExcludeTestAndPracticeChange($event)"
+    >
+      Exclude Test/Practice
+    </mat-checkbox>
+
+    <ngx-datatable
+      class="material striped"
+      [headerHeight]="50"
+      [rowHeight]="50"
+      [columnMode]="'force'"
+      [rows]="rows"
+      [columns]="columns"
+      [messages]="{ emptyMessage: 'No submissions' }"
+      [sorts]="[{prop: 'submitTime', dir: 'desc'}]"
+      [limit]="10"
+      [footerHeight]="50"
+    >
+    </ngx-datatable>
+  </div>
+</ng-container>
+
+<ng-template #sourceLinkTmpl let-row="row" let-value="value">
+  <i [routerLink]="getSourceLink(row)" class="fa fa-file-text-o"></i>
+</ng-template>
