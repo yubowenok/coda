@@ -133,6 +133,7 @@ function judgeProblemSet(problemsetId: string) {
       verdict: result.verdict,
       executionTime: result.time,
       failedCase: result.failedCase.number,
+      failedCaseName: result.failedCase.name,
       totalCase: result.totalCases
     };
 

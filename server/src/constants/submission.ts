@@ -56,6 +56,7 @@ export interface Verdict {
   verdict: VerdictType;
   executionTime: number;
   failedCase: number;
+  failedCaseName: string;
   totalCase: number;
 }
 

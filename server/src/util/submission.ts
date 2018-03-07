@@ -175,6 +175,7 @@ export const getJudgedSubmission = (problemsetId: string, submission: Submission
       username: submission.username,
       submissionNumber: submission.submissionNumber,
       failedCase: 0,
+      failedCaseName: '',
       totalCase: 0,
       verdict: VerdictType.PENDING,
       executionTime: 0,
