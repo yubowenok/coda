@@ -37,6 +37,7 @@
       ({{(submission.failedCase === 0 ? submission.totalCase : submission.failedCase - 1) + '/' +
       submission.totalCase}})
     </h3>
+    <div *ngIf="submission.failedCaseName">#{{submission.failedCase}} Failed: {{submission.failedCaseName}}</div>
     <div>
       <span class="case correct" *ngFor="let number of ((submission.failedCase === 0 ?
             submission.totalCase : submission.failedCase - 1) | repeat)"

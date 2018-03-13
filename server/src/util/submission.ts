@@ -196,6 +196,7 @@ export const getJudgedSubmission = (problemsetId: string, submission: Submission
     executionTime: verdict.executionTime,
     blindJudgeStatus: submission.blindJudgeStatus,
     failedCase: verdict.failedCase,
+    failedCaseName: verdict.failedCaseName,
     totalCase: verdict.totalCase
   };
 

@@ -56,6 +56,11 @@ module.exports = function(app: Express) {
       }
     }
 
+    // hide case name for non-admin
+    if (!req.user.isAdmin) {
+      judgedSubmission.failedCaseName = '';
+    }
+
     res.json(judgedSubmission);
   });
 

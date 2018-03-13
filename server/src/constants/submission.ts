@@ -56,7 +56,7 @@ export interface Verdict {
   verdict: VerdictType;
   executionTime: number;
   failedCase: number;
-  failedCaseName: string;
+  failedCaseName?: string;
   totalCase: number;
 }
 
@@ -85,6 +85,7 @@ export interface JudgedSubmission {
   submitTime: number; // date
   outsideProblemsetTime: boolean;
   failedCase?: number; // 0 if AC
+  failedCaseName?: string; // '' or undefined if unknown
   totalCase?: number;
   blindJudgeStatus?: BlindJudgeStatus;
 }

@@ -95,6 +95,21 @@ pm2 start dist/judge/judge.js -- --interval 5
 ```
 Then use ``pm2 startup`` to manage your startup script in case the machine reboots.
 
+### System config
+
+You can add a file "config.json" at CODA_ROOT to specify system options.
+
+```json
+{
+  "disableSource": true,
+  "judgeProblemsets": ["problemset1", "problemset2"]
+}
+```
+
+**disableSource**: When true, all users can view their own submissions in all problemsets, including those that have ended.
+
+**judgeProblemsets**: Only those problemsets in the list are judged. Give null if every problemset is to be judged.
+
 
 ### User signup
 
@@ -117,4 +132,12 @@ Finally use the email-signup script to send each user an email with an invitatio
 npm run gen-users -- --emails emails.json
 cp users.json $CODA_ROOT/users.json
 npm run email-signup
+```
+
+### Export source code
+
+You can export all submission source to a folder.
+
+```bash
+npm run export-code -- --problemset {problemsetId}
 ```

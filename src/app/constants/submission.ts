@@ -41,6 +41,7 @@ export interface Submission {
   submitTime: number; // date
   outsideProblemsetTime: boolean;
   failedCase?: number; // 0 if AC
+  failedCaseName?: string; // '' or undefined if unkonwn
   totalCase?: number;
 }
 

@@ -4,6 +4,7 @@ import * as paths from '../constants/path';
 import { User, UserDict, UserSession } from '../constants/user';
 import { ScoreboardMode } from '../constants/problemset';
 import { checkProblemsetEnded, getProblemset } from './problemset';
+import { getSystemConfig } from './config';
 import * as _ from 'lodash';
 
 const getUsers = (): User[] => {
@@ -95,7 +96,8 @@ export const isAuthorizedUser = (req: Request, res: Response, next: NextFunction
       return res.status(401).json({ msg: 'access denied' });
     }
 
-    if (checkProblemsetEnded(problemset) && problemset.scoreboardMode === ScoreboardMode.ENABLED) {
+    if (checkProblemsetEnded(problemset) && problemset.scoreboardMode === ScoreboardMode.ENABLED
+      && !getSystemConfig().disableSource) {
       return next();
     }
   }

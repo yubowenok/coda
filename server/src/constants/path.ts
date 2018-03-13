@@ -5,15 +5,10 @@ import { Language, LanguageSuffix, Submission } from './submission';
 const PROBLEMSET_DIR = path.join(process.env.CODA_ROOT, 'problemset');
 const PROBLEM_DIR = path.join(process.env.CODA_ROOT, 'problem');
 
-const JUDGE_PROBLEMSET_DIR = path.join(process.env.DOCKER_ROOT, 'problemset');
 const JUDGE_PROBLEM_DIR = path.join(process.env.DOCKER_ROOT, 'problem');
 
 export const usersPath = (): string => {
   return path.join(process.env.CODA_ROOT, 'users.json');
-};
-
-export const groupsPath = (): string => {
-  return path.join(process.env.CODA_ROOT, 'groups.json');
 };
 
 export const problemsetDir = (problemsetId?: string): string => {
@@ -26,10 +21,6 @@ export const problemsetConfigPath = (problemsetId: string): string => {
 
 export const problemsetSubmissionsPath = (problemsetId: string): string => {
   return path.join(PROBLEMSET_DIR, problemsetId, 'submissions.json');
-};
-
-export const problemsetAnonymousPath = (problemsetId: string): string => {
-  return path.join(PROBLEMSET_DIR, problemsetId, 'anonymous.json');
 };
 
 export const problemsetSessionsPath = (problemsetId: string): string => {
@@ -126,6 +117,6 @@ export const localJudgeSourcePath = (problemId: string, subtask: string, file: s
   return sourcePath;
 };
 
-export const runningProblemsetConfigPath = (runningProblemsetConfigId: string): string => {
-  return path.join(process.env.CODA_ROOT, runningProblemsetConfigId);
+export const systemConfigPath = (): string => {
+  return path.join(process.env.CODA_ROOT, 'config.json');
 };

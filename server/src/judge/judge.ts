@@ -18,7 +18,8 @@ import {
   getProblemset,
   getSubmissionList,
   getProblemsetList,
-  getVerdictList
+  getVerdictList,
+  getSystemConfig
 } from '../util';
 
 const containerName = process.env.CONTAINER_NAME;
@@ -166,16 +167,15 @@ function judgeProblemSet(problemsetId: string) {
 }
 
 let judgeRound = 0;
-function judgeAll(runningProblemsetConfigId: string) {
+function judgeAll(problemsets?: string[]) {
   let problemsetIds: string[];
   let logProblemsetIds: string;
-  if (runningProblemsetConfigId === undefined) {
+  if (problemsets === undefined) {
     problemsetIds = getProblemsetList().map(problemset => problemset.id);
     logProblemsetIds = 'all';
   } else {
-    problemsetIds = JSON.parse(fs.readFileSync(paths.runningProblemsetConfigPath(runningProblemsetConfigId),
-      'utf8'));
-    logProblemsetIds = problemsetIds.join(',');
+    problemsetIds = problemsets;
+    logProblemsetIds = problemsets.join(',');
   }
   console.log(`Judging round ${++judgeRound}: ${logProblemsetIds}`);
   problemsetIds.forEach(problemsetId => judgeProblemSet(problemsetId));
@@ -191,14 +191,14 @@ if (dockerStr.indexOf(containerName) > -1) {
 systemSync(`docker run -dit --name ${containerName} -v ${path.resolve(localRoot)}:${dockerRoot}:ro ${imageName}`);
 
 const interval = yargs.argv.interval;
-const runningProblemset = yargs.argv.problemset;
+const judgeProblemsets = getSystemConfig().judgeProblemsets || undefined;
 
 if (interval === undefined) {
   // run judge once
-  judgeAll(runningProblemset);
+  judgeAll(judgeProblemsets);
 } else {
   // run judge every interval seconds
   setInterval(function() {
-    judgeAll(runningProblemset);
+    judgeAll(judgeProblemsets);
   }, interval * 1000);
 }
