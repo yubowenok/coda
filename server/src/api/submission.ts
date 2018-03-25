@@ -17,6 +17,7 @@ import {
   checkProblemsetEnded
 } from '../util';
 import { ScoreboardMode } from '../constants/problemset';
+import { VerdictType } from '../constants/submission';
 
 module.exports = function(app: Express) {
   /**
@@ -59,6 +60,12 @@ module.exports = function(app: Express) {
     // hide case name for non-admin
     if (!req.user.isAdmin) {
       judgedSubmission.failedCaseName = '';
+    }
+
+    // hide failed case for non-admin if problemset does not show case number
+    if (!problemset.showCaseNumber && judgedSubmission.verdict !== VerdictType.AC && !req.user.isAdmin) {
+      judgedSubmission.totalCase = 0;
+      judgedSubmission.failedCase = 0;
     }
 
     res.json(judgedSubmission);
