@@ -43,9 +43,6 @@ mat-progress-bar {
   width: 50px;
 }
 
-.subtask .score {
-}
-
 .single-task-score {
   font-size: .8em;
   margin-left: .5em;
