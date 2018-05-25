@@ -14,11 +14,11 @@ describe('user signup', () => {
   it('should not signup without invitationCode', (done) => {
     request(app).post('/api/signup')
       .send({
-        email: 'by123@nyu.edu',
-        username: 'by123',
+        email: 'bytest@nyu.edu',
+        username: 'bytest',
         password: '123456',
         confirmPassword: '123456',
-        fullName: 'by'
+        fullName: 'byu'
       })
       .expect(500)
       .expect(res => expect(res.body.msg).toMatch(/invitation code/))
@@ -28,12 +28,12 @@ describe('user signup', () => {
   it('should not signup with mismatching passwords', (done) => {
     request(app).post('/api/signup')
       .send({
-        email: 'by123@nyu.edu',
-        username: 'by123',
+        email: 'bytest@nyu.edu',
+        username: 'bytest',
         password: '123456',
         confirmPassword: '654321',
-        invitationCode: 'ABC',
-        fullName: 'by'
+        invitationCode: '',
+        fullName: 'byu'
       })
       .expect(500)
       .expect(res => expect(res.body.msg).toMatch(/match/))
@@ -43,11 +43,11 @@ describe('user signup', () => {
   it('should not signup with too short username', (done) => {
     request(app).post('/api/signup')
       .send({
-        email: 'by123@nyu.edu',
+        email: 'bytest@nyu.edu',
         username: 'ab',
         password: '123456',
         confirmPassword: '123456',
-        invitationCode: 'ABC',
+        invitationCode: 'XYZ',
         fullName: ''
       })
       .expect(500)
@@ -58,11 +58,11 @@ describe('user signup', () => {
   it('should not signup with invalid username', (done) => {
     request(app).post('/api/signup')
       .send({
-        email: 'by123@nyu.edu',
+        email: 'bytest@nyu.edu',
         username: '123',
         password: '123456',
         confirmPassword: '123456',
-        invitationCode: 'ABC',
+        invitationCode: 'XYZ',
         fullName: ''
       })
       .expect(500)
@@ -73,11 +73,11 @@ describe('user signup', () => {
   it('should not signup without full name', (done) => {
     request(app).post('/api/signup')
       .send({
-        email: 'by123@nyu.edu',
-        username: 'by123',
+        email: 'bytest@nyu.edu',
+        username: 'bytest',
         password: '123456',
         confirmPassword: '123456',
-        invitationCode: 'ABC',
+        invitationCode: 'XYZ',
         fullName: ''
       })
       .expect(500)
@@ -88,19 +88,19 @@ describe('user signup', () => {
   it('should be able to signup', (done) => {
     request(app).post('/api/signup')
       .send({
-        email: 'by123@nyu.edu',
-        username: 'by123',
+        email: 'bytest@nyu.edu',
+        username: 'bytest',
         password: '123456',
         confirmPassword: '123456',
-        invitationCode: 'ABC',
-        fullName: 'by'
+        invitationCode: 'XYZ',
+        fullName: 'byu'
       })
       .expect(200)
       .expect(res => expect(res.body).toMatchObject({
-        email: 'by123@nyu.edu',
-        username: 'by123',
-        fullName: 'by',
-        nickname: 'by'
+        email: 'bytest@nyu.edu',
+        username: 'bytest',
+        fullName: 'byu',
+        nickname: 'byu'
       }))
       .end(done);
   });
@@ -108,12 +108,12 @@ describe('user signup', () => {
   it('should not duplicate signup', (done) => {
     request(app).post('/api/signup')
       .send({
-        email: 'by123@nyu.edu',
-        username: 'by1234',
+        email: 'bytest@nyu.edu',
+        username: 'bytest2',
         password: '123456',
         confirmPassword: '123456',
-        invitationCode: 'ABC',
-        fullName: 'by'
+        invitationCode: 'XYZ',
+        fullName: 'byu'
       })
       .expect(500)
       .expect(res => expect(res.body.msg).toMatch(/email has already signed up/))
@@ -124,11 +124,11 @@ describe('user signup', () => {
     request(app).post('/api/signup')
       .send({
         email: 'jz000@nyu.edu',
-        username: 'by123',
+        username: 'bytest',
         password: '123456',
         confirmPassword: '123456',
         invitationCode: 'CCC',
-        fullName: 'jz'
+        fullName: 'jz000'
       })
       .expect(500)
       .expect(res => expect(res.body.msg).toMatch(/username exists/))
@@ -138,7 +138,7 @@ describe('user signup', () => {
   it('should be able to login', (done) => {
     request(app).post('/api/login')
       .send({
-        username: 'by123',
+        username: 'bytest',
         password: '123456'
       })
       .expect(200, done);
@@ -157,7 +157,7 @@ describe('update password/settings', () => {
     agent = request(app);
     agent.post('/api/login')
       .send({
-        username: 'by789',
+        username: 'by123',
         password: '123456'
       })
       .then((res) => {
@@ -183,14 +183,36 @@ describe('update password/settings', () => {
     agent.post('/api/update-settings')
       .set('cookie', cookie)
       .send({
-        nickname: 'BY789',
-        anonymous: true
+        nickname: 'BY123',
+        fullName: 'BYU'
       })
       .expect(200)
       .expect(res => expect(res.body).toEqual({
-        nickname: 'BY789',
-        anonymous: true
+        nickname: 'BY123',
+        fullName: 'BYU'
       }))
+      .end(done);
+  });
+
+  it('should not allow nickname with excessive length', (done) => {
+    agent.post('/api/update-settings')
+      .set('cookie', cookie)
+      .send({
+        nickname: 'abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij',
+        fullName: 'BYU'
+      })
+      .expect(500)
+      .end(done);
+  });
+
+  it('should not allow full name with excessive length', (done) => {
+    agent.post('/api/update-settings')
+      .set('cookie', cookie)
+      .send({
+        nickname: 'BYU',
+        fullName: 'abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij'
+      })
+      .expect(500)
       .end(done);
   });
 
@@ -205,7 +227,7 @@ describe('update password/settings', () => {
   it('should not login with old password', (done) => {
     agent.post('/api/login')
       .send({
-        username: 'by789',
+        username: 'by123',
         password: '123456'
       })
       .expect(500)

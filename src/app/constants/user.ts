@@ -15,9 +15,10 @@ export interface UserInfo {
   username: string;
   fullName: string;
   nickname: string;
+  isAdmin: boolean;
 }
 
 export interface UserSettings {
+  fullName: string;
   nickname: string;
-  anonymous: boolean;
 }

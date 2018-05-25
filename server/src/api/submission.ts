@@ -6,15 +6,18 @@ import {
   isAuthorizedUser,
   getSubmission,
   checkSubmission,
-  getSubmissionList,
+  getUserSubmissionList,
   getProblemset,
   getVerdict,
   getVerdictDict,
   getJudgedSubmission,
   getJudgedSubmissionWithSource,
   updateVerdictForBlindJudge,
-  updateVerdictsForBlindJudge
+  updateVerdictsForBlindJudge,
+  checkProblemsetEnded
 } from '../util';
+import { ScoreboardMode } from '../constants/problemset';
+import { VerdictType } from '../constants/submission';
 
 module.exports = function(app: Express) {
   /**
@@ -27,6 +30,7 @@ module.exports = function(app: Express) {
     isAuthorizedUser,
     (req: Request, res: Response) => {
     const problemsetId = req.params.problemsetId;
+    const problemset = getProblemset(problemsetId);
     const username = req.params.username;
     const submissionNumber = +req.params.submissionNumber;
     if (!checkSubmission(problemsetId, username, submissionNumber)) {
@@ -36,7 +40,34 @@ module.exports = function(app: Express) {
     const judgedSubmission = getJudgedSubmissionWithSource(problemsetId, submission,
       getVerdict(problemsetId, submission));
 
-    updateVerdictForBlindJudge(getProblemset(problemsetId), judgedSubmission);
+    if (problemset.scoreboardMode !== ScoreboardMode.ENABLED && req.user.username !== username) {
+      if (req.user.isAdmin) {
+        judgedSubmission.adminView = true;
+      } else {
+        // cannot view submission if scoreboard is not ENABLED
+        return res.status(401).json({ msg: 'access denied' });
+      }
+    }
+
+    if (!checkProblemsetEnded(problemset)) {
+      if (req.user.isAdmin) {
+        judgedSubmission.adminView = true;
+      } else {
+        updateVerdictForBlindJudge(getProblemset(problemsetId), judgedSubmission);
+      }
+    }
+
+    // hide case name for non-admin
+    if (!req.user.isAdmin) {
+      judgedSubmission.failedCaseName = '';
+    }
+
+    // hide failed case for non-admin if problemset does not show case number
+    if (!problemset.showCaseNumber && judgedSubmission.verdict !== VerdictType.AC && !req.user.isAdmin) {
+      judgedSubmission.totalCase = 0;
+      judgedSubmission.failedCase = 0;
+    }
+
     res.json(judgedSubmission);
   });
 
@@ -50,14 +81,27 @@ module.exports = function(app: Express) {
     isAuthorizedUser,
     (req: Request, res: Response) => {
       const problemsetId = req.params.problemsetId;
+      const problemset = getProblemset(problemsetId);
       const username = req.params.username;
       const verdicts = getVerdictDict(problemsetId);
-      const judgedSubmissions = getSubmissionList(problemsetId, username)
+      const judgedSubmissions = getUserSubmissionList(problemsetId, username)
         .map(submission => getJudgedSubmission(problemsetId, submission,
           verdicts && submission.username in verdicts ?
             verdicts[submission.username][submission.submissionNumber] : undefined));
 
-      updateVerdictsForBlindJudge(getProblemset(problemsetId), judgedSubmissions);
+      if (problemset.scoreboardMode !== ScoreboardMode.ENABLED && req.user.username !== username) {
+        if (!req.user.isAdmin) {
+          // cannot view submission if scoreboard is not ENABLED
+          return res.status(401).json({ msg: 'access denied' });
+        }
+      }
+
+      if (!checkProblemsetEnded(problemset)) {
+        if (!req.user.isAdmin) {
+          updateVerdictsForBlindJudge(problemset, judgedSubmissions);
+        }
+      }
+
       res.json(judgedSubmissions);
   });
 };

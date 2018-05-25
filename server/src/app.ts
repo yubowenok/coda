@@ -27,7 +27,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 app.use(compression());
-app.use(logger('dev'));
+app.use(logger('combined'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
@@ -50,6 +50,7 @@ require('./api/problem')(app);
 require('./api/submission')(app);
 require('./api/submit')(app);
 require('./api/scoreboard')(app);
+require('./api/queue')(app);
 require('./api/user')(app);
 
 // Serve the web content

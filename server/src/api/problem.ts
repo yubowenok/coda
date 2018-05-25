@@ -4,23 +4,26 @@ import * as fs from 'fs';
 import * as paths from '../constants/path';
 import {
   getProblemset,
-  getProblem,
+  getProblemsetProblem,
   isValidProblemsetId,
   isValidProblemNumber,
   isAuthenticated,
   parseStatement,
-  checkProblemsetStarted
+  checkProblemsetStarted,
+  isAuthorizedUser
 } from '../util';
-import { ProblemConfig, ProblemsetProblem } from '../constants';
+import { ProblemConfig, ProblemScoring, WebProblem } from '../constants';
+
+const MESSAGE_NO_ONLINE_STATEMENT = '(online statement not available)';
 
 /**
  * Creates a web format problem.
  * Merges problemset config (subtask scores, etc.) into problem config.
  */
-const toWebProblem = (problemsetProblem: ProblemsetProblem, problem: ProblemConfig): Object => {
+const toWebProblem = (scoring: ProblemScoring, problem: ProblemConfig): WebProblem => {
   const statement = fs.readFileSync(paths.problemStatementPath(problem.id), 'utf8');
   const webStatement = parseStatement(statement);
-  const subtasks = problemsetProblem.subtasks.map((subtask: { id: string, score: number }, index: number) => {
+  const subtasks = scoring.subtasks.map((subtask: { id: string, score: number }, index: number) => {
     return {
       ...subtask,
       text: webStatement.subtasks[index]
@@ -43,10 +46,10 @@ const toWebProblem = (problemsetProblem: ProblemsetProblem, problem: ProblemConf
   // Sort samples by id's. They are by default sorted by filename, so "sample-large.in" would incorrectly appear
   // before "sample.in".
   samples.sort((a: { id: string }, b: { id: string }) => {
-    if (a === b) {
+    if (a.id === b.id) {
       return 0;
     }
-    return a < b ? -1 : 1;
+    return a.id < b.id ? -1 : 1;
   });
 
   return {
@@ -66,24 +69,48 @@ module.exports = function(app: Express) {
     isAuthenticated,
     isValidProblemsetId,
     isValidProblemNumber,
+    isAuthorizedUser,
     (req: Request, res: Response) => {
     const problemsetId = req.params.problemsetId;
     const problemNumber = req.params.problemNumber;
     const problemset = getProblemset(problemsetId);
+    const started = checkProblemsetStarted(problemset, req.user.username);
 
-    if (!checkProblemsetStarted(problemset)) {
+    if (!started && !req.user.isAdmin) {
       return res.status(401).json({ msg: 'Problemset has not started '});
     }
 
-    let found = false;
-    problemset.problems.forEach((prob: ProblemsetProblem) => {
-      if (prob.number === problemNumber) {
-        res.json(toWebProblem(prob, getProblem(prob.id)));
-        found = true;
-      }
-    });
-    if (!found) {
-      res.status(500).json({ msg: 'critical server error' });
+    const problem = getProblemsetProblem(problemset, problemNumber);
+    const scoring = problemset.problems.filter(prob => prob.number === problemNumber)[0];
+    const webProblem = toWebProblem(scoring, problem);
+    if (!started || (problemset.noOnlineStatement && req.user.isAdmin)) {
+      webProblem.adminView = true;
     }
+    if (!req.user.isAdmin && problemset.noOnlineStatement) {
+      webProblem.statement = MESSAGE_NO_ONLINE_STATEMENT;
+      webProblem.subtasks.forEach(subtask => subtask.text = MESSAGE_NO_ONLINE_STATEMENT );
+    }
+
+    res.json(webProblem);
   });
+
+  app.get('/api/image/:problemsetId/:problemNumber/:filename',
+    isAuthenticated,
+    isValidProblemsetId,
+    isValidProblemNumber,
+    isAuthorizedUser,
+    (req: Request, res: Response) => {
+      const problemsetId = req.params.problemsetId;
+      const problemNumber = req.params.problemNumber;
+      const filename = req.params.filename;
+
+      const problemset = getProblemset(problemsetId);
+      const problem = getProblemsetProblem(problemset, problemNumber);
+      const filePath = paths.problemImagePath(problem.id, filename);
+      if (!filePath) {
+        return res.status(404).json({ msg: 'image not found' });
+      }
+      res.sendFile(filePath);
+  });
+
 };

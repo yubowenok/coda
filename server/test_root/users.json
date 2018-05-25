@@ -1,17 +1,17 @@
 [
   {
+    "username": "by123",
     "email": "by123@nyu.edu",
     "invitationCode": "ABC",
-    "password": ""
+    "password": "$2a$12$FS1a2k49G7/jkMSMGOCELOxXRucAIlG2ueBpr1wDrtxK7lLg.GDVq",
+    "fullName": "byby",
+    "nickname": "byby"
   },
   {
-    "username": "by789",
-    "email": "by789@nyu.edu",
+    "email": "bytest@nyu.edu",
     "invitationCode": "XYZ",
-    "password": "$2a$12$FS1a2k49G7/jkMSMGOCELOxXRucAIlG2ueBpr1wDrtxK7lLg.GDVq",
-    "fullName": "Bowen2",
-    "nickname": "Bowen2",
-    "anonymous": false
+    "password": "",
+    "groups": ["aps"]
   },
   {
     "username": "jz123",
@@ -19,8 +19,7 @@
     "invitationCode": "AAA",
     "password": "$2a$12$FS1a2k49G7/jkMSMGOCELOxXRucAIlG2ueBpr1wDrtxK7lLg.GDVq",
     "fullName": "JZ",
-    "nickname": "JZ",
-    "anonymous": false
+    "nickname": "JZ"
   },
   {
     "username": "jz789",
@@ -28,12 +27,20 @@
     "invitationCode": "BBB",
     "password": "$2a$12$FS1a2k49G7/jkMSMGOCELOxXRucAIlG2ueBpr1wDrtxK7lLg.GDVq",
     "fullName": "JZ2",
-    "nickname": "JZ2",
-    "anonymous": false
+    "nickname": "JZ2"
   },
   {
     "email": "jz000@nyu.edu",
     "invitationCode": "CCC",
     "password": ""
+  },
+  {
+    "username": "admin",
+    "email": "admin@coda",
+    "invitationCode": "ADMIN",
+    "password": "$2a$12$FS1a2k49G7/jkMSMGOCELOxXRucAIlG2ueBpr1wDrtxK7lLg.GDVq",
+    "fullName": "admin",
+    "nickname": "admin",
+    "groups": ["admin"]
   }
 ]

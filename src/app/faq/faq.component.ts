@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import * as _ from 'lodash';
 import { CopyService } from '../copy.service';
+const { version: codaVersion } = require('../../../package.json');
 
 @Component({
   selector: 'app-faq',
@@ -60,7 +60,10 @@ public class Main
   }
 }`;
 
+  codaVersion: string;
+
   ngOnInit() {
+    this.codaVersion = codaVersion;
   }
 
   copyText(text: string): void {

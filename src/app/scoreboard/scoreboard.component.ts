@@ -1,16 +1,22 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { ApiService } from '../api.service';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
+import { Subscription } from 'rxjs/Subscription';
 
-import { ProblemsetInfo } from '../constants/problemset';
-import { ParticipantScore, Scoreboard, ScoreboardColumnWidth as ColumnWidth } from '../constants/scoreboard';
-import { ProblemInfo, SubtaskInfo } from '../constants/problem';
+import { ApiService } from '../api.service';
+import { MessageService } from '../message.service';
+
+import {
+  ProblemsetInfo,
+  ParticipantScore,
+  ProblemInfo,
+  SubtaskInfo,
+  Scoreboard,
+  ScoreboardColumnWidth as ColumnWidth
+} from '../constants';
 
 import * as time from '../constants/time';
 import { TimeDisplayPipe } from '../pipe/time-display.pipe';
-import { MessageService } from '../message.service';
-import { problemsetEnded } from '../util';
 
 enum Mode {
   SCORE = 'score',
@@ -23,7 +29,7 @@ enum Mode {
   templateUrl: './scoreboard.component.html',
   styleUrls: ['./scoreboard.component.css']
 })
-export class ScoreboardComponent implements OnInit {
+export class ScoreboardComponent implements OnInit, OnDestroy {
 
   @ViewChild('headerTmpl') headerTmpl: TemplateRef<any>;
   @ViewChild('attemptsTmpl') attemptsTmpl: TemplateRef<any>;
@@ -47,17 +53,23 @@ export class ScoreboardComponent implements OnInit {
   private columns = [];
   private mode = Mode.SCORE;
 
+  private currentProblemsetSubscription: Subscription;
+
   ngOnInit() {
     this.api.changeProblemsetId(this.route.snapshot.paramMap.get('problemsetId'));
 
     this.problemset = this.api.latestProblemset;
-    this.api.getCurrentProblemset()
+    this.currentProblemsetSubscription = this.api.getCurrentProblemset()
       .subscribe(problemset => {
         this.problemset = problemset;
         this.updateTable();
       });
 
     this.getScoreboard();
+  }
+
+  ngOnDestroy() {
+    this.currentProblemsetSubscription.unsubscribe();
   }
 
   getScoreboard(): void {
@@ -103,6 +115,9 @@ export class ScoreboardComponent implements OnInit {
   sortParticipants(): void {
     this.scoreboard.participants.sort(function(a: ParticipantScore, b: ParticipantScore): number {
       if (a.score === b.score) {
+        if (a.finishTime === b.finishTime) {
+          return a.name === b.name ? 0 : (a.name < b.name ? -1 : 1);
+        }
         return a.finishTime - b.finishTime;
       }
       return b.score - a.score;
@@ -136,7 +151,8 @@ export class ScoreboardComponent implements OnInit {
           headerClass: 'header center',
           headerTemplate: this.headerTmpl,
           cellClass: 'center',
-          cellTemplate: subtaskTemplate
+          cellTemplate: subtaskTemplate,
+          sortable: false
         });
       }
     }
@@ -144,8 +160,14 @@ export class ScoreboardComponent implements OnInit {
     const newRows = [];
     for (let i = 0; i < this.scoreboard.participants.length; i++) {
       const participant: ParticipantScore = this.scoreboard.participants[i];
+      let rank = 1;
+      if (i) {
+        const previousParticipant = this.scoreboard.participants[i - 1];
+        rank = participant.score === previousParticipant.score &&
+          participant.finishTime === previousParticipant.finishTime ? newRows[i - 1].rank : i + 1;
+      }
       const row = {
-        rank: i + 1,
+        rank: rank,
         name: participant.name,
         username: participant.username,
         score: participant.score,
@@ -183,9 +205,9 @@ export class ScoreboardComponent implements OnInit {
     this.selected = [this.selectedRow];
   }
 
-  gotoSubmissionLink(cell: { username: string, submissionNumber: string }): void {
-    if (!cell.submissionNumber || !problemsetEnded(this.problemset)) {
-      this.message.info('source code not available before problemset ends');
+  gotoSubmissionLink(cell: { username?: string, submissionNumber: string }): void {
+    if (!cell.submissionNumber || !cell.username) {
+      this.message.info('source code not available');
     } else {
       this.router.navigate([
         `/problemset/${this.problemset.id}/submission/${cell.username}/${cell.submissionNumber}`

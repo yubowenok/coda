@@ -1,5 +1,5 @@
 import * as child_process from 'child_process';
-const imageName = process.env.IMAGE_NAME || 'szfck/nyu-problemtools:1.0.4';
+const imageName = process.env.IMAGE_NAME || 'szfck/nyu-problemtools:latest';
 
 function systemSync(cmd: string) {
   try {

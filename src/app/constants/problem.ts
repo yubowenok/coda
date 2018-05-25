@@ -40,4 +40,5 @@ export interface ProblemContent {
     sample: string,
     subtasks: string[]
   }[];
+  adminView?: boolean;
 }

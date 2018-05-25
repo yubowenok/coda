@@ -32,6 +32,36 @@ export class MessageDialogComponent {
 
 }
 
+@Component({
+  selector: 'app-confirm-dialog',
+  template: `
+    <h1 mat-dialog-title *ngIf="data.title">{{data.title}}</h1>
+    <div mat-dialog-content>
+      {{data.msg}}
+    </div>
+    <div mat-dialog-actions class="float-right">
+      <button mat-button (click)="onCancel()" class="float-right">Cancel</button>
+      <button mat-button (click)="onProceed()" class="float-right">Proceed</button>
+    </div>
+  `,
+})
+export class ConfirmDialogComponent {
+
+  constructor(
+    public dialogRef: MatDialogRef<ConfirmDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) { }
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+
+  onProceed(): void {
+    this.data.proceed();
+  }
+
+}
+
 @Injectable()
 export class MessageService {
 
@@ -60,6 +90,17 @@ export class MessageService {
       data: {
         title: title,
         msg: msg
+      }
+    });
+  }
+
+  confirmDialog(msg: string, proceedCallback: Function, title?: string) {
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: title,
+        msg: msg,
+        proceed: proceedCallback
       }
     });
   }

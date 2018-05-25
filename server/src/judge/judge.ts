@@ -7,7 +7,7 @@ import * as yargs from 'yargs';
 import {
   ProblemConfig,
   ProblemsetConfig,
-  ProblemsetProblem,
+  ProblemScoring,
   Submission,
   Verdict,
   DockerVerdict,
@@ -18,7 +18,8 @@ import {
   getProblemset,
   getSubmissionList,
   getProblemsetList,
-  getVerdictsList
+  getVerdictList,
+  getSystemConfig
 } from '../util';
 
 const containerName = process.env.CONTAINER_NAME;
@@ -62,27 +63,19 @@ function judgeSubmission(problemId: string, subtask: string, source: string): Do
 }
 
 function changeJavaClass(contents: string, name: string) {
-  contents = '' + contents.replace(/ +(?= )/g, '');
-  let pos = contents.indexOf('public class ');
-
-  if (pos > -1) {
-    pos += 'public class '.length;
-    const nxt = contents.indexOf('{', pos);
-    if (nxt > -1) {
-      contents = contents.substr(0, pos) + name + contents.substr(nxt);
-    }
-  }
-
-  return contents;
+  const matched = contents.match(/public\s+class\s+([^{\s]+)/);
+  return contents.substr(0, matched.index) +
+    contents.substr(matched.index).replace(matched[1], name);
 }
 
 function judgeProblemSet(problemsetId: string) {
   // console.log(`judging problemsetId ${problemsetId}`);
 
   const problemset: ProblemsetConfig = getProblemset(problemsetId);
-  const problems: ProblemsetProblem[] = problemset.problems;
+  const problems: ProblemScoring[] = problemset.problems;
   const submissions: Submission[] = getSubmissionList(problemsetId);
-  const verdicts: Verdict[] = getVerdictsList(problemsetId);
+  const verdicts: Verdict[] = getVerdictList(problemsetId);
+
   const map: { [name: string]: string } = {};
 
   for (let i = 0; i < problems.length; i++) {
@@ -94,7 +87,7 @@ function judgeProblemSet(problemsetId: string) {
   for (let i = 0; i < verdicts.length; i++) {
     set.add(verdicts[i].sourceFile);
   }
-
+  let writeBackCnt = 0;
   for (let i = 0; i < submissions.length; i++) {
     const sourceFile: string = submissions[i].sourceFile;
 
@@ -117,13 +110,13 @@ function judgeProblemSet(problemsetId: string) {
       // change java class name
       content = changeJavaClass(content, judgeFileName);
     }
-    const subproblemPath = paths.problemDir(problemId);
     const tmpFileName = judgeFileName + path.extname(sourceFile);
     const dockerSource = paths.dockerJudgeSourcePath(problemId, subtask, tmpFileName);
     const copyFilePath = paths.localJudgeSourcePath(problemId, subtask, tmpFileName);
 
     fs.writeFileSync(copyFilePath, content);
 
+    console.log(`problemset: ${problemsetId}`);
     const result: DockerVerdict = judgeSubmission(
       problemId,
       subtask,
@@ -141,6 +134,7 @@ function judgeProblemSet(problemsetId: string) {
       verdict: result.verdict,
       executionTime: result.time,
       failedCase: result.failedCase.number,
+      failedCaseName: result.failedCase.name,
       totalCase: result.totalCases
     };
 
@@ -159,25 +153,31 @@ function judgeProblemSet(problemsetId: string) {
 
     console.log(verdict);
     verdicts.push(verdict);
-
     fs.unlinkSync(copyFilePath);
-
+    writeBackCnt++;
+    // write back every 5 verdicts
+    if (writeBackCnt >= 5) {
+      fs.writeFileSync(paths.problemsetVerdictsPath(problemsetId), JSON.stringify(verdicts, undefined, 2));
+      writeBackCnt = 0;
+    }
   }
-  fs.writeFileSync(paths.problemsetVerdictsPath(problemsetId), JSON.stringify(verdicts, undefined, 2));
+  if (writeBackCnt > 0) {
+    fs.writeFileSync(paths.problemsetVerdictsPath(problemsetId), JSON.stringify(verdicts, undefined, 2));
+  }
 }
 
-function judgeAll(runningProblemsetConfigId: string) {
+let judgeRound = 0;
+function judgeAll(problemsets?: string[]) {
   let problemsetIds: string[];
-
-  if (runningProblemsetConfigId === undefined) {
+  let logProblemsetIds: string;
+  if (problemsets === undefined) {
     problemsetIds = getProblemsetList().map(problemset => problemset.id);
-    console.log('start judging all the problemset ******** ');
+    logProblemsetIds = 'all';
   } else {
-    console.log(`start judgeing problemsets from ${runningProblemsetConfigId}`);
-    problemsetIds = JSON.parse(fs.readFileSync(paths.runningProblemsetConfigPath(runningProblemsetConfigId),
-      'utf8'));
+    problemsetIds = problemsets;
+    logProblemsetIds = problemsets.join(',');
   }
-
+  console.log(`Judging round ${++judgeRound}: ${logProblemsetIds}`);
   problemsetIds.forEach(problemsetId => judgeProblemSet(problemsetId));
 }
 
@@ -191,14 +191,14 @@ if (dockerStr.indexOf(containerName) > -1) {
 systemSync(`docker run -dit --name ${containerName} -v ${path.resolve(localRoot)}:${dockerRoot}:ro ${imageName}`);
 
 const interval = yargs.argv.interval;
-const runningProblemset = yargs.argv.problemset;
+const judgeProblemsets = getSystemConfig().judgeProblemsets || undefined;
 
 if (interval === undefined) {
   // run judge once
-  judgeAll(runningProblemset);
+  judgeAll(judgeProblemsets);
 } else {
   // run judge every interval seconds
   setInterval(function() {
-    judgeAll(runningProblemset);
+    judgeAll(judgeProblemsets);
   }, interval * 1000);
 }

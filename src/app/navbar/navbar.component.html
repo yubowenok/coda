@@ -11,7 +11,7 @@
     <app-navbar-problemset [problemset]="problemset"></app-navbar-problemset>
   </div>
   <mat-divider></mat-divider>
-  <div class="section" *ngIf="problemset.started">
+  <div class="section" *ngIf="hasProblemsetDisplay()">
     <button mat-button routerLink="/problemset/{{problemset.id}}/submit">
       <i class="fa fa-arrow-circle-up submit-icon"></i>Submit
     </button>
@@ -20,6 +20,10 @@
     </button>
     <button mat-button routerLink="/problemset/{{problemset.id}}/submissions/{{api.getCurrentUser().username}}">
       <i class="fa fa-file"></i>My Submissions
+    </button>
+    <button mat-button routerLink="/problemset/{{problemset.id}}/queue/"
+            *ngIf="api.getCurrentUser() && api.getCurrentUser().isAdmin">
+      <i class="fa fa-list-alt"></i>Judge Queue
     </button>
   </div>
   <mat-divider></mat-divider>

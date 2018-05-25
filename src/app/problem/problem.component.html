@@ -1,6 +1,9 @@
 <app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
 <mat-spinner *ngIf="!problem && !error" diameter="50"></mat-spinner>
 <div *ngIf="problem" class="problem">
+  <div class="status" *ngIf="problem.adminView">
+    You are viewing this problem as admin.
+  </div>
   <div class="title">
     <h1>{{problem.title}}</h1>
     <button mat-raised-button color="primary" class="submit float-right" routerLink="submit">Submit</button>
@@ -8,10 +11,17 @@
   <div class="time-limit">
     <h3>Time Limit: <span>{{problem.timeLimit}} {{'second' + (problem.timeLimit > 1 ? 's' : '')}}</span></h3>
   </div>
+  <div class="image float-right" *ngIf="problem.illustration" [ngStyle]="getImageWidth()">
+    <img src="{{getImagePath()}}">
+    <div class="citation" [appHtml]="problem.illustration.text" *ngIf="problem.illustration.text"></div>
+  </div>
   <div [appMathJax]="problem.statement"></div>
   <div class="section">
     <h3>Subtasks</h3>
-    <p *ngIf="problem.isSingleTask">This problem does not have subtasks.</p>
+    <p *ngIf="problem.isSingleTask">
+      <span>{{'(' + problem.subtasks[0].score + ' points): '}}</span>
+      This problem does not have subtasks.
+    </p>
     <ul class="subtask-list" *ngIf="!problem.isSingleTask">
       <li *ngFor="let subtask of problem.subtasks">
         <span class="subtask-id">

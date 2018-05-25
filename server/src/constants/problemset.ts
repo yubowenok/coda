@@ -21,7 +21,7 @@ export enum ScoreboardMode {
   ANONYMOUS = 'ANONYMOUS'
 }
 
-export interface ProblemsetProblem {
+export interface ProblemScoring {
   number: string;
   id: string;
   subtasks: { id: string, score: number }[];
@@ -39,11 +39,14 @@ export interface ProblemsetConfig {
   duration?: number;
   freebies?: number;
   showCaseNumber?: boolean;
-  problems: ProblemsetProblem[];
-  allowUsers: string[];
-  allowGroups: string[];
+  problems: ProblemScoring[];
+  allowUsers?: string[];
+  allowGroups?: string[];
+  denyUsers?: string[];
+  denyGroups?: string[];
   fullFeedback?: boolean;
-  private?: boolean;
+  private?: boolean; // private problemset is not listed in problemsets/
+  noOnlineStatement?: boolean;
 }
 
 export interface ProblemsetDict {
@@ -68,7 +71,11 @@ export interface WebProblemset {
   judgeMode: JudgeMode;
   penaltyMode: PenaltyMode;
   scoreboardMode: ScoreboardMode;
-  problems: ProblemsetProblem[];
+  freebies?: number;
+  duration?: number;
+  problems: ProblemScoring[];
   startTime: number;
   endTime: number;
+  adminView?: boolean;
+  private?: boolean;
 }

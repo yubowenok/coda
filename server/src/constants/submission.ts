@@ -55,8 +55,8 @@ export interface Verdict {
   sourceFile: string; // path to source file
   verdict: VerdictType;
   executionTime: number;
-  // memory: number;
   failedCase: number;
+  failedCaseName?: string;
   totalCase: number;
 }
 
@@ -73,6 +73,7 @@ export interface VerdictDict {
 }
 
 export interface JudgedSubmission {
+  username?: string; // for judge queue username is visible
   submissionNumber: number; // typically numbered 1, 2, ... for (problemset, username) pair
   problemNumber: string;
   subtask: string;
@@ -84,6 +85,7 @@ export interface JudgedSubmission {
   submitTime: number; // date
   outsideProblemsetTime: boolean;
   failedCase?: number; // 0 if AC
+  failedCaseName?: string; // '' or undefined if unknown
   totalCase?: number;
   blindJudgeStatus?: BlindJudgeStatus;
 }
@@ -91,4 +93,5 @@ export interface JudgedSubmission {
 export interface JudgedSubmissionWithSource extends JudgedSubmission {
   sourceCode: string;
   compileError?: string;
+  adminView?: boolean;
 }

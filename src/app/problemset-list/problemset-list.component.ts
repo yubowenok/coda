@@ -1,17 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import * as moment from 'moment';
 
 import { ApiService } from '../api.service';
 import { ProblemsetInfo, RunMode, JudgeMode, PenaltyMode } from '../constants';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-problemset-list',
   templateUrl: './problemset-list.component.html',
   styleUrls: ['./problemset-list.component.css']
 })
-export class ProblemsetListComponent implements OnInit {
+export class ProblemsetListComponent implements OnInit, OnDestroy {
 
   problemsetGroups: {
     title: string,
@@ -35,16 +33,13 @@ export class ProblemsetListComponent implements OnInit {
     FREEBIES: 'Number of incorrect submissions that are exempted from penalty'
   };
 
-  private fragment: string;
-
-  constructor(
-    private api: ApiService,
-    private route: ActivatedRoute
-  ) { }
+  constructor(private api: ApiService) { }
 
   ngOnInit() {
     this.getProblemsetList();
-    this.route.fragment.subscribe(fragment => { this.fragment = fragment; });
+  }
+
+  ngOnDestroy() {
   }
 
   getProblemsetList(): void {
@@ -55,7 +50,7 @@ export class ProblemsetListComponent implements OnInit {
           this.updateProblemsetGroups();
           this.error = undefined;
         },
-        (err: HttpErrorResponse) => {
+        err => {
           this.error = err.error;
         }
       );

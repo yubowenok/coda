@@ -1,16 +1,18 @@
 <div *ngIf="api.getCurrentUser()">You have already signed up.</div>
 <form [formGroup]="form" *ngIf="!api.getCurrentUser()">
   <mat-form-field>
-    <i class="info fa fa-lg fa-info-circle" matTooltip="{{tooltip.INVITATION_CODE}}"></i>
+    <i class="input-info fa fa-lg fa-info-circle" matTooltip="{{tooltip.INVITATION_CODE}}"></i>
     <input matInput placeholder="Invitation Code"
-           formControlName="invitationCode" [formGroup]="form">
+           formControlName="invitationCode"
+           [formGroup]="form"
+    >
     <mat-error *ngIf="form.controls.invitationCode.hasError('required')">
       Please enter your invitation code
     </mat-error>
   </mat-form-field>
 
   <mat-form-field>
-    <i class="info fa fa-lg fa-info-circle" matTooltip="{{tooltip.EMAIL}}"></i>
+    <i class="input-info fa fa-lg fa-info-circle" matTooltip="{{tooltip.EMAIL}}"></i>
     <input matInput placeholder="Email"
            formControlName="email" [formGroup]="form">
     <mat-error *ngIf="form.controls.email.hasError('email') || form.controls.email.hasError('required')">
@@ -24,8 +26,8 @@
     <mat-error *ngIf="form.controls.username.hasError('characters')">
       Username must start with a letter and contain only lowercase letters, digits, or underscores
     </mat-error>
-    <mat-error *ngIf="form.controls.username.hasError('length')">
-      Username must be at least 3 characters long
+    <mat-error *ngIf="form.controls.username.hasError('minLength')">
+      Username length must be at least 3
     </mat-error>
   </mat-form-field>
 
@@ -33,7 +35,7 @@
     <input matInput placeholder="Password" value="" type="password"
            formControlName="password" [formGroup]="form">
     <mat-error *ngIf="form.controls.password.hasError('length')">
-      Password must be at least 6 characters long
+      Password length must be at least 6
     </mat-error>
   </mat-form-field>
 
@@ -50,6 +52,9 @@
            formControlName="fullName" [formGroup]="form">
     <mat-error *ngIf="form.controls.fullName.hasError('required')">
       Full name is required
+    </mat-error>
+    <mat-error *ngIf="form.controls.fullName.hasError('length')">
+      Full name length must be at least 3
     </mat-error>
   </mat-form-field>
 
