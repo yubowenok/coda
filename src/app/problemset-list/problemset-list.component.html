@@ -1,6 +1,21 @@
 <app-page-error *ngIf="error" [msg]="error.msg"></app-page-error>
 <mat-spinner *ngIf="!problemsetList && !error" diameter="50"></mat-spinner>
-<mat-card *ngFor="let group of problemsetGroups">
+
+<div class="header-row">
+  <button mat-icon-button routerLink="/faq"
+    matTooltip="FAQ"
+  >
+    <mat-icon>help_outline</mat-icon>
+  </button>
+  <button mat-icon-button (click)="toggleListStyle()"
+    matTooltip="Toggle Details"
+  >
+    <mat-icon>format_list_bulleted</mat-icon>
+  </button>
+</div>
+
+<ng-container *ngFor="let group of problemsetGroups">
+<mat-card *ngIf="group.problemsetList.length">
   <mat-card-title>{{group.title}}</mat-card-title>
   <mat-card-content>
     <mat-nav-list>
@@ -8,9 +23,9 @@
         <mat-icon mat-list-icon>assignment</mat-icon>
         <span *ngIf="problemset.private" matTooltip="private problemset"><i class="fa fa-eye-slash fa-lg"></i></span>
         <h3 mat-line class="row">{{problemset.title}}</h3>
-        <div mat-line class="problemset row">
+        <div mat-line class="problemset row" *ngIf="endTimeVisible(problemset)">
           <div class="time">
-            <span>
+            <span *ngIf="startTimeVisible(problemset)">
               <label>Start: </label>{{displayTime(problemset.startTime)}}
             </span>
             <span>
@@ -18,37 +33,34 @@
             </span>
           </div>
         </div>
-        <div mat-line class="row">
+        <div mat-line class="row" *ngIf="showDetailedList">
           <mat-chip-list>
             <mat-chip class="mode run" selected="{{isSelftestMode(problemset)}}"
                       matTooltip="{{isSelftestMode(problemset) ?
                       tooltip.SELFTEST_MODE : tooltip.STANDARD_MODE}}"
-                      [routerLink]="['/faq']"
-                      fragment="{{isSelftestMode(problemset) ? 'selftest' : 'standard'}}"
+                      (click)="modeChipClicked(problemset.id)"
             >
               {{problemset.runMode | titlecase}}
             </mat-chip>
             <mat-chip class="mode judge" selected="{{isBlindJudge(problemset)}}"
                       matTooltip="{{isBlindJudge(problemset) ?
                       tooltip.BLIND_JUDGE : tooltip.OPEN_JUDGE}}"
-                      [routerLink]="['/faq']"
-                      fragment="{{isBlindJudge(problemset) ? 'blind' : 'open'}}"
+                      (click)="modeChipClicked(problemset.id)"
             >
               {{problemset.judgeMode | titlecase}}
             </mat-chip>
             <mat-chip class="mode penalty" selected="{{isTimePenalty(problemset)}}"
                       matTooltip="{{isTimePenalty(problemset) ?
                       tooltip.TIME_PENALTY : tooltip.SCORE_PENALTY}}"
-                      [routerLink]="['/faq']"
-                      fragment="{{isTimePenalty(problemset) ? 'score-penalty' : 'time-penalty'}}"
+                      (click)="modeChipClicked(problemset.id)"
             >
               {{problemset.penaltyMode | titlecase}} Penalty
             </mat-chip>
             <mat-chip class="mode"
                       *ngIf="problemset.freebies"
-                      [routerLink]="['/faq']"
-                      fragment="freebies"
-                      matTooltip="{{tooltip.FREEBIES}}">
+                      matTooltip="{{tooltip.FREEBIES}}"
+                      (click)="modeChipClicked(problemset.id)"
+            >
               Freebies × {{problemset.freebies}}
             </mat-chip>
           </mat-chip-list>
@@ -57,3 +69,4 @@
     </mat-nav-list>
   </mat-card-content>
 </mat-card>
+</ng-container>

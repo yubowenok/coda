@@ -1,8 +1,15 @@
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav class="sidenav" mode="side" opened="true" fixedInViewport="true">
+  <mat-sidenav class="sidenav" mode="side" fixedInViewport="true"
+    [(opened)]="navbarOpened"
+  >
     <app-navbar></app-navbar>
   </mat-sidenav>
   <mat-sidenav-content>
+    <button mat-icon-button (click)="toggleNavbar()" id="navbar-toggle"
+      matTooltip="Toggle Menu" matTooltipPosition="right">
+      <mat-icon *ngIf="navbarOpened">arrow_left</mat-icon>
+      <mat-icon *ngIf="!navbarOpened">arrow_right</mat-icon>
+    </button>
     <div class="sidenav-content-wrapper">
       <router-outlet></router-outlet>
     </div>

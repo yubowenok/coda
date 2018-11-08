@@ -18,10 +18,9 @@ mat-list-item {
 }
 
 mat-chip.mode {
-  cursor: pointer;
   text-align: center;
   display: inline-block;
-  line-height: .75;
+  line-height: .5;
 }
 
 .mode.run {
@@ -45,6 +44,17 @@ mat-card-title {
 }
 
 .mat-nav-list .mat-list-item .row.mat-line {
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin: 5px 0;
+}
+
+.row.mat-line /deep/ .mat-chip-list-wrapper {
+  padding-bottom: 5px;
+}
+
+.header-row {
+  height: 20px;
+}
+
+.header-row > * {
+  float: right;
 }

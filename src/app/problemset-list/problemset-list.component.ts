@@ -1,8 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, HostListener } from '@angular/core';
 import * as moment from 'moment';
+import * as Cookies from 'cookies-js';
 
 import { ApiService } from '../api.service';
 import { ProblemsetInfo, RunMode, JudgeMode, PenaltyMode } from '../constants';
+import { Router } from '@angular/router';
+import * as time from '../constants/time';
 
 @Component({
   selector: 'app-problemset-list',
@@ -17,6 +20,8 @@ export class ProblemsetListComponent implements OnInit, OnDestroy {
   }[];
 
   problemsetList: ProblemsetInfo[];
+
+  showDetailedList = true;
 
   error: { msg: string } | undefined;
 
@@ -33,13 +38,35 @@ export class ProblemsetListComponent implements OnInit, OnDestroy {
     FREEBIES: 'Number of incorrect submissions that are exempted from penalty'
   };
 
-  constructor(private api: ApiService) { }
+  constructor(
+    private api: ApiService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.getProblemsetList();
+    this.loadPreference();
   }
 
   ngOnDestroy() {
+    this.savePreference();
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  public beforeWindowUnload($event: BeforeUnloadEvent) {
+    this.savePreference();
+  }
+
+  loadPreference() {
+    if (Cookies.get('showDetailedProblemsetList') !== undefined) {
+      this.showDetailedList = Cookies.get('showDetailedProblemsetList') === 'true';
+    }
+  }
+
+  savePreference() {
+    Cookies.set('showDetailedProblemsetList', this.showDetailedList, {
+      expires: time.DAY_MS * 30 / time.SECOND_MS
+    });
   }
 
   getProblemsetList(): void {
@@ -80,7 +107,7 @@ export class ProblemsetListComponent implements OnInit, OnDestroy {
 
   isBlindJudge(problemset: ProblemsetInfo): boolean {
     return problemset.judgeMode === JudgeMode.BLIND;
-}
+  }
 
   isSelftestMode(problemset: ProblemsetInfo): boolean {
     return problemset.runMode === RunMode.SELFTEST;
@@ -90,4 +117,19 @@ export class ProblemsetListComponent implements OnInit, OnDestroy {
     return problemset.penaltyMode === PenaltyMode.TIME;
   }
 
+  modeChipClicked(problemsetId: string) {
+    this.router.navigate(['/problemset', problemsetId]);
+  }
+
+  toggleListStyle() {
+    this.showDetailedList = !this.showDetailedList;
+  }
+
+  startTimeVisible(problemset: ProblemsetInfo) {
+    return this.showDetailedList || problemset.startTime > new Date().getTime();
+  }
+
+  endTimeVisible(problemset: ProblemsetInfo) {
+    return this.showDetailedList || problemset.endTime > new Date().getTime();
+  }
 }

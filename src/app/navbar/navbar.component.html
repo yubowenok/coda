@@ -28,15 +28,3 @@
   </div>
   <mat-divider></mat-divider>
 </ng-container>
-
-<mat-accordion>
-  <mat-expansion-panel expanded="{{linksExpanded}}"
-                       (opened)="linksExpanded = true" (closed)="linksExpanded = false">
-    <mat-expansion-panel-header>
-      <mat-panel-title>Links</mat-panel-title>
-    </mat-expansion-panel-header>
-    <button mat-button routerLink="/problemsets">Problemsets</button>
-    <button mat-button routerLink="/faq">FAQ</button>
-  </mat-expansion-panel>
-</mat-accordion>
-
