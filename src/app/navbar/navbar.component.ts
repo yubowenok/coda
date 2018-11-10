@@ -1,8 +1,7 @@
-import {Component, OnInit, HostListener } from '@angular/core';
-import * as Cookies from 'cookies-js';
+import {Component, OnInit } from '@angular/core';
+
 import { ApiService } from '../api.service';
 
-import * as time from '../constants/time';
 import { ProblemsetInfo } from '../constants/problemset';
 import { shouldProblemsetDisplay } from '../util';
 
@@ -18,28 +17,11 @@ export class NavbarComponent implements OnInit {
 
   problemset: ProblemsetInfo;
 
-  public linksExpanded = true;
-
   constructor(public api: ApiService) { }
-
-  @HostListener('window:beforeunload', ['$event'])
-  public beforeWindowUnload($event: BeforeUnloadEvent) {
-    this.saveLinksExpanded();
-  }
 
   ngOnInit() {
     this.api.getCurrentProblemset()
       .subscribe(problemset => this.problemset = problemset);
-
-    if (Cookies.get('linksExpanded') !== undefined) {
-      this.linksExpanded = Cookies.get('linksExpanded');
-    }
-  }
-
-  saveLinksExpanded(): void {
-    Cookies.set('linksExpanded', this.linksExpanded, {
-      expires: time.DAY_MS * 7 / time.SECOND_MS
-    });
   }
 
   hasProblemsetDisplay(): boolean {

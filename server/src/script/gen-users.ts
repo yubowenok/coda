@@ -2,7 +2,11 @@
  * Reads a list of emails and creates users.json for signup.
  *
  * Usage:
- *   node gen-users.js --emails {emails.json}
+ *   node gen-users.js --emails {emails.json} --groups {groups}
+ *
+ * emails.json: A json array containing user emails.
+ * groups: Comma separated string of groups to be assigned.
+ *
  */
 import * as yargs from 'yargs';
 import * as fs from 'fs';
@@ -13,6 +17,7 @@ if (!emailFile) {
   console.error('--emails arg is missing');
   process.exit(1);
 }
+const groups = yargs.argv.groups || '';
 
 const emails = JSON.parse(fs.readFileSync(emailFile, 'utf8'));
 
@@ -21,7 +26,8 @@ const users = emails.map((email: string) => {
   return {
     invitationCode: code,
     email: email,
-    password: ''
+    password: '',
+    groups: groups.split(','),
   };
 });
 

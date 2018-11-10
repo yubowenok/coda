@@ -25,3 +25,17 @@ app-navbar {
 .scrolling-content {
   overflow: auto;
 }
+
+#navbar-toggle {
+  color: #999;
+  position: absolute;
+  background-color: #ccc;
+  border-radius: 0;
+  width: 3px;
+  box-shadow: 1px 2px 4px rgba(0,0,0,.25);
+}
+
+#navbar-toggle /deep/ .mat-button-wrapper {
+  left: -7px;
+  position: relative;
+}

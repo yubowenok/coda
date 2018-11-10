@@ -18,6 +18,8 @@ export class AppComponent implements OnInit {
     private location: Location
   ) { }
 
+  public navbarOpened = true;
+
   private lastPoppedUrl: string | undefined;
   private yScrollStack: number[] = [];
 
@@ -46,6 +48,10 @@ export class AppComponent implements OnInit {
         setTimeout(() => window.scrollTo(0, newScrollY), 0);
       }
     });
+  }
+
+  toggleNavbar() {
+    this.navbarOpened = !this.navbarOpened;
   }
 
 }

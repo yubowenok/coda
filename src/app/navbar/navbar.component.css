@@ -31,19 +31,9 @@ navbar-problemset {
   margin-bottom: 30px;
 }
 
-mat-accordion {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
-
 .section {
   margin-top: 10px;
   margin-bottom: 10px;
-}
-
-/deep/ .mat-expansion-panel-content .mat-expansion-panel-body {
-  padding: 0;
 }
 
 .submit-icon {
