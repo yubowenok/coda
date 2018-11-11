@@ -54,7 +54,7 @@ public class Main
     int a = Integer.parseInt(st.nextToken());
     int b = Integer.parseInt(st.nextToken());
     BufferedWriter out = new BufferedWriter(new OutputStreamWriter(System.out));
-    out.write((a + b) + "\n");
+    out.write((a + b) + "\\n");
     out.flush();
   }
 }`;
