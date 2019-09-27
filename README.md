@@ -1,6 +1,6 @@
 # Coda
 
-[![Build Status](https://travis-ci.com/yubowenok/coda.svg?token=72Mbb98eevCq6x2s2zUd&branch=master)](https://travis-ci.com/yubowenok/coda)
+[![Build Status](https://travis-ci.org/yubowenok/coda.svg?branch=master)](https://travis-ci.org/yubowenok/coda)
 
 Coda Online Judge Platform
 
