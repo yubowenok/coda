@@ -20,11 +20,8 @@ export class SignupComponent implements OnInit {
 
   tooltip = {
     INVITATION_CODE: `An invitation code is required for signup.
-    All enrolled students should have received an invitation code in your university mailbox.
-    If you have enrolled but not yet received the code, please contact the instructor.
-    If you are auditing the course, please contact the instructor to request a code.`,
-    EMAIL: `Please use your netID email address like "abc123@nyu.edu".
-    Do not use email alias like "albert.bobst.courant@nyu.edu"`
+    If you have not received an invitation code, please contact your system administrator.`,
+    EMAIL: `Please use your email address that received the invitation code.`
   };
 
   private form: FormGroup;

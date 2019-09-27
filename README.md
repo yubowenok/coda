@@ -5,6 +5,7 @@
 Coda Online Judge Platform
 
 Light-weight contest & practice platform for Coding Of Data structure and Algorithm.
+This is the homework and exam grading platform used by [CSCI-UA.0480-004 Special Topics: Algorithmic Problem Solving](https://cs.nyu.edu/courses/spring18/CSCI-UA.0480-004/) in Spring18 and Fall18.
 
 ![image](https://user-images.githubusercontent.com/1314429/35206822-4d568f18-ff0d-11e7-956c-c7bea2706c20.png)
 ![image](https://user-images.githubusercontent.com/1314429/35206851-78459c28-ff0d-11e7-8c9d-3355124aa5fd.png)
@@ -76,7 +77,7 @@ server {
   }
 }
 ```
- 
+
 Build in production mode:
 
 ```bash
