@@ -204,7 +204,7 @@ export const getParticipantScores = (problemset: ProblemsetConfig, submissionDic
           }
           subtaskResult.score = subtaskResult.possibleScore; // actually obtain the score
           subtaskResult.solved = true;
-          subtaskResult.attempts = Math.max(subtaskResult.attempts, 1); // set at least 1 attempt
+          subtaskResult.attempts += 1; // add 1 attempt for this harder subtask submission
           subtaskResult.submissionNumber = submission.submissionNumber;
 
           // total result

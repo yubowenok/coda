@@ -15,7 +15,7 @@ import {
 } from '../constants';
 import { executionTimeDisplay, problemsetTimeDisplay } from '../util';
 
-const PENDING_RECHECK_INTERVAL = 10 * SECOND_MS;
+const PENDING_RECHECK_INTERVAL = 3 * SECOND_MS;
 
 @Component({
   selector: 'app-submission',

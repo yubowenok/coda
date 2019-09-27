@@ -49,14 +49,13 @@ public class Main
 {
   public static void main (String args[]) throws Exception
   {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    String line = br.readLine();
-    StringTokenizer st = new StringTokenizer(line);
+    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    StringTokenizer st = new StringTokenizer(in.readLine());
     int a = Integer.parseInt(st.nextToken());
     int b = Integer.parseInt(st.nextToken());
-    StringBuilder sb = new StringBuilder();
-    sb.append(String.format("%d\\n", a + b));
-    System.out.print(sb.toString());
+    BufferedWriter out = new BufferedWriter(new OutputStreamWriter(System.out));
+    out.write((a + b) + "\\n");
+    out.flush();
   }
 }`;
 
