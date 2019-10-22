@@ -39,7 +39,7 @@
     "express-session": "^1.15.6",
     "express-validator": "^4.3.0",
     "fbgraph": "^1.4.1",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.13",
     "lusca": "^1.5.2",
     "morgan": "^1.9.0",
     "nodemailer": "^4.4.2",
