@@ -24,7 +24,7 @@
     "@angular/platform-browser-dynamic": "^5.2.1",
     "@angular/router": "^5.2.1",
     "@swimlane/ngx-datatable": "^11.1.7",
-    "bcrypt": "^1.0.3",
+    "bcrypt": "^5.0.0",
     "codemirror": "^5.33.0",
     "cookies-js": "^1.2.3",
     "core-js": "^2.4.1",
