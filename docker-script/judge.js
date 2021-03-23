@@ -21,6 +21,7 @@ const exec = child_process.exec;
 const execSync = child_process.execSync;
 
 const ARGS = require('optimist').argv;
+const { exception } = require('console');
 const problemPath = ARGS.problem;
 const source = ARGS.source;
 const time = ARGS.time;
@@ -80,6 +81,9 @@ function getCompilerErrorMsg(tmpSubmission) {
       break;
     case '.py':
       cmdLine = 'python ' + tmpSubmission + ' 2>' + errPath;
+      break;
+    case '.cs':
+      cmdLine = 'mcs -optimize+ -r:System.Numerics ' + tmpSubmission + ' 2>' + errPath;
       break;
     default:
       return 'file extension not supported by any compiler';
@@ -175,4 +179,3 @@ if (help) {
     console.log(toJsonResult(stdout, source, fileName));
   });
 }
-

@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 export enum Language {
   C = 'C',
   CPP = 'CPP',
+  CSHARP = 'CSHARP',
   JAVA = 'JAVA'
 }
 
@@ -11,6 +12,7 @@ export const LanguageList = _.values(Language);
 export const LanguageSuffix: { [lang: string]: string } = {
   C: 'c',
   CPP: 'cpp',
+  CSHARP: 'cs',
   JAVA: 'java'
 };
 

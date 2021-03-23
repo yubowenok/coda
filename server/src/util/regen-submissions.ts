@@ -16,6 +16,7 @@ if (!problemsetId) {
 const languageMap: { [lang: string]: Language } = {
   'C': Language.C,
   'CPP': Language.CPP,
+  'CSHARP': Language.CSHARP,
   'JAVA': Language.JAVA
 };
 

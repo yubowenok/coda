@@ -188,7 +188,11 @@ if (dockerStr.indexOf(containerName) > -1) {
   systemSync(`docker rm ${containerName}`);
 }
 
-systemSync(`docker run -dit --name ${containerName} -v ${path.resolve(localRoot)}:${dockerRoot}:ro ${imageName}`);
+const dockerCmd = `docker run -dit --name ${containerName} ` +
+  `-v ${path.resolve(localRoot)}:${dockerRoot}:ro ` +
+  `-v ${path.resolve(localRoot)}/problem:${dockerRoot}/problem:ro ${imageName}`;
+console.log(dockerCmd);
+systemSync(dockerCmd);
 
 const interval = yargs.argv.interval;
 const judgeProblemsets = getSystemConfig().judgeProblemsets || undefined;

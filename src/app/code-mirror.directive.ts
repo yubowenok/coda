@@ -7,6 +7,7 @@ import 'codemirror/addon/display/placeholder';
 const cmModes = {
   C: 'text/x-csrc',
   CPP: 'text/x-c++src',
+  CSHARP: 'text/x-csharp',
   JAVA: 'text/x-java'
 };
 

@@ -21,7 +21,7 @@ Coda has three components: web, server, and judge. Install the parts separately.
 npm install # web
 npm --prefix ./server install # server & judge
 
-npm --prefix run init-judge # initialize judge
+npm --prefix ./server run init-judge # initialize judge
 ```
 
 Judge initialization requires permission to talk to Docker daemon.
